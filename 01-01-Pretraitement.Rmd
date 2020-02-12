@@ -1,0 +1,33 @@
+---
+output:
+  pdf_document:
+    toc: true
+    fig_caption: true
+---
+
+```{R}
+library(CASdatasets)
+library(ggplot2)
+data(eudirectlapse)
+data.init <- eudirectlapse
+data <- data.init
+
+## Changement dans les donnees
+str(data)
+data$lapse <- as.factor(data$lapse)
+table(data$polholder_diffdriver)
+# polholder_diffdrive changer unknown en NA aussi vehiuclegarage
+# adapter pour freqperyear: factor_temperature_vector <- factor(temperature_vector, order = TRUE, levels = c("Low", "Medium", "High"))
+# vehicule powerkw ???
+
+## summary
+summary(data)
+summary(data$prem_final)
+summary(data$polholder_age)
+
+for(i in 1:length(levels(data$vehicl_powerkw))){
+  print(levels(data$vehicl_powerkw)[i])
+  print(summary(data$lapse[data$vehicl_powerkw == levels(data$vehicl_powerkw)[i]]))
+}
+
+```
