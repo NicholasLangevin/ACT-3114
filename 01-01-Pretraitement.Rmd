@@ -43,25 +43,25 @@ library(CASdatasets)
 library(ggplot2)
 data(eudirectlapse)
 data.init <- eudirectlapse
-data <- data.init
 
 ## Changement dans les donnees
+data <- data.init
 str(data)
 data$lapse <- as.factor(data$lapse)
-table(data$polholder_diffdriver)
-# polholder_diffdrive changer unknown en NA aussi vehiuclegarage
-# adapter pour freqperyear: factor_temperature_vector <- factor(temperature_vector, order = TRUE, levels = c("Low", "Medium", "High"))
-# vehicule powerkw ???
+levels(data$lapse) <- c("renew", "cancelation")
+data[data$polholder_diffdriver == "unknown", ]$polholder_diffdriver <- NA
+data[data$vehicl_garage == "unknown", ]$vehicl_garage <- NA
+data$prem_freqperyear <- factor(data$prem_freqperyear, order = TRUE, levels = c("1 per year", "2 per year", "4 per year", "12 per year"))
 
-## summary
-summary(data)
-summary(data$prem_final)
-summary(data$polholder_age)
+data$vehicl_powerkw_na <- data$vehicl_powerkw
+data[data$vehicl_powerkw_na == "125-300 kW", ]$vehicl_powerkw_na <- NA
+data[data$vehicl_powerkw %in% c("150 kW","175 kW","200 kW","225 kW","250 kW","275 kW","300 kW"), ]$vehicl_powerkw <- "125-300 kW"
+data <- droplevels(data)
+data$vehicl_powerkw <- factor(data$vehicl_powerkw, order = TRUE, levels = c("25-50 kW", "75 kW", "100 kW", "125-300 kW"))
+table(data$vehicl_powerkw)
+str(data)
 
-for(i in 1:length(levels(data$vehicl_powerkw))){
-  print(levels(data$vehicl_powerkw)[i])
-  print(summary(data$lapse[data$vehicl_powerkw == levels(data$vehicl_powerkw)[i]]))
-}
+
 
 ```
 
