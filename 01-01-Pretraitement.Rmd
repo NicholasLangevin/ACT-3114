@@ -1,11 +1,44 @@
 ---
 output:
-  pdf_document:
-    toc: true
-    fig_caption: true
+  pdf_document
+header-includes: \usepackage[french]{babel}
 ---
 
-```{R}
+\newpage
+\begin{flushright}
+    \textbf{Équipe 8}
+\end{flushright}
+
+\begin{center}
+    \vspace{2\baselineskip}
+    Charles Comeau \\
+    (111 185 421) \\
+    \vspace{1\baselineskip}
+    Nicholas Langevin \\
+    (111 184 631) \\
+    \vspace{1\baselineskip}
+    Andréanne Larouche \\
+    (111 190 518) \\
+    \vspace{7\baselineskip}
+    Apprentissage statistique en actuariat\\
+    ACT-3114 \\
+    \vspace{7\baselineskip}
+    {\large
+    \textbf{Premier rapport}} \\
+    \vspace{8\baselineskip}
+    présenté à \\
+    Marie-Pier Côté \\
+    \vspace{9\baselineskip}
+    École d’actuariat \\
+    Université Laval \\
+    27 février 2020
+\end{center}
+
+\newpage
+
+\tableofcontents
+
+```{R , echo = FALSE, include = FALSE, warning = FALSE}
 library(CASdatasets)
 library(ggplot2)
 data(eudirectlapse)
@@ -31,3 +64,29 @@ for(i in 1:length(levels(data$vehicl_powerkw))){
 }
 
 ```
+
+\newpage
+
+# Introduction
+
+
+\newpage
+
+# Analyse exploratoire des données
+
+
+\newpage
+
+# Autres sections
+
+
+\newpage
+
+# Conclusion
+
+
+\newpage
+
+# Annexe
+
+Notre jeu de données représente le statut de renouvellement pour 23 060 polices d'assurance basées sur un an d'observation. Les données receuillies proviennent d'une compagnie d'assurance inconnue dont l'année d'observation est également inconnue.
