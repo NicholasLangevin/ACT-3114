@@ -24,7 +24,7 @@ header-includes: \usepackage[french]{babel}
     ACT-3114 \\
     \vspace{7\baselineskip}
     {\large
-    \textbf{Premier rapport}} \\
+    \textbf{Analyse des données de renouvellement d'assurance}} \\
     \vspace{8\baselineskip}
     présenté à \\
     Marie-Pier Côté \\
@@ -69,6 +69,7 @@ for(i in 1:length(levels(data$vehicl_powerkw))){
 
 # Introduction
 
+Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement d'une police d'assurance, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. Ainsi, "lapse", variable de type catégorielle qui indique si l'assuré résignera lors de son renouvellement d'assurance ou non, est la variable réponse qui sera intéressante.
 
 \newpage
 
