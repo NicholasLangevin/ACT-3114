@@ -61,7 +61,23 @@ data$vehicl_powerkw <- factor(data$vehicl_powerkw, order = TRUE, levels = c("25-
 table(data$vehicl_powerkw)
 str(data)
 
-
+## Diagramme à bande des frequence de renouvellement et decheance en fonction des variables categorielles 
+ggplot(data, aes(x=lapse, fill=polholder_BMCevol))+
+  geom_bar(position="dodge")
+ggplot(data, aes(x=lapse, fill=polholder_diffdriver))+
+  geom_bar(position="dodge")
+ggplot(data, aes(x=lapse, fill=polholder_gender))+
+  geom_bar(position="dodge")
+ggplot(data, aes(x=lapse, fill=policy_caruse))+
+  geom_bar(position="dodge")
+ggplot(data, aes(x=lapse, fill=prem_freqperyear))+
+  geom_bar(position="dodge")
+ggplot(data, aes(x=lapse, fill=vehicl_garage))+
+  geom_bar(position="dodge")
+ggplot(data, aes(x=lapse, fill=vehicl_powerkw))+
+  geom_bar(position="dodge")
+ggplot(data, aes(x=lapse, fill=vehicl_region))+
+  geom_bar(position="dodge")
 
 ```
 
