@@ -91,6 +91,166 @@ Les données qui seront analysées dans ce rapport proviennent du jeu de donnée
 
 # Analyse exploratoire des données
 
+## lapse
+
+La variable lapse représente si le client à abandonner sa police lors du renouvellement. Il s'agit de la variable eogène. Initialement, le choix du client était indiquer par une représensation binaire (À VÉRIFIER). Si le client désire résigner sa police lapse prenait la valeur 1, autrement elle prenait la valeur 0. À des fins de simplification nous avons converti la variable en variable catégorielle pour aider la visualisation pour la suite. La variable prendra maintenant la valeur "cancelation" si le client à décider de résigner et "renew" si il renouvelle la police d'assurance.Voici, un diagramme illustrant la répartition des choix des clients.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r graph_lapse, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x=lapse))+
+  geom_bar()
+```
+On constate qu'il y a 20106 clients qui ont renouveler alors qu'il y en a 2954 qui résigner leur du renouvellement. Il y a donc 12.81% des 23060 clients qui n'ont pas renouveler.
+
+
+## polholder_age
+
+Cette variable est une variable numérique discrète représentant l'âge du propriétaire de la police d'assurance. Voici un tableau de fréquence des âges des assurés.
+
+```{r graph_polholder_age, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = polholder_age))+
+  geom_bar()
+```
+
+L'âge minimal parmis les assuré est de 19 ans et l'âge maximal est de 85 ans. On constate qu'il y a une forte proportion d'assuré entre 25 et 60 ans.
+
+
+## polholder_BMCevol
+
+
+
+## polholder_diffdriver
+
+Il s'agit d'une variable catégorielle nominale représentant la différence de statut qui pourrait avoir entre le propriétaire de la police et le conducteur principale.  
+
+```{r graph_polholder_diffdriver, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = polholder_diffdriver))+
+  geom_bar()
+```
+
+## polholder_gender
+
+Variable catégorielle nomianle représentant le sexe du propriétaire de la police. Voici la répartition du sexe du propriétaire de la police d'assurance.
+
+```{r graph_polholder_gender, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = polholder_gender))+
+  geom_bar()
+```
+
+## polholder_job
+
+Variable catégorielle nominale décrivant le travail du prorpiétaire du contrat. Deux valeurs sont possibles soit "medical" soit "normal". 
+
+```{r graph_polholder_job, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = polholder_job))+
+  geom_bar()
+```
+
+## policy_age
+
+Variable numérique discrète représentant le nombre d'année sans résignation de la police d'assurance depuis la première année assurée. 
+
+```{r graph_policy_age, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = policy_age))+
+  geom_bar()
+```
+
+On constate une forte décroissance du nombre d'assurée pour le nombre d'années depuis l'entré en vigueur pour les  3 premières années pour ensuite ce stabilisé par la suite.
+
+## policy_caruse
+
+Variable catégorielle nominale représentant les fins d'utilisation du véhicule.     
+
+```{r graph_policy_caruse, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = policy_caruse))+
+  geom_bar()
+```
+On constate qu'il y a un nombre considérable de données manquantes et très peu de véhicule pour un usage commerciale.
+
+
+## policy_nbcontract
+
+Variable numérique discrète représentant le nombre de contrat que possède l'assuré chez l'assureur. 
+
+```{r graph_policy_nbcontract, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = policy_nbcontract))+
+  geom_bar()
+```
+
+L'histogramme illustre le fait qu'il y a une forte concentration d'assuré pour lesquels le nombre de contrat qu'ils ont chez l'assureur est inférieur à 5. On peut aussi voir que certains assurés ont jusqu'à 15 contrats.
+
+
+## Les variables de primes
+
+Il y a plusieurs variables numériques continues relatives à la prime. La variable prem_final re présente le montant de la prime proposé pour le renouvellement par l'assureur alors que prem_last représente le montant payé lors du dernier renouvellement. La variable prem_market est la prime qui serait chargée selon le marché. La variable prem_pure est la prime pure.    
+
+```{r stats_prem, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+stats_final <- c(summary(data$prem_final)[c(1, 3, 4, 6)], sd(data$prem_final))
+
+stats_last <- c(summary(data$prem_last)[c(1, 3, 4, 6)], sd(data$prem_last))
+
+stats_market <- c(summary(data$prem_market)[c(1, 3, 4, 6)], sd(data$prem_market))
+
+stats_pure <- c(summary(data$prem_pure)[c(1, 3, 4, 6)], sd(data$prem_pure))
+
+tableau_stats <- rbind(stats_final, stats_last, stats_market, stats_pure)
+
+dat_frame_tab <- as.data.frame(tableau_stats)
+
+colnames(dat_frame_tab) <- c("Minimum", "Médiane", "Moyenne", "Maximum", "Écart-type")
+
+```
+
+
+## prem_freqperyear
+
+Variable catégorielle ordinale représentant la fréquence par année à laquelle la prime est payable. Les fréquence possible est mensuelle, trimestrielle, semestrielle ou annuelle.
+
+```{r graph_prem_freqperyear, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = prem_freqperyear))+
+  geom_bar()
+```
+On voit qu'un peu moins de la moitié des clients paient la prime en un seul versement, environ un quart des clients paient trimestriellement, et le dernier quart est partagé par la prime payable semestriellement et mensuellement.
+
+
+## Variables relatives à l'âge du véhicule
+
+Les deux prochaines variables sont en lien avec l'aĝe du véhicule, il s'agit de variables numériques discrètes. La variable vehicl_agepurchase représente l'âge du véhicule lorsque l'assuré a acheté le véhicule. La variable vehicl_age représente l'aĝe du véhicule actuellement. 
+
+```{r graph_age, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+library(gridExtra)
+library(grid)
+library(lattice)
+age_vehicule <- ggplot(data, aes(x = vehicl_age))+
+  geom_bar()
+
+agepurchase_vehicule <- ggplot(data, aes(x = vehicl_agepurchase))+
+  geom_bar()
+
+grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
+
+```
+
+Beaucoup de véhicule ont été achetés lorsqu'il était neuf (vehicl_purchase = 0). En examinant les véhicules conduits par es assurés on remarque qu'il y a peu de véhicule neuf et le nombre de véhicule est croissant en fonction de l'utilisation jusqu'à 13 ans puis décroit par la suite. On retrouve un grand nombre de véhicule assuré avec 18 ans d'usage, il est fort probable que cela correspondre aux véhicules de plus de 18 ans. 
+
+
+## vehicl_garage
+
+Variable catégorielle nominale décrivant le type de stationnement de la voiture. Voici la répartition des types de stationnement.
+
+```{r graph_vehicl_garage, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+ggplot(data, aes(x = vehicl_garage))+
+  geom_bar() + theme(axis.text.x = element_text(angle = 90))
+```
+
+On voit que les moyens de stationnement les plus populaire sont le garage privé et la rue.
+
+
+## 
+
 
 \newpage
 
