@@ -99,6 +99,110 @@ Les données qui seront analysées dans ce rapport proviennent du jeu de donnée
 
 \newpage
 
+# Analyse en composantes principales
+```{R , echo = FALSE, include = FALSE}
+require(tidyverse)
+require(FactoMineR)
+require(factoextra)
+require(plotly)
+require(ggplot2)
+library(cluster)
+```
+
+Étant donné que notre jeu de données contient `R nrow(Donnees_tempo)` observations, il peut être utile de visualiser les données à l'aide de l'analyse en composantes principales, appelé ACP. En effet, ce type d'analyse permet de mieux visualiser un jeu de données lorsque celui-ci est de grande dimension. Il sera ainsi possible de voir quelles variables explicatives sont plus intéressantes par leur impact sur la variance des composantes principales. Il est à noter qu'en général, on garde assez de composantes pour représenter entre 80 et 90 % de la variance totale. 
+
+Pour que cette méthode de visualisation puisse être utilisée, il sera nécessaire de prendre seulement les variables explicatives numériques de ce jeu de donnée. Les variables catégorielles ne seront pas analysées dans cette section car même en les transformant en variables numériques, elles ne seront pas représentative de leur signification.
+
+```{R , echo = FALSE, include = TRUE}
+Donnees_tempo <- na.omit(data)
+Data_num <- Donnees_tempo[, c("polholder_age", "policy_age", "policy_nbcontract", "prem_final", "prem_last", "prem_market", 
+                              "prem_pure", "vehicl_age", "vehicl_agepurchase")]
+```
+
+On doit ensuite choisir le nombre de composantes principales. Cette étape peut être complétée en spécifiant le pourcentage de variance expliquée pour obtenir la cible précisée précedemment ou utiliser la méthode du coude sur le diagramme d'éboulis. 
+
+```{R , echo = FALSE, include = FALSE}
+ACP <- PCA(Data_num, scale = TRUE, ncp = 6)
+```
+À l'aide du graphique ACP des variables on peut observer que pour la première composante principlae, une valeur élevé indique un contrat ayant une prime élevé, que ce soit la prime du marché, la prime pure, la prime finale ou la prime chargée lors du dernier renouvellement. Par contre, un assuré âgé aura un score moindre qu'un assuré en bas âge. Un score élevé représente donc un assuré en bas âge ayant une prime élevé tandis qu'un score faible représente une personne plus âgée avec une faible prime d'assurance. 
+
+La deuxième composante principale représente, quant à elle, l'âge du véhicule assuré. Un score élevé est associé à des véhicules de moindres valeurs mais risquant d'avantage un bris de veillesse. Plus les polices d'assurance sont récentes et plus le score en sera augmenté. Ainsi, les polices d'assurances récente ayant des véhicules de l'année représenteront les scores les plus faibles pour cette composante.
+
+```{R , echo = FALSE, include = TRUE}
+fviz_screeplot(ACP)
+ACP$eig
+```
+
+Selon le diagramme d'éboulis, il sera nécessaire de conserver 6 composantes principales et on observe, à l'aide des valeurs propres de la matrice de corélation, que 6 composantes principales permettent d'expliquer 97% de la variance totale.
+
+À l'aide de la fonction ACP, nous pouvons voir la gravité des contributions pour chacune des variables sur chacune des composantes principales retenu. Ainsi, on remarque que la variable *prem_final* est celle ayant la plus grande contribution sur la première composantes principale, tout comme les variable *prem_last*, *prem_market* et *prem_pure*. Quand à la deuxième et à la sixième composante principale, c'est les variables *vehicl_age* et *vehicl_agepurchase* qui fournissent la plus grande contribution. Les variables explicatives *polholder_age* et *policy_age* ont les contributions les plus importantes pour les troisième et cinquième composantes principales. Pour ce qui est de la variable *policy_nbcontract*, elle est la variable apportant la plus grande contribution sur la quatrième composante principale. 
+
+```{R , echo = FALSE, include = TRUE}
+ACP$var$contrib
+```
+
+En illustrant les contributions des variables pour chacune des composantes principales, il est plus facile de visualiser l'intensité de leur contribution.
+
+```{R , message=FALSE, include = TRUE, echo = FALSE}
+contrib <- data.frame(ACP$var$coord[,1:6])
+contrib$carac <- rownames(contrib)
+contrib.long <- reshape2::melt(contrib)
+
+ggplot(contrib.long, aes(x=carac, fill=variable, y=value))+
+  geom_bar(stat="identity",position=PositionDodge)+
+  facet_grid(~variable)+
+  theme(legend.position="top",axis.text.x = element_text(angle = 90))+
+  coord_flip()
+```
+
+
+Diagramme de points (modèle) : À COMPLÉTER ET VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
+```{R , echo = FALSE, include = TRUE}
+data <- cbind(Donnees_tempo, ACP$ind$coord)
+
+g_ind <- ggplot(data = data,
+             aes(x= Dim.2, y=Dim.3, col = policy_age,  shape = lapse, labels = polholder_age,
+                 alpha = 0.2)) +
+  geom_point() +
+  xlab("Dimension 2") +
+  ylab("Dimension 3") +
+  theme_bw()
+ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
+
+g_ind <- ggplot(data = data,
+             aes(x= Dim.1, y=Dim.2, col = prem_pure,  shape = lapse, labels = vehicl_agepurchase,
+                 alpha = 0.2)) +
+  geom_point() +
+  xlab("Dimension 1") +
+  ylab("Dimension 2") +
+  theme_bw()
+ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
+```
+
+\newpage
+
+# Partitionnement en k moyennes
+
+Le partitionnement en k moyennes est utiliser pour classifier les observations en k groupes distincts. La valeur de k est une valeur qu'on transmet pour indiquer le nombre de partitions désirées. Chaque observation sera ensuite assigné à un seul groupe. L'algorithme utilisée pour ce type de partitionnement a pour objectif de minimiser la variance intra-groupe.
+
+```{R , echo = FALSE, include = TRUE}
+Data_num <- Donnees_tempo[, c("polholder_age", "policy_age", "policy_nbcontract", "prem_final", "prem_last", "prem_market", 
+                              "prem_pure", "vehicl_age", "vehicl_agepurchase")]
+
+K <- 3
+kmoyennes <- kmeans(Data_num, K, nstart=5)
+Donnees_acp <- PCA(Data_num, scale = FALSE, ncp = 2, graph = FALSE)
+
+composante1 <- Donnees_acp$ind$coord[,1]
+composante2 <- Donnees_acp$ind$coord[,2]
+
+groupe <- as.factor(kmoyennes$cluster)
+
+ggplot() + geom_point(aes(composante1, composante2, color = groupe)) + theme_minimal()
+```
+
+\newpage
+
 # Conclusion
 
 
