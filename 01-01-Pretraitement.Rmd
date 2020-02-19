@@ -330,13 +330,13 @@ g_ind <- ggplot(data = data,
 ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
 
 g_ind <- ggplot(data = data,
-             aes(x= Dim.1, y=Dim.2, col = prem_pure,  shape = lapse, labels = vehicl_agepurchase,
+             aes(x= Dim.5, y=Dim.6, col = policy_age,  shape = lapse, labels = vehicl_agepurchase,
                  alpha = 0.2)) +
   geom_point() +
   xlab("Dimension 1") +
   ylab("Dimension 2") +
   theme_bw()
-ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
+ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
 ```
 
 \newpage
