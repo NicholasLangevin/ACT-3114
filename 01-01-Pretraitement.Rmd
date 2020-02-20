@@ -1,14 +1,10 @@
 ---
-output: pdf_document
-header-includes:
-  \usepackage[french]{babel}
-  \usepackage{hyperref}
-  \hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,      
-    urlcolor=cyan,
-  }
+header-includes: \usepackage[french]{babel} \usepackage{hyperref} \hypersetup{ colorlinks=true,
+  linkcolor=blue, filecolor=magenta, urlcolor=cyan, }
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 \newpage
@@ -48,8 +44,6 @@ header-includes:
 library(CASdatasets)
 library(tidyverse)
 library(mice)
-library(BaylorEdPsych)
-library(mvnmle)
 library(xtable)
 library(reshape2)
 library(VIM)
@@ -90,7 +84,7 @@ data.traiter <- data
 ```{R, FonctionPrintTable, echo = FALSE, include = FALSE, warning = FALSE}
 
 print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1), ...){
-  print(xtable(pourcentage_manquant, digits = 3,
+  print(xtable(dat, digits = 3,
              caption=caption,
              label=label,
              align=align, ...),
@@ -209,7 +203,7 @@ L'histogramme illustre le fait qu'il y a une forte concentration d'assuré pour 
 
 Il y a plusieurs variables numériques continues relatives à la prime. La variable prem_final re présente le montant de la prime proposé pour le renouvellement par l'assureur alors que prem_last représente le montant payé lors du dernier renouvellement. La variable prem_market est la prime qui serait chargée selon le marché. La variable prem_pure est la prime pure.    
 
-```{r stats_prem, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
+```{r stats_prem, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE, results='asis'}
 stats_final <- c(summary(data$prem_final)[c(1, 3, 4, 6)], sd(data$prem_final))
 
 stats_last <- c(summary(data$prem_last)[c(1, 3, 4, 6)], sd(data$prem_last))
@@ -224,6 +218,7 @@ dat_frame_tab <- as.data.frame(tableau_stats)
 
 colnames(dat_frame_tab) <- c("Minimum", "Médiane", "Moyenne", "Maximum", "Écart-type")
 
+print.tables(dat_frame_tab)
 ```
 
 
@@ -281,7 +276,7 @@ On voit que les moyens de stationnement les plus populaire sont le garage privé
 ```{R, ProportionDeValeursManquante, echo = FALSE, results='asis'}
 nb_manquant <- round(apply(data, 2, FUN = function(x) sum(is.na(x)))/nrow(data) * 100,2)
 ```
-La base de données contenait seulement trois variables avec des valeurs manquante. La difference entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron des valeur manquante. On remarque que les trois variables manquante semble lier. En effet, 100% des cas manquant pour la variale *polholder_diffdriver* sont aussi manquantes pour les deux autres variables. En ce qui concerne les variables *policy_caruse* et *vehicl_garage*, il sont plus souvent manquante seulement pour une variable à la fois, mais il y a quelques cas où les deux sont manquantes en même temps.
+La base de données contenait seulement trois variables avec des valeurs manquante. La variable indiquant la difference d'âge entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron des valeur manquante. On remarque que les trois variables manquante semble lier. En effet, 100% des cas manquant pour la variale *polholder_diffdriver* sont aussi manquantes pour les deux autres variables. En ce qui concerne les variables *policy_caruse* et *vehicl_garage*, il sont plus souvent manquante seulement pour une variable à la fois, mais il y a quelques cas où les deux sont manquantes en même temps.
 
 ```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}ddd"}
 #pattern.matrix <- md.pattern(data, rotate.names = TRUE)
@@ -293,7 +288,7 @@ Ensuite, dans le but de déterminé si les données manquante était MCAR, nous 
   H_0:&\: \text{Le données sont MCAR} \\
   H_1:&\: \text{Le données ne sont pas MCAR}
 \end{align*}
-La statistique à été calculer avec le test *MCAR de Little* et une p-value inférieure à 1% à été obtenu. Avec un niveau de signifiance de 1%, il est possible de regeté l'hypothese que les données sont MCAR. Ensuite, il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Puisque les données proviennent d'un compagie anonyme, nous n'avons pas d'information sur la récolte de données et il nous est imposible de trouver des patrons qui pourrait provoquer des données NCAR. En conséquence, nous allons considéré que nos données sont MAR. De plus, en effectuant des tests khi-carré pour la variable polholder_diffdriver, il a été remarquer que, dans 100% des cas, l'information sur la difference entre le détenteur de police et le conducteur étaient manquante dans le cas que le travail était dans le domaine de la médecine et que pour les polices vieille d'au moins 4 ans. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
+La statistique à été calculer avec le test *MCAR de Little* et une p-value inférieure à 1% à été obtenu. Avec un niveau de signifiance de 1%, il est possible de regeté l'hypothese que les données sont MCAR. Ensuite, il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Puisque les données proviennent d'un compagie anonyme, nous n'avons pas d'information sur la récolte de données et il nous est imposible de trouver des patrons qui pourrait provoquer des données NMAR. En conséquence, nous allons considéré que nos données sont MAR. De plus, en effectuant des tests khi-carré pour la variable polholder_diffdriver, il a été remarquer que, dans 100% des cas, l'information sur la difference entre le détenteur de police et le conducteur étaient manquante dans le cas que le travail était dans le domaine de la médecine et que pour les polices vieille d'au moins 4 ans. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
 
 Pour l'imputation des données, la méthode d'imputation multiples à été choisie. Pour des restrictions de temps de calcul, 5 itérations de régresion stochastique on été fait. Pour la variable *policy_caruse*, un régression logistique à été effectuer puisque la variable consiste en deux niveau. Pour les variables *vehicl_garage* et *polholder_diffdriver* qui sont des variable catégoriel non-ordonée, un régression polynomial à été utilisé.
 
@@ -382,7 +377,6 @@ ACP <- PCA(Data_num, scale = TRUE, ncp = 6)  #scale=TRUE permet de normaliser le
 
 ```{R , echo = FALSE, include = TRUE}
 fviz_screeplot(ACP)
-ACP$eig
 ```
 
 Selon le diagramme d'éboulis, il sera nécessaire de conserver 6 composantes principales et on observe, à l'aide des valeurs propres de la matrice de corélation, que 6 composantes principales permettent d'expliquer 97% de la variance totale.
@@ -425,7 +419,7 @@ g_ind <- ggplot(data = data,
   xlab("Dimension 2") +
   ylab("Dimension 3") +
   theme_bw()
-#ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
+ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
 
 g_ind <- ggplot(data = data,
              aes(x= Dim.1, y=Dim.2, col = vehicl_agepurchase,  shape = lapse, labels = prem_pure,
@@ -434,7 +428,7 @@ g_ind <- ggplot(data = data,
   xlab("Dimension 1") +
   ylab("Dimension 2") +
   theme_bw()
-#ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
+ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
 
 g_ind <- ggplot(data = data,
              aes(x= Dim.1, y=Dim.3, col = policy_age,  shape = lapse, labels = prem_pure,
@@ -443,7 +437,7 @@ g_ind <- ggplot(data = data,
   xlab("Dimension 1") +
   ylab("Dimension 3") +
   theme_bw()
-#ggplotly(g_ind) #Pour comparer les dimensions 1 et 3
+ggplotly(g_ind) #Pour comparer les dimensions 1 et 3
 ```
 
 À VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
@@ -458,14 +452,16 @@ Le partitionnement en k moyennes est utiliser pour classifier les observations e
 Data_num <- Donnees_tempo[, c("polholder_age", "policy_age", "policy_nbcontract", "prem_final", "prem_last", "prem_market", 
                               "prem_pure", "vehicl_age", "vehicl_agepurchase")]
 
-K <- 3
+K <- 5
 kmoyennes <- kmeans(Data_num, K, nstart=5)
-Donnees_acp <- PCA(Data_num, scale = FALSE, ncp = 2, graph = FALSE)
+Donnees_acp <- PCA(Data_num, scale = FALSE, ncp = 6, graph = FALSE)
 
 composante1 <- Donnees_acp$ind$coord[,1]
 composante2 <- Donnees_acp$ind$coord[,2]
 
+
 groupe <- as.factor(kmoyennes$cluster)
+
 
 ggplot() + geom_point(aes(composante1, composante2, color = groupe)) + theme_minimal()
 ```
