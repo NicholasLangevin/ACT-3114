@@ -93,7 +93,7 @@ Les données qui seront analysées dans ce rapport proviennent du jeu de donnée
 
 ## lapse
 
-La variable lapse représente si le client à abandonner sa police lors du renouvellement. Il s'agit de la variable eogène. Initialement, le choix du client était indiquer par une représensation binaire (À VÉRIFIER). Si le client désire résigner sa police lapse prenait la valeur 1, autrement elle prenait la valeur 0. À des fins de simplification nous avons converti la variable en variable catégorielle pour aider la visualisation pour la suite. La variable prendra maintenant la valeur "cancelation" si le client à décider de résigner et "renew" si il renouvelle la police d'assurance.Voici, un diagramme illustrant la répartition des choix des clients.
+La variable lapse indique si l'assuré à renouveller ou non sa police lors du renouvellement. Il s'agit de la variable exogène. Initialement, le choix du client était indiqué par une variable binaire, soit une variable catégorique nominale. Si le client désirait résigner sa police lapse prenait la valeur 1, autrement elle prenait la valeur 0. À des fins de simplification et de compréhension générale, nous avons converti la variable en variable pour que la visualisation en soit augmentée pour la suite. La variable prendra maintenant la valeur "cancelation" si le client à décider de résigner sa police et de "renew" s'il a décider de la renouveller. Voici, un diagramme illustrant la répartition des choix des clients.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -101,10 +101,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r graph_lapse, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
 ggplot(data, aes(x=lapse))+
-  geom_bar()
+  geom_bar() +
+  theme_bw() 
 ```
-On constate qu'il y a 20106 clients qui ont renouveler alors qu'il y en a 2954 qui résigner leur du renouvellement. Il y a donc 12.81% des 23060 clients qui n'ont pas renouveler.
-
+On constate qu'il y a 20106 clients qui ont renouvelé alors qu'il y en a 2954 qui ont résigné leur du renouvellement. Il y a donc 12.81% des 23060 clients qui n'ont pas renouveler. Pour mieux comprendre la cause de leur résignation et ainsi arriver à modéliser la variable de renouvellement de police, il sera nécessaire de faire l'analyse de variables explicatives contenus dans ce jeu de données. 
 
 ## polholder_age
 
@@ -112,13 +112,15 @@ Cette variable est une variable numérique discrète représentant l'âge du pro
 
 ```{r graph_polholder_age, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
 ggplot(data, aes(x = polholder_age))+
-  geom_bar()
+  geom_bar() +
+  theme_bw()
 ```
 
-L'âge minimal parmis les assuré est de 19 ans et l'âge maximal est de 85 ans. On constate qu'il y a une forte proportion d'assuré entre 25 et 60 ans.
+L'âge minimal parmis les assuré est de 19 ans et l'âge maximal est de 85 ans. On constate qu'il y a une forte proportion d'assuré entre 25 et 45 ans. Il pourra être pertinent d'analyser si les assurés de moins de 25 ans et de plus de 45 ans sont présent en moins grand nombre dû au fait que les primes sont trop élevé et font d'avantage d'appel pour comparer les primes ailleurs ce qui les mènent vers la résignation. 
 
 
 ## polholder_BMCevol
+
 
 
 
@@ -128,16 +130,18 @@ Il s'agit d'une variable catégorielle nominale représentant la différence de 
 
 ```{r graph_polholder_diffdriver, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
 ggplot(data, aes(x = polholder_diffdriver))+
-  geom_bar()
+  geom_bar()+
+  theme_bw()
 ```
 
 ## polholder_gender
 
-Variable catégorielle nomianle représentant le sexe du propriétaire de la police. Voici la répartition du sexe du propriétaire de la police d'assurance.
+Variable catégorielle nominale représentant le sexe du propriétaire de la police. Voici la répartition du sexe du propriétaire de la police d'assurance.
 
 ```{r graph_polholder_gender, echo = FALSE, eval = TRUE, include = TRUE, warning = FALSE}
 ggplot(data, aes(x = polholder_gender))+
-  geom_bar()
+  geom_bar() +
+  theme_bw()
 ```
 
 ## polholder_job
@@ -282,11 +286,9 @@ Data_num <- Donnees_tempo[, c("polholder_age", "policy_age", "policy_nbcontract"
 On doit ensuite choisir le nombre de composantes principales. Cette étape peut être complétée en spécifiant le pourcentage de variance expliquée pour obtenir la cible précisée précedemment ou utiliser la méthode du coude sur le diagramme d'éboulis. 
 
 ```{R , echo = FALSE, include = FALSE}
-ACP <- PCA(Data_num, scale = TRUE, ncp = 6)
+ACP <- PCA(Data_num, scale = TRUE, ncp = 6)  #scale=TRUE permet de normaliser les données. Pourtant les variables n'ont pas a voir des échelles converti ? je crois. 
+#si on fait scale=FALSE le graphique est laid. Vous en pensez quoi
 ```
-À l'aide du graphique ACP des variables on peut observer que pour la première composante principlae, une valeur élevé indique un contrat ayant une prime élevé, que ce soit la prime du marché, la prime pure, la prime finale ou la prime chargée lors du dernier renouvellement. Par contre, un assuré âgé aura un score moindre qu'un assuré en bas âge. Un score élevé représente donc un assuré en bas âge ayant une prime élevé tandis qu'un score faible représente une personne plus âgée avec une faible prime d'assurance. 
-
-La deuxième composante principale représente, quant à elle, l'âge du véhicule assuré. Un score élevé est associé à des véhicules de moindres valeurs mais risquant d'avantage un bris de veillesse. Plus les polices d'assurance sont récentes et plus le score en sera augmenté. Ainsi, les polices d'assurances récente ayant des véhicules de l'année représenteront les scores les plus faibles pour cette composante.
 
 ```{R , echo = FALSE, include = TRUE}
 fviz_screeplot(ACP)
@@ -295,13 +297,19 @@ ACP$eig
 
 Selon le diagramme d'éboulis, il sera nécessaire de conserver 6 composantes principales et on observe, à l'aide des valeurs propres de la matrice de corélation, que 6 composantes principales permettent d'expliquer 97% de la variance totale.
 
-À l'aide de la fonction ACP, nous pouvons voir la gravité des contributions pour chacune des variables sur chacune des composantes principales retenu. Ainsi, on remarque que la variable *prem_final* est celle ayant la plus grande contribution sur la première composantes principale, tout comme les variable *prem_last*, *prem_market* et *prem_pure*. Quand à la deuxième et à la sixième composante principale, c'est les variables *vehicl_age* et *vehicl_agepurchase* qui fournissent la plus grande contribution. Les variables explicatives *polholder_age* et *policy_age* ont les contributions les plus importantes pour les troisième et cinquième composantes principales. Pour ce qui est de la variable *policy_nbcontract*, elle est la variable apportant la plus grande contribution sur la quatrième composante principale. 
+À l'aide du graphique ACP des variables, on peut voir la gravité des contributions pour chacune des variables sur chacune des composantes principales retenu. Ainsi, on peut observer que pour la première composante principale, un score élevé indique un contrat ayant une prime élevée, que ce soit la prime du marché, la prime pure, la prime finale ou la prime chargée lors du dernier renouvellement. Par contre, un assuré âgé qui renouvelle depuis plusieurs année aura un score moindre qu'un assuré en bas âge ayant une police d'assurance récente. Un score élevé représente donc un assuré en bas âge ayant une police récente et une prime élevé tandis qu'un score faible représente une personne plus âgée avec une faible prime d'assurance. 
+
+La deuxième composante principale représente, quant à elle, l'âge du véhicule assuré. Un score élevé est associé à des véhicules de moindres valeurs mais risquant d'avantage un bris de veillesse. Plus les polices d'assurance sont récentes et plus le score en sera augmenté. Ainsi, les polices d'assurances récente ayant des véhicules de l'année représenteront les scores les plus faibles pour cette composante.
+
+Pour ce qui est de la troisième composante principale, elle représente l'âge du véhicule, l'âge de l'assuré et l'âge de la police. Le score sera le plus élevé quand le véhicule est très vieux que l
+
+Quand à la deuxième et à la sixième composante principale, c'est les variables *vehicl_age* et *vehicl_agepurchase* qui fournissent la plus grande contribution. Les variables explicatives *polholder_age* et *policy_age* ont les contributions les plus importantes pour les troisième et cinquième composantes principales. Pour ce qui est de la variable *policy_nbcontract*, elle est la variable apportant la plus grande contribution sur la quatrième composante principale. 
 
 ```{R , echo = FALSE, include = TRUE}
 ACP$var$contrib
 ```
 
-En illustrant les contributions des variables pour chacune des composantes principales, il est plus facile de visualiser l'intensité de leur contribution.
+En illustrant les contributions des variables pour chacune des composantes principales, il est plus facile de visualiser les conclusions mentionnées précédemment.
 
 ```{R , message=FALSE, include = TRUE, echo = FALSE}
 contrib <- data.frame(ACP$var$coord[,1:6])
@@ -315,8 +323,8 @@ ggplot(contrib.long, aes(x=carac, fill=variable, y=value))+
   coord_flip()
 ```
 
-
-Diagramme de points (modèle) : À COMPLÉTER ET VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
+##Graphique présentant les résultats de l'ACP
+CONCLUSIONS ??
 ```{R , echo = FALSE, include = TRUE}
 data <- cbind(Donnees_tempo, ACP$ind$coord)
 
@@ -327,17 +335,28 @@ g_ind <- ggplot(data = data,
   xlab("Dimension 2") +
   ylab("Dimension 3") +
   theme_bw()
-ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
+#ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
 
 g_ind <- ggplot(data = data,
-             aes(x= Dim.5, y=Dim.6, col = policy_age,  shape = lapse, labels = vehicl_agepurchase,
+             aes(x= Dim.1, y=Dim.2, col = vehicl_agepurchase,  shape = lapse, labels = prem_pure,
                  alpha = 0.2)) +
   geom_point() +
   xlab("Dimension 1") +
   ylab("Dimension 2") +
   theme_bw()
-ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
+#ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
+
+g_ind <- ggplot(data = data,
+             aes(x= Dim.1, y=Dim.3, col = policy_age,  shape = lapse, labels = prem_pure,
+                 alpha = 0.2)) +
+  geom_point() +
+  xlab("Dimension 1") +
+  ylab("Dimension 3") +
+  theme_bw()
+#ggplotly(g_ind) #Pour comparer les dimensions 1 et 3
 ```
+
+À VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
 
 \newpage
 
