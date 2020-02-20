@@ -369,11 +369,6 @@ ggplot(contrib.long, aes(x=carac, fill=variable, y=value))+
 À voir si on les gardes ou pas (?)
 
 ```{R , echo = FALSE, include = TRUE}
-=======
-##Graphique présentant les résultats de l'ACP
-CONCLUSIONS ??
-```{R , echo = FALSE, include = TRUE, eval=FALSE}
->>>>>>> reduction grosseur graph
 data <- cbind(Donnees_tempo, ACP$ind$coord)
 
 g_ind <- ggplot(data = data,
