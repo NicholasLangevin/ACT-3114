@@ -277,21 +277,21 @@ On voit que les moyens de stationnement les plus populaire sont le garage privé
 ```{R, ProportionDeValeursManquante, echo = FALSE, results='asis'}
 nb_manquant <- round(apply(data, 2, FUN = function(x) sum(is.na(x)))/nrow(data) * 100,2)
 ```
-La base de données contenait seulement trois variables avec des valeurs manquante. La variable indiquant la difference d'âge entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron des valeur manquante. On remarque que les trois variables manquante semble lier. En effet, 100% des cas manquant pour la variale *polholder_diffdriver* sont aussi manquantes pour les deux autres variables. En ce qui concerne les variables *policy_caruse* et *vehicl_garage*, il sont plus souvent manquante seulement pour une variable à la fois, mais il y a quelques cas où les deux sont manquantes en même temps.
+La base de données contenait seulement trois variables avec des valeurs manquante. La variable indiquant la difference d'âge entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, celle indiquant l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et la variable indiquant le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron des valeurs manquantes. On remarque que les trois variables manquantes semblent liées entres-elles. En effet, la totalité des cas manquants pour la variable *polholder_diffdriver* sont aussi manquants pour les deux autres variables nommées précédemmment. En ce qui concerne les variables *policy_caruse* et *vehicl_garage*, elles sont majoritairement manquantes pour une variable seulement mais quelques exceptions subsistent.
 
 ```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}ddd"}
 #pattern.matrix <- md.pattern(data, rotate.names = TRUE)
 missing.pathern <- aggr(data, combined = TRUE, ylabs="",labels=c("","","","diffdriver","","","","caruse","","","","","","","","","garage","",""), sortVars=TRUE)
 ```
 
-Ensuite, dans le but de déterminé si les données manquante était MCAR, nous avons effectuer le test d'hypothese suivant
+Ensuite, dans le but de déterminer si les données manquantes sont MCAR, nous avons effectué le test d'hypothèse suivant
 \begin{align*}
   H_0:&\: \text{Le données sont MCAR} \\
   H_1:&\: \text{Le données ne sont pas MCAR}
 \end{align*}
-La statistique à été calculer avec le test *MCAR de Little* et une p-value inférieure à 1% à été obtenu. Avec un niveau de signifiance de 1%, il est possible de regeté l'hypothese que les données sont MCAR. Ensuite, il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Puisque les données proviennent d'un compagie anonyme, nous n'avons pas d'information sur la récolte de données et il nous est imposible de trouver des patrons qui pourrait provoquer des données NMAR. En conséquence, nous allons considéré que nos données sont MAR. De plus, en effectuant des tests khi-carré pour la variable polholder_diffdriver, il a été remarquer que, dans 100% des cas, l'information sur la difference entre le détenteur de police et le conducteur étaient manquante dans le cas que le travail était dans le domaine de la médecine et que pour les polices vieille d'au moins 4 ans. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
+La statistique a été calculé avec le test *MCAR de Little* et une p-value inférieure à 1% a été obtenue. Avec un niveau de signification de 1%, il est possible de rejeter l'hypothèse, soit que les données sont de type MCAR. Il est à noter qu'il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Cela est dû au fait que puisque les données proviennent d'un compagnie inconnue, nous n'avons pas d'information sur la méthode de récolte de données et il nous est impossible de trouver des patrons qui pourraient provoquer des données de type NMAR. En conséquence, nous considérerons que nos données sont MAR. De ce sens, en effectuant des tests khi-carré pour la variable *polholder_diffdriver*, il a été remarqué que l'information sur la différence entre le détenteur de police et le conducteur nous indique que les variables sont toujours manquantes dans le cas ou le travail du détenteur de la police est dans le domaine de la médecine et que la durée de la police d'assurance est d'au moins 4 ans. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
 
-Pour l'imputation des données, la méthode d'imputation multiples à été choisie. Pour des restrictions de temps de calcul, 5 itérations de régresion stochastique on été fait. Pour la variable *policy_caruse*, un régression logistique à été effectuer puisque la variable consiste en deux niveau. Pour les variables *vehicl_garage* et *polholder_diffdriver* qui sont des variable catégoriel non-ordonée, un régression polynomial à été utilisé.
+Pour l'imputation des données, la méthode d'imputation multiples à été choisie. Pour des restrictions de temps de calcul, cinq itérations de régression stochastique ont été fait. Pour la variable *policy_caruse*, une régression logistique a été effectué puisque la variable catégorielle comporte deux niveaux. Pour les variables *vehicl_garage* et *polholder_diffdriver*, qui sont des variables catégorielles non-ordonées, une régression polynomiale a été utilisée.
 
 ```{R, ImputationDesDonnees, echo = FALSE, eval=FALSE, warning = FALSE}
 methode <- c("sample","sample","sample","polyreg","sample","sample","sample","logreg","sample","sample","sample","sample","sample","sample","sample","sample","polyreg","sample","sample")
@@ -390,7 +390,8 @@ Pour ce qui est de la troisième composante principale, elle représente l'âge 
 
 Les trois dernières composantes sont moins intéressantes pour l'analyse et ne seront utilisés que pour déterminer le nombre de variables numériques à conserver pour les analyses qui suiveront pour la complétion de ce travail pratique. Une information qui pourrait tout de même être pertinente est qu'un score élevé sous la quatrième composante indique un nombre élevé de contrat tout en ayant une police d'assurance qui est renouvellé depuis plusieurs années. Des caractéristiques recherchées qui permettent de facilement identifier une clientèle fidèle et fiable. 
 
-```{R , echo = FALSE, include = TRUE}
+```{R , echo = FALSE, include = FALSE}
+ACP$eig
 ACP$var$contrib
 ```
 
@@ -408,8 +409,10 @@ ggplot(contrib.long, aes(x=carac, fill=variable, y=value))+
   coord_flip()
 ```
 
-##Graphique présentant les résultats de l'ACP
-CONCLUSIONS ??
+## Graphique présentant les résultats de l'ACP
+
+À voir si on les gardes ou pas (?)
+
 ```{R , echo = FALSE, include = TRUE}
 data <- cbind(Donnees_tempo, ACP$ind$coord)
 
@@ -439,9 +442,11 @@ g_ind <- ggplot(data = data,
   ylab("Dimension 3") +
   theme_bw()
 #ggplotly(g_ind) #Pour comparer les dimensions 1 et 3
+
+
+##À VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
 ```
 
-À VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
 
 \newpage
 
