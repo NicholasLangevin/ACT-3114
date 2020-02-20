@@ -119,7 +119,8 @@ ggplot(data, aes(x=lapse, fill=vehicl_region))+
 
 # Introduction
 
-Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement d'une police d'assurance, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. Ainsi, "lapse", variable de type catégorielle qui indique si l'assuré résignera lors de son renouvellement d'assurance ou non, est la variable réponse qui sera intéressante.
+Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement d'une police d'assurance, représenté par la variable "lapse" dans ce cas-ci, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. On pourra distincguer les statuts de renouvellement comme étant affiché à annulé("Cancellation") ou à renouvellement ("Renew") selon le cas approprié. 
+Ce jeu de données est intéressant du fait qu'il permettera au fur de l'analyse de nous indiquer les variables types ayant un impact sur la décision de renouvellement de police des assurés d'une compagnie d'assurance X. En plus d'être un problème de nature actuarielle, le jeu de données choisi pourra nous permettre d'entammer une ouverture des réflexions possibles lorsque nous aurons à travailler dans une compagnie d'assurance. Étant trois personnes intéressés par l'assurance de dommages, ce problème nous semblait des plus appropriés et intéressant face à nos intérêts communs. Le nombre d'observations est également intéressant car il nous permettera de porter des conclusions précise avec assez de crédibilité sans toutefois être avoir à travailler avec un jeu de données inutilement trop volumineux. De plus, chaque variable explicative semble à prime à bord intéressante pour l'analyse et assez pertinente, ce que nous pourrons découvrir dans l'élaboration de ce travail pratique.
 
 \newpage
 
@@ -385,9 +386,9 @@ Selon le diagramme d'éboulis, il sera nécessaire de conserver 6 composantes pr
 
 La deuxième composante principale représente, quant à elle, l'âge du véhicule assuré. Un score élevé est associé à des véhicules de moindres valeurs mais risquant d'avantage un bris de veillesse. Plus les polices d'assurance sont récentes et plus le score en sera augmenté. Ainsi, les polices d'assurances récente ayant des véhicules de l'année représenteront les scores les plus faibles pour cette composante.
 
-Pour ce qui est de la troisième composante principale, elle représente l'âge du véhicule, l'âge de l'assuré et l'âge de la police. Le score sera le plus élevé quand le véhicule est très vieux que l
+Pour ce qui est de la troisième composante principale, elle représente l'âge du véhicule, l'âge de l'assuré et l'âge de la police. Le score sera le plus élevé quand le véhicule est plus âgé tout comme le détenteur de la police d'assurance et que la police est renouveller depuis un grand nombre d'année. En sens inverse, le score sera de plus en plus faible si le détenteur de la police est jeune, qu'il possède une voiture de l'année et une police d'assurance très récente. 
 
-Quand à la deuxième et à la sixième composante principale, c'est les variables *vehicl_age* et *vehicl_agepurchase* qui fournissent la plus grande contribution. Les variables explicatives *polholder_age* et *policy_age* ont les contributions les plus importantes pour les troisième et cinquième composantes principales. Pour ce qui est de la variable *policy_nbcontract*, elle est la variable apportant la plus grande contribution sur la quatrième composante principale. 
+Les trois dernières composantes sont moins intéressantes pour l'analyse et ne seront utilisés que pour déterminer le nombre de variables numériques à conserver pour les analyses qui suiveront pour la complétion de ce travail pratique. Une information qui pourrait tout de même être pertinente est qu'un score élevé sous la quatrième composante indique un nombre élevé de contrat tout en ayant une police d'assurance qui est renouvellé depuis plusieurs années. Des caractéristiques recherchées qui permettent de facilement identifier une clientèle fidèle et fiable. 
 
 ```{R , echo = FALSE, include = TRUE}
 ACP$var$contrib
@@ -419,7 +420,7 @@ g_ind <- ggplot(data = data,
   xlab("Dimension 2") +
   ylab("Dimension 3") +
   theme_bw()
-ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
+#ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
 
 g_ind <- ggplot(data = data,
              aes(x= Dim.1, y=Dim.2, col = vehicl_agepurchase,  shape = lapse, labels = prem_pure,
@@ -428,7 +429,7 @@ g_ind <- ggplot(data = data,
   xlab("Dimension 1") +
   ylab("Dimension 2") +
   theme_bw()
-ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
+#ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
 
 g_ind <- ggplot(data = data,
              aes(x= Dim.1, y=Dim.3, col = policy_age,  shape = lapse, labels = prem_pure,
@@ -437,7 +438,7 @@ g_ind <- ggplot(data = data,
   xlab("Dimension 1") +
   ylab("Dimension 3") +
   theme_bw()
-ggplotly(g_ind) #Pour comparer les dimensions 1 et 3
+#ggplotly(g_ind) #Pour comparer les dimensions 1 et 3
 ```
 
 À VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
