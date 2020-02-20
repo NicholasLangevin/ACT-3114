@@ -1,7 +1,14 @@
 ---
-output:
-  pdf_document
-header-includes: \usepackage[french]{babel}
+output: pdf_document
+header-includes:
+  \usepackage[french]{babel}
+  \usepackage{hyperref}
+  \hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+  }
 ---
 
 \newpage
@@ -37,29 +44,62 @@ header-includes: \usepackage[french]{babel}
 \newpage
 
 \tableofcontents
-
-```{R , echo = FALSE, include = FALSE, warning = FALSE}
+```{R, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
 library(CASdatasets)
-library(ggplot2)
+library(tidyverse)
+library(mice)
+library(BaylorEdPsych)
+library(mvnmle)
+library(xtable)
+library(reshape2)
+library(VIM)
+```
+
+```{R, TraitementDesDonnees, echo = FALSE, include = FALSE, warning = FALSE}
 data(eudirectlapse)
 data.init <- eudirectlapse
 
 ## Changement dans les donnees
 data <- data.init
-str(data)
+
+# Changement des 0 et 1 de lapse en renouvellement et resignation
 data$lapse <- as.factor(data$lapse)
-levels(data$lapse) <- c("renew", "cancelation")
+levels(data$lapse) <- c("renouvellement", "resignation")
+
+# Changment des valeurs unknown en NA des variables: 
+# polholder_diffdriver, vehicl_garage et policy_caruse
 data[data$polholder_diffdriver == "unknown", ]$polholder_diffdriver <- NA
 data[data$vehicl_garage == "unknown", ]$vehicl_garage <- NA
+data[data$policy_caruse == "unknown", ]$policy_caruse <- NA
+
+# Reordonnement de la variable prem_freqperyear en facteur ordonnée (ordinal)
 data$prem_freqperyear <- factor(data$prem_freqperyear, order = TRUE, levels = c("1 per year", "2 per year", "4 per year", "12 per year"))
 
+# Traitement de la variable vehicl_powerkw: regroupement en 4 groupe
 data$vehicl_powerkw_na <- data$vehicl_powerkw
 data[data$vehicl_powerkw_na == "125-300 kW", ]$vehicl_powerkw_na <- NA
 data[data$vehicl_powerkw %in% c("150 kW","175 kW","200 kW","225 kW","250 kW","275 kW","300 kW"), ]$vehicl_powerkw <- "125-300 kW"
 data <- droplevels(data)
 data$vehicl_powerkw <- factor(data$vehicl_powerkw, order = TRUE, levels = c("25-50 kW", "75 kW", "100 kW", "125-300 kW"))
 table(data$vehicl_powerkw)
-str(data)
+
+data <- data %>% select(-vehicl_powerkw_na)
+data.traiter <- data
+```
+
+```{R, FonctionPrintTable, echo = FALSE, include = FALSE, warning = FALSE}
+
+print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1), ...){
+  print(xtable(pourcentage_manquant, digits = 3,
+             caption=caption,
+             label=label,
+             align=align, ...),
+            include.rownames = FALSE, sanitize.text.function=function(x){x},
+            caption.placement = "top", comment=FALSE)
+}
+```
+
+```{R , echo = FALSE, include = FALSE, warning = FALSE}
 
 ## Diagramme à bande des frequence de renouvellement et decheance en fonction des variables categorielles 
 ggplot(data, aes(x=lapse, fill=polholder_BMCevol))+
@@ -259,6 +299,78 @@ On voit que les moyens de stationnement les plus populaire sont le garage privé
 \newpage
 
 # Autres sections
+# Traitement des valeurs manquantes
+```{R, ProportionDeValeursManquante, echo = FALSE, results='asis'}
+nb_manquant <- round(apply(data, 2, FUN = function(x) sum(is.na(x)))/nrow(data) * 100,2)
+```
+La base de données contenait seulement trois variables avec des valeurs manquante. La difference entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron des valeur manquante. On remarque que les trois variables manquante semble lier. En effet, 100% des cas manquant pour la variale *polholder_diffdriver* sont aussi manquantes pour les deux autres variables. En ce qui concerne les variables *policy_caruse* et *vehicl_garage*, il sont plus souvent manquante seulement pour une variable à la fois, mais il y a quelques cas où les deux sont manquantes en même temps.
+
+```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}ddd"}
+#pattern.matrix <- md.pattern(data, rotate.names = TRUE)
+missing.pathern <- aggr(data, combined = TRUE, ylabs="",labels=c("","","","diffdriver","","","","caruse","","","","","","","","","garage","",""), sortVars=TRUE)
+```
+
+Ensuite, dans le but de déterminé si les données manquante était MCAR, nous avons effectuer le test d'hypothese suivant
+\begin{align*}
+  H_0:&\: \text{Le données sont MCAR} \\
+  H_1:&\: \text{Le données ne sont pas MCAR}
+\end{align*}
+La statistique à été calculer avec le test *MCAR de Little* et une p-value inférieure à 1% à été obtenu. Avec un niveau de signifiance de 1%, il est possible de regeté l'hypothese que les données sont MCAR. Ensuite, il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Puisque les données proviennent d'un compagie anonyme, nous n'avons pas d'information sur la récolte de données et il nous est imposible de trouver des patrons qui pourrait provoquer des données NCAR. En conséquence, nous allons considéré que nos données sont MAR. De plus, en effectuant des tests khi-carré pour la variable polholder_diffdriver, il a été remarquer que, dans 100% des cas, l'information sur la difference entre le détenteur de police et le conducteur étaient manquante dans le cas que le travail était dans le domaine de la médecine et que pour les polices vieille d'au moins 4 ans. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
+
+Pour l'imputation des données, la méthode d'imputation multiples à été choisie. Pour des restrictions de temps de calcul, 5 itérations de régresion stochastique on été fait. Pour la variable *policy_caruse*, un régression logistique à été effectuer puisque la variable consiste en deux niveau. Pour les variables *vehicl_garage* et *polholder_diffdriver* qui sont des variable catégoriel non-ordonée, un régression polynomial à été utilisé.
+
+```{R, ImputationDesDonnees, echo = FALSE, eval=FALSE, warning = FALSE}
+methode <- c("sample","sample","sample","polyreg","sample","sample","sample","logreg","sample","sample","sample","sample","sample","sample","sample","sample","polyreg","sample","sample")
+donnees.imp <- mice(data, m=5, method=methode, print=TRUE, seed=1095)
+summary(donnees.imp)
+
+data.compl <- mice::complete(donnees.imp)
+save(data.compl,file="dataCompletTraiter.Rda")
+# Il ne reste bien plus de donnees.
+apply(data.compl, 2, FUN = function(x) sum(is.na(x)))
+```
+```{R, LoadImputationDesDonnees, echo = FALSE, result=FALSE, warning = FALSE}
+load("dataCompletTraiter.Rda")
+```
+
+
+```{R, TraitementDesValeursManquantes, echo = FALSE, eval = FALSE, warning = FALSE}
+data <- data.traiter %>% select(-vehicl_powerkw_na)
+# Get number of NA value for each variables
+apply(data, 2, FUN = function(x) sum(is.na(x)))
+pattern.matrix <- md.pattern(data, rotate.names = TRUE)
+
+test.MCAR <- function(var.data, na_var.data){
+  if(is.numeric(data[[var.data]])){
+    round(t.test(data[[var.data]][is.na(data[[na_var.data]])],
+                    data[[var.data]][!is.na(data[[na_var.data]])],var.equal=FALSE)[["p.value"]], 5) 
+  }else{
+    round(chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct=FALSE)[["p.value"]], 5)
+  }
+}
+# Tester pour la variable vehicl_garage
+sapply(names(data  %>% select(-vehicl_garage)), FUN=test.MCAR, na_var.data = "vehicl_garage")
+ 
+
+# teste pour la variable polholder_diffdriver
+sapply(names(data  %>% select(-polholder_diffdriver, -vehicl_garage, -policy_caruse)), FUN=test.MCAR, na_var.data = "polholder_diffdriver")
+# On rejete H0(MCAR)a 5% pour polholder_job et policy_age: On remarque que  
+# tout les cas manquant pour la variable polholder_diffdriver sont polholder_job=medical
+# policy_age sont plus vielle > 3-4
+data[is.na(data$polholder_diffdriver), c("lapse", "polholder_job", "policy_age", "polholder_diffdriver", "vehicl_garage")]
+
+sapply(names(data  %>% select(-vehicl_garage)), FUN=test.MCAR, na_var.data = "vehicl_garage")
+
+table(data$polholder_diffdriver[data$polholder_job == "medical"])
+table(data$polholder_job)
+
+stat <- LittleMCAR(data)
+names(stat)
+stat$chi.square
+stat$df
+nrow(data)
+round(pchisq(stat$chi.square, stat$df, lower.tail = FALSE), 18)
+```
 
 
 \newpage
