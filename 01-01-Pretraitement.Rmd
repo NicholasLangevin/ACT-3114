@@ -1,5 +1,5 @@
 ---
-header-includes: \usepackage[french]{babel} \usepackage{hyperref} \hypersetup{ colorlinks=true,
+header-includes: \usepackage[french]{babel} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan, }
 output:
   pdf_document: default
@@ -42,6 +42,7 @@ output:
 \tableofcontents
 ```{R, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
 library(CASdatasets)
+library(knitr)
 library(tidyverse)
 library(mice)
 library(xtable)
@@ -266,7 +267,7 @@ Les assurés sont répartis dans toutes les régions on note toutefois que la r�
 
 
 ## Variable ordinal
-Variable catégorielle ordinale **prem_freqperyear** représentant la fréquence par année à laquelle la prime est payable. Les fréquence possible est mensuelle, trimestrielle, semestrielle ou annuelle.
+La variable catégorielle ordinale **prem_freqperyear** représente la fréquence par année à laquelle la prime est payable. Les fréquence possible est mensuelle, trimestrielle, semestrielle ou annuelle.
 
 ```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:freqperyearAndvehiclGarage}todo"}
 ggplot.premfreqperyear <- ggplot(data, aes(x = prem_freqperyear))+
@@ -280,7 +281,45 @@ grid.arrange(ggplot.premfreqperyear, ggplot.vehicl_garage,  ncol=2)
 ```
 On voit qu'un peu moins de la moitié des clients paient la prime en un seul versement, environ un quart des clients paient trimestriellement, et le dernier quart est partagé par la prime payable semestriellement et mensuellement.
 
-**vehicl_powerkw ICI**
+
+La variable **vehicl_powerkw** représente la puissance du moteur de la voiture conduit exprimé en chevaux moteurs. Initialement, cette variable contient 11 niveaux possibles. Cependant, en regardant les niveaux, nous avons constaté que les données pour cette variable n'ont pas été collectées uniformément puisque certaines catégories sont comprises dans une autre catégorie. Un des niveaux correspond aux véhicules d'une puissance se situant entre 125 et 300. Il y a aussi des groupes pour lequels la puissance se trouve entre l'interval du groupe présenté précédement, certains avec très peu d'observations d'autres avec un peu plus d'observations. Or, puisqu'on ne sait pas la puissance des voitures se trouvant dans le groupe de puissance 125-300 et que celui-ci comprend un grand nombre d'observation nous avons opté pour l'option d'ajouter les groupes pour lesquels leur puissance se situait entre 125 et 300 chevaux. Pour facilité la représentation du traitement effectué sur la variable **vehicl_powerkw** voici un tableau de fréquence avant traitement et tableau après traitement.
+
+
+```{r tabl_powerkw, echo=FALSE, results='asis', fig.cap="\\label{tbl:powerkw}Tableaux de fréquence des catégories de puissance de moteur"}
+
+c1_avant <- levels(data.init$vehicl_powerkw)
+c2_avant <- unname(summary(data.init$vehicl_powerkw))
+
+c1_apres <- levels(data$vehicl_powerkw)
+c2_apres <- unname(summary(data$vehicl_powerkw))
+
+tableau_powerkw_avant <- cbind(c1_avant, c2_avant)
+tableau_powerkw_apres <- cbind(c1_apres, c2_apres)
+
+tab_avant <- as.data.frame(tableau_powerkw_avant)
+tab_apres <- as.data.frame(tableau_powerkw_apres)
+
+colnames(tab_avant) <- c("Puissance", "Nombre d'observation")
+colnames(tab_apres) <- c("Puissance", "Nombre d'observation")
+
+t1 <- kable(tab_avant, format = "latex", align = c("c", "r"), booktabs = TRUE)
+t2 <- kable(tab_apres, format = "latex", align = c("c", "r"),  booktabs = TRUE)
+
+cat(c("\\begin{table}[!htb]
+    \\begin{minipage}{.5\\linewidth}
+      \\caption{}
+      \\centering",
+        t1,
+    "\\end{minipage}%
+    \\begin{minipage}{.5\\linewidth}
+      \\centering
+        \\caption{}",
+        t2,
+    "\\end{minipage} 
+\\end{table}"
+))  
+```
+
 
 ## Variable numérique
 La variable **polholder_age** est une variable numérique discrète représentant l'âge du propriétaire de la police d'assurance. La \autoref{fig:polholderAge} représente la distribution de âges des assurés.

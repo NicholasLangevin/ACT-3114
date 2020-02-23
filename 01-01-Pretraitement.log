@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2020.2.20)  20 FEB 2020 16:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2020.2.22)  22 FEB 2020 23:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **01-01-Pretraitement.tex
 (./01-01-Pretraitement.tex
-LaTeX2e <2020-02-02> patch level 2
-L3 programming layer <2020-02-14> (c:/Users/charl/AppData/Roaming/TinyTeX/texmf
+LaTeX2e <2020-02-02> patch level 3
+L3 programming layer <2020-02-21> (c:/Users/charl/AppData/Roaming/TinyTeX/texmf
 -dist/tex/latex/base/article.cls
 Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
 (c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/size10.clo
@@ -422,12 +422,33 @@ Package babel Info: Making ? an active character on input line 422.
 ))
 (c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/carlisle/scalefnt.
 sty)
+(c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.
+sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen167
+\lightrulewidth=\dimen168
+\cmidrulewidth=\dimen169
+\belowrulesep=\dimen170
+\belowbottomsep=\dimen171
+\aboverulesep=\dimen172
+\abovetopsep=\dimen173
+\cmidrulesep=\dimen174
+\cmidrulekern=\dimen175
+\defaultaddspace=\dimen176
+\@cmidla=\count277
+\@cmidlb=\count278
+\@aboverulesep=\dimen177
+\@belowrulesep=\dimen178
+\@thisruleclass=\count279
+\@lastruleclass=\count280
+\@thisrulewidth=\dimen179
+)
 Package hyperref Info: Option `colorlinks' set `true' on input line 60.
 
 (c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backen
 d-pdfmode.def
 File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count277
+\l__kernel_color_stack_int=\count281
 \l__pdf_internal_box=\box47
 ) (./01-01-Pretraitement.aux
 
@@ -493,7 +514,7 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 ettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count278
+\c@section@level=\count282
 )
 LaTeX Info: Redefining \ref on input line 65.
 LaTeX Info: Redefining \pageref on input line 65.
@@ -605,7 +626,7 @@ File: 01-01-Pretraitement_files/figure-latex/graph_polholder_age-1.pdf Graphic
 file (type pdf)
 <use 01-01-Pretraitement_files/figure-latex/graph_polholder_age-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/graph_polholder
-_age-1.pdf  used on input line 344.
+_age-1.pdf  used on input line 397.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
 <01-01-Pretraitement_files/figure-latex/graph_policy_age-1.pdf, id=121, 361.35p
 t x 223.83624pt>
@@ -613,7 +634,7 @@ File: 01-01-Pretraitement_files/figure-latex/graph_policy_age-1.pdf Graphic fil
 e (type pdf)
 <use 01-01-Pretraitement_files/figure-latex/graph_policy_age-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/graph_policy_ag
-e-1.pdf  used on input line 367.
+e-1.pdf  used on input line 420.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
 <01-01-Pretraitement_files/figure-latex/graph_policy_nbcontract-1.pdf, id=123, 
 361.35pt x 223.83624pt>
@@ -621,71 +642,71 @@ File: 01-01-Pretraitement_files/figure-latex/graph_policy_nbcontract-1.pdf Grap
 hic file (type pdf)
 <use 01-01-Pretraitement_files/figure-latex/graph_policy_nbcontract-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/graph_policy_nb
-contract-1.pdf  used on input line 383.
+contract-1.pdf  used on input line 436.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
 
 LaTeX Warning: Reference `tbl:summaryPrimes' on page 7 undefined on input line 
-396.
+449.
 
-[7 <./01-01-Pretraitement_files/figure-latex/graph_polholder_age-1.pdf>] [8 <./
-01-01-Pretraitement_files/figure-latex/graph_policy_age-1.pdf> <./01-01-Pretrai
-tement_files/figure-latex/graph_policy_nbcontract-1.pdf>]
-<01-01-Pretraitement_files/figure-latex/graph_age-1.pdf, id=153, 361.35pt x 223
+[7] [8 <./01-01-Pretraitement_files/figure-latex/graph_polholder_age-1.pdf> <./
+01-01-Pretraitement_files/figure-latex/graph_policy_age-1.pdf>]
+<01-01-Pretraitement_files/figure-latex/graph_age-1.pdf, id=150, 361.35pt x 223
 .83624pt>
 File: 01-01-Pretraitement_files/figure-latex/graph_age-1.pdf Graphic file (type
  pdf)
 <use 01-01-Pretraitement_files/figure-latex/graph_age-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/graph_age-1.pdf
-  used on input line 433.
+  used on input line 486.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
-[9 <./01-01-Pretraitement_files/figure-latex/graph_age-1.pdf>]
-<01-01-Pretraitement_files/figure-latex/MissingPattern-1.pdf, id=166, 469.755pt
+[9 <./01-01-Pretraitement_files/figure-latex/graph_policy_nbcontract-1.pdf>]
+<01-01-Pretraitement_files/figure-latex/MissingPattern-1.pdf, id=162, 469.755pt
  x 216.81pt>
 File: 01-01-Pretraitement_files/figure-latex/MissingPattern-1.pdf Graphic file 
 (type pdf)
 <use 01-01-Pretraitement_files/figure-latex/MissingPattern-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/MissingPattern-
-1.pdf  used on input line 473.
+1.pdf  used on input line 526.
 (pdftex.def)             Requested size: 469.75386pt x 216.80946pt.
-[10 <./01-01-Pretraitement_files/figure-latex/MissingPattern-1.pdf>] [11]
+[10 <./01-01-Pretraitement_files/figure-latex/graph_age-1.pdf>] [11 <./01-01-Pr
+etraitement_files/figure-latex/MissingPattern-1.pdf>]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
-18.
+71.
 (c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-<01-01-Pretraitement_files/figure-latex/unnamed-chunk-3-1.pdf, id=187, 469.755p
+<01-01-Pretraitement_files/figure-latex/unnamed-chunk-3-1.pdf, id=189, 469.755p
 t x 325.215pt>
 File: 01-01-Pretraitement_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file
  (type pdf)
 <use 01-01-Pretraitement_files/figure-latex/unnamed-chunk-3-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/unnamed-chunk-3
--1.pdf  used on input line 538.
+-1.pdf  used on input line 591.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [12 <./01-01-Pretraitement_files/figure-latex/unnamed-chunk-3-1.pdf>]
-<01-01-Pretraitement_files/figure-latex/unnamed-chunk-5-1.pdf, id=199, 469.755p
+<01-01-Pretraitement_files/figure-latex/unnamed-chunk-5-1.pdf, id=201, 469.755p
 t x 325.215pt>
 File: 01-01-Pretraitement_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file
  (type pdf)
 <use 01-01-Pretraitement_files/figure-latex/unnamed-chunk-5-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/unnamed-chunk-5
--1.pdf  used on input line 586.
+-1.pdf  used on input line 639.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [13 <./01-01-Pretraitement_files/figure-latex/unnamed-chunk-5-1.pdf>]
-<01-01-Pretraitement_files/figure-latex/unnamed-chunk-7-1.pdf, id=210, 469.755p
+<01-01-Pretraitement_files/figure-latex/unnamed-chunk-7-1.pdf, id=212, 469.755p
 t x 325.215pt>
 File: 01-01-Pretraitement_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file
  (type pdf)
 <use 01-01-Pretraitement_files/figure-latex/unnamed-chunk-7-1.pdf>
 Package pdftex.def Info: 01-01-Pretraitement_files/figure-latex/unnamed-chunk-7
--1.pdf  used on input line 606.
+-1.pdf  used on input line 659.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [14 <./01-01-Pretraitement_files/figure-latex/unnamed-chunk-7-1.pdf>] [15]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 623.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 676.
 [16]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 623.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 676.
 (./01-01-Pretraitement.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 623.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 623.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 676.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 676.
 Package rerunfilecheck Info: File `01-01-Pretraitement.out' has not changed.
 (rerunfilecheck)             Checksum: 793D8DD4EF9DE1D470CB408B2312939B;1853.
 
@@ -694,16 +715,16 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 623.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 676.
  ) 
 Here is how much of TeX's memory you used:
- 11895 strings out of 483140
- 175182 string characters out of 5962478
- 426953 words of memory out of 5000000
- 26676 multiletter control sequences out of 15000+600000
+ 11959 strings out of 483129
+ 176066 string characters out of 5962097
+ 430738 words of memory out of 5000000
+ 26745 multiletter control sequences out of 15000+600000
  575922 words of font info for 51 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 34i,10n,37p,311b,425s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,10n,37p,333b,425s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.e
 nc}{c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.
 enc}{c:/Users/charl/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ma
@@ -716,10 +737,10 @@ t/fonts/type1/public/lm/lmr10.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/texmf
 -dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/charl/AppData/Roaming/TinyTeX/te
 xmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/charl/AppData/Roaming/TinyT
 eX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on 01-01-Pretraitement.pdf (16 pages, 1319306 bytes).
+Output written on 01-01-Pretraitement.pdf (16 pages, 1321015 bytes).
 PDF statistics:
- 278 PDF objects out of 1000 (max. 8388607)
- 229 compressed objects within 3 object streams
- 55 named destinations out of 1000 (max. 500000)
+ 280 PDF objects out of 1000 (max. 8388607)
+ 231 compressed objects within 3 object streams
+ 57 named destinations out of 1000 (max. 500000)
  147 words of extra memory for PDF output out of 10000 (max. 10000000)
 
