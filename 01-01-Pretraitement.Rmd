@@ -183,6 +183,21 @@ La variable **policy_caruse** représente les fins d'utilisation du véhicule.
 ```{r tabl_caruse, echo=FALSE, results='asis', fig.cap="\\label{tbl:caruse}Usage du vehicule"}
 l1 <- c(summary(data$policy_caruse)[c("commercial")])
 
+
+colnames(dat_frame_tab2) <- c("Sexe", "\\%")
+
+print.tables(dat_frame_tab2, hline.after=c(-1,0,2), digits=2)
+```
+
+On voit qu'il y a quand même significativement plus d'homme ayant une police d'assurance chez l'assureur que de femme. Possiblement pour la raison que les hommes conduise davantage une voiture.
+
+La variable décrivant le travail du propriétaire du contrat est nommé **polholder_job**. Deux valeurs sont possibles soit "medical" soit "normal". On constate que `r round((summary(data$polholder_job)[c("medical")])/nrow(data)*100, 2)`% des assurés on un travail de type médical alors qu'il y en a `r round((summary(data$polholder_job)[c("normal")])/nrow(data)*100, 2)`% qui ont un autre type d'emploi.
+
+La variable **policy_caruse** représente les fins d'utilisation du véhicule. 
+
+```{r tabl_caruse, echo=FALSE, results='asis', fig.cap="\\label{tbl:caruse}Usage du vehicule"}
+l1 <- c(summary(data$policy_caruse)[c("commercial")])
+
 l2 <- c(summary(data$policy_caruse)[c("private or freelance work")])
 
 l3 <- c(summary(data$policy_caruse)[c("NA's")])
@@ -218,6 +233,32 @@ l6 <- c(summary(data$vehicl_garage)[c("underground garage")])
 l7 <- c(summary(data$vehicl_garage)[c("other")])
 
 l8 <- c(summary(data$vehicl_garage)[c("NA's")])
+
+ligne_name <- c("Sous un abri d'auto", "Terrase de stationnement", "Stationnement privé", "Garage", "Rue", "Garage sous-terrain", "Autre", "Données manquantes")
+tableau_garage <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7, l8))
+
+dat_frame_tab4 <- as.data.frame(tableau_garage)
+
+colnames(dat_frame_tab4) <- c("Moyen de stationnement", "Nombre d'observation")
+
+print.tables(dat_frame_tab4, hline.after=c(-1,0,8), digits=2, align = c("l", "l", "c"))
+```
+
+On voit que pour les moyens de stationnement les plus populaire sont le garage privé et la rue. Il y a des données manquantes, elles seront traitées plus loin dans le rapport.
+
+La variable polholder_BMCevol indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payé lors du dernier renouvellement. Elle prend donc 3 valeurs possibles. 
+
+
+```{r tabl_BM, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
+l1 <- c(summary(data$polholder_BMCevol)[c("up")])
+
+l2 <- c(summary(data$polholder_BMCevol)[c("stable")])
+
+l3 <- c(summary(data$polholder_BMCevol)[c("down")])
+
+ligne_name <- c("Hausse", "Inchangée", "Baisse")
+tableau_BM <- cbind(ligne_name ,rbind(l1 , l2, l3))
+
 
 ligne_name <- c("Sous un abri d'auto", "Terrase de stationnement", "Stationnement privé", "Garage", "Rue", "Garage sous-terrain", "Autre", "Données manquantes")
 tableau_garage <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7, l8))
@@ -394,7 +435,6 @@ Beaucoup de véhicule ont été achetés lorsqu'il était neuf (vehicl_purchase 
 
 \newpage
 
-# Autres sections
 # Traitement des valeurs manquantes
 ```{R, ProportionDeValeursManquante, echo = FALSE, results='asis'}
 nb_manquant <- round(apply(data, 2, FUN = function(x) sum(is.na(x)))/nrow(data) * 100,2)
@@ -462,44 +502,39 @@ apply(data.compl, 2, FUN = function(x) sum(is.na(x)))
 # Analyse en composantes principales
 Étant donné que notre jeu de données contient `R nrow(Donnees_tempo)` observations, il peut être utile de visualiser les données à l'aide de l'analyse en composantes principales, appelé ACP. En effet, ce type d'analyse permet de mieux visualiser un jeu de données lorsque celui-ci est de grande dimension. Il sera ainsi possible de voir quelles variables explicatives sont plus intéressantes par leur impact sur la variance des composantes principales. Il est à noter qu'en général, on garde assez de composantes pour représenter entre 80 et 90 % de la variance totale. 
 
-Pour que cette méthode de visualisation puisse être utilisée, il sera nécessaire de prendre seulement les variables explicatives numériques de ce jeu de donnée. Les variables catégorielles ne seront pas analysées dans cette section car même en les transformant en variables numériques, elles ne seront pas représentative de leur signification.
+Pour que cette méthode de visualisation puisse être utilisée, il sera nécessaire de prendre seulement les variables explicatives numériques de ce jeu de donnée. Les variables catégorielles ne seront pas analysées dans cette section car même en les transformant en variables numériques, elles ne seront pas représentative des valeurs leur qui leur aurait été attribuée en faisant la modification de type.
 
 ```{R , echo = FALSE, include = TRUE}
-Donnees_tempo <- na.omit(data)
-Data_num <- Donnees_tempo[, c("polholder_age", "policy_age", "policy_nbcontract", "prem_final", "prem_last", "prem_market", 
+data <- na.omit(data)
+Data_num <- data[, c("polholder_age", "policy_age", "policy_nbcontract", "prem_final", "prem_last", "prem_market", 
                               "prem_pure", "vehicl_age", "vehicl_agepurchase")]
 ```
 
-On doit ensuite choisir le nombre de composantes principales. Cette étape peut être complétée en spécifiant le pourcentage de variance expliquée pour obtenir la cible précisée précedemment ou utiliser la méthode du coude sur le diagramme d'éboulis. 
+On doit ensuite choisir le nombre de composantes principales. Cette étape peut être complétée en ayant deja un pourcentage de variance expliquée en tête et en choisissant le nombre de composantes à partir des valeurs propres ou en analysant directement le diagramme d'ébouli. Dans ce cas, la méthode du coude ne sera pas utilisée, on priviligie d'avantage le choix selon le premier plateau observée. Le nombre de composantes choisit seront celle ne faisant pas partie du premier plateau observée. 
 
 ```{R , echo = FALSE, include = FALSE}
-ACP <- PCA(Data_num, scale = TRUE, ncp = 6)  #scale=TRUE permet de normaliser les données. Pourtant les variables n'ont pas a voir des échelles converti ? je crois. 
-#si on fait scale=FALSE le graphique est laid. Vous en pensez quoi
+ACP <- PCA(Data_num, scale = TRUE)  
 ```
 
 ```{R , echo = FALSE, include = TRUE}
 fviz_screeplot(ACP)
 ```
 
-Selon le diagramme d'éboulis, il sera nécessaire de conserver 6 composantes principales et on observe, à l'aide des valeurs propres de la matrice de corélation, que 6 composantes principales permettent d'expliquer 97% de la variance totale.
+Selon le diagramme d'éboulis, il sera nécessaire de conserver 2 composantes principales et on observe, à l'aide des valeurs propres de la matrice de corélation, que 2 composantes principales permettent d'expliquer 63% de la variance totale.
 
-À l'aide du graphique ACP des variables, on peut voir la gravité des contributions pour chacune des variables sur chacune des composantes principales retenu. Ainsi, on peut observer que pour la première composante principale, un score élevé indique un contrat ayant une prime élevée, que ce soit la prime du marché, la prime pure, la prime finale ou la prime chargée lors du dernier renouvellement. Par contre, un assuré âgé qui renouvelle depuis plusieurs année aura un score moindre qu'un assuré en bas âge ayant une police d'assurance récente. Un score élevé représente donc un assuré en bas âge ayant une police récente et une prime élevé tandis qu'un score faible représente une personne plus âgée avec une faible prime d'assurance. 
+À l'aide du graphique ACP des variables, on peut voir la gravité des contributions pour chacune des variables sur chaque composantes principales retenu. Ainsi, on peut observer que pour la première composante principale, un score élevé indique un contrat ayant une prime élevée, que ce soit la prime du marché, la prime pure, la prime finale ou la prime chargée lors du dernier renouvellement. Par contre, un assuré âgé qui renouvelle depuis plusieurs année aura un score plus faible qu'un assuré en bas âge ayant une police d'assurance récente. Un score élevé représente donc un assuré en bas âge ayant une police récente et une prime élevé tandis qu'un score faible représente une personne plus âgée avec une faible prime d'assurance. 
 
 La deuxième composante principale représente, quant à elle, l'âge du véhicule assuré. Un score élevé est associé à des véhicules de moindres valeurs mais risquant d'avantage un bris de veillesse. Plus les polices d'assurance sont récentes et plus le score en sera augmenté. Ainsi, les polices d'assurances récente ayant des véhicules de l'année représenteront les scores les plus faibles pour cette composante.
-
-Pour ce qui est de la troisième composante principale, elle représente l'âge du véhicule, l'âge de l'assuré et l'âge de la police. Le score sera le plus élevé quand le véhicule est plus âgé tout comme le détenteur de la police d'assurance et que la police est renouveller depuis un grand nombre d'année. En sens inverse, le score sera de plus en plus faible si le détenteur de la police est jeune, qu'il possède une voiture de l'année et une police d'assurance très récente. 
-
-Les trois dernières composantes sont moins intéressantes pour l'analyse et ne seront utilisés que pour déterminer le nombre de variables numériques à conserver pour les analyses qui suiveront pour la complétion de ce travail pratique. Une information qui pourrait tout de même être pertinente est qu'un score élevé sous la quatrième composante indique un nombre élevé de contrat tout en ayant une police d'assurance qui est renouvellé depuis plusieurs années. Des caractéristiques recherchées qui permettent de facilement identifier une clientèle fidèle et fiable. 
 
 ```{R , echo = FALSE, include = FALSE}
 ACP$eig
 ACP$var$contrib
 ```
 
-En illustrant les contributions des variables pour chacune des composantes principales, il est plus facile de visualiser les conclusions mentionnées précédemment.
+En illustrant les contributions des variables pour les deux premières composantes principales, il est plus facile de visualiser les conclusions mentionnées précédemment.
 
 ```{R , message=FALSE, include = TRUE, echo = FALSE}
-contrib <- data.frame(ACP$var$coord[,1:6])
+contrib <- data.frame(ACP$var$coord[,1:2])
 contrib$carac <- rownames(contrib)
 contrib.long <- reshape2::melt(contrib)
 
@@ -507,72 +542,36 @@ ggplot(contrib.long, aes(x=carac, fill=variable, y=value))+
   geom_bar(stat="identity",position=PositionDodge)+
   facet_grid(~variable)+
   theme(legend.position="top",axis.text.x = element_text(angle = 90))+
+  xlab("Variable") +
+  ylab("Poids") +
   coord_flip()
 ```
-
-<<<<<<< HEAD
-## Graphique présentant les résultats de l'ACP
-
-À voir si on les gardes ou pas (?)
-
-```{R , echo = FALSE, include = TRUE}
-data <- cbind(Donnees_tempo, ACP$ind$coord)
-
-g_ind <- ggplot(data = data,
-             aes(x= Dim.2, y=Dim.3, col = policy_age,  shape = lapse, labels = polholder_age,
-                 alpha = 0.2)) +
-  geom_point() +
-  xlab("Dimension 2") +
-  ylab("Dimension 3") +
-  theme_bw()
-#ggplotly(g_ind) #Pour comparer les dimensions 2 et 3
-
-g_ind <- ggplot(data = data,
-             aes(x= Dim.1, y=Dim.2, col = vehicl_agepurchase,  shape = lapse, labels = prem_pure,
-                 alpha = 0.2)) +
-  geom_point() +
-  xlab("Dimension 1") +
-  ylab("Dimension 2") +
-  theme_bw()
-#ggplotly(g_ind) #Pour comparer les dimensions 1 et 2
-
-g_ind <- ggplot(data = data,
-             aes(x= Dim.1, y=Dim.3, col = policy_age,  shape = lapse, labels = prem_pure,
-                 alpha = 0.2)) +
-  geom_point() +
-  xlab("Dimension 1") +
-  ylab("Dimension 3") +
-  theme_bw()
-#ggplotly(g_ind) #Pour comparer les dimensions 1 et 3
-
-
-##À VÉRIFIER S'IL NE FAUT PAS INCLURE LES VARIABLES CATEGORIELLE ORDINALE TRANSFORMÉES EN VARIABLE NUMÉRQUES
-```
-
 
 \newpage
 
 # Partitionnement en k moyennes
 
-Le partitionnement en k moyennes est utiliser pour classifier les observations en k groupes distincts. La valeur de k est une valeur qu'on transmet pour indiquer le nombre de partitions désirées. Chaque observation sera ensuite assigné à un seul groupe. L'algorithme utilisée pour ce type de partitionnement a pour objectif de minimiser la variance intra-groupe.
+Le partitionnement en k moyennes est utilisé pour classifier les observations en k groupes distincts. La valeur de k est une valeur qu'on transmet pour indiquer le nombre de partitions désirées. Chaque observation sera ensuite assigné à un seul groupe. L'algorithme utilisée pour ce type de partitionnement a pour objectif de minimiser la variance intra-groupe.
 
+Le choix du nombre de groupe peut être choisit à l'aide du diagramme d'éboulis par la méthode du coude. Ainsi en ce réferant au graphique YYY de la section "Analyse en composantes principales", on devrait faire le partitionnement sur 6 groupes distincts. En effet le choix s'effectue pour que le nombre de composantes apporte individuellement un pourcentage de variance expliquée significatif. On s'arrête sur la composante principale qui ce situe dans le "pli de coude", soit juste avant le dernier plateau.
+
+Voici le graphique obtenu pour le partitionnement en $k$ moyennes :
 ```{R , echo = FALSE, include = TRUE}
-Data_num <- Donnees_tempo[, c("polholder_age", "policy_age", "policy_nbcontract", "prem_final", "prem_last", "prem_market", 
-                              "prem_pure", "vehicl_age", "vehicl_agepurchase")]
-
-K <- 5
+K <- 6
 kmoyennes <- kmeans(Data_num, K, nstart=5)
-Donnees_acp <- PCA(Data_num, scale = FALSE, ncp = 6, graph = FALSE)
+Donnees_acp <- PCA(Data_num, ncp = 6,  scale = FALSE, graph = FALSE)
 
 composante1 <- Donnees_acp$ind$coord[,1]
 composante2 <- Donnees_acp$ind$coord[,2]
 
-
 groupe <- as.factor(kmoyennes$cluster)
 
-
-ggplot() + geom_point(aes(composante1, composante2, color = groupe)) + theme_minimal()
+ggplot() + 
+  geom_point(aes(composante1, composante2, color = groupe)) + 
+  theme_minimal()
 ```
+
+De ce graphique, on peut conclure que le partionnement c'est fait vraiment que sur les montants des primes. 
 
 \newpage
 
@@ -581,6 +580,13 @@ ggplot() + geom_point(aes(composante1, composante2, color = groupe)) + theme_min
 
 \newpage
 
+# Bibliographie
+
+
+\newpage
+
 # Annexe
+
+Description du jeu de données soumis sur le forum :
 
 Notre jeu de données représente le statut de renouvellement pour 23 060 polices d'assurance basées sur un an d'observation. Les données receuillies proviennent d'une compagnie d'assurance inconnue dont l'année d'observation est également inconnue.
