@@ -391,7 +391,12 @@ Beaucoup de véhicule ont été achetés lorsqu'il était neuf (vehicl_purchase 
 
 ## Variable endogène en fonction des variables explicatives
 
-Il est intéressant de voir comment se comporte la variable endogène en fonction des différentes variables explicatives. Bien sûr, nos variables explicatives comme décrit plus tôt ne sont pas toutes de même type il en résulte donc qu'elles n'auront
+Il est intéressant de voir comment se comporte la variable endogène en fonction des différentes variables explicatives. Bien sûr, nos variables explicatives comme décrit plus tôt ne sont pas toutes de même type il en résulte donc qu'elles n'auront pas toutes la même représentation visuelle par rapport à la variable endogène.
+
+Pour variable continues **(voir lab_partionnement2)**
+
+
+
 
 
 \newpage
