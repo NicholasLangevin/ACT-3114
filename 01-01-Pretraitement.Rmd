@@ -183,21 +183,6 @@ La variable **policy_caruse** représente les fins d'utilisation du véhicule.
 ```{r tabl_caruse, echo=FALSE, results='asis', fig.cap="\\label{tbl:caruse}Usage du vehicule"}
 l1 <- c(summary(data$policy_caruse)[c("commercial")])
 
-
-colnames(dat_frame_tab2) <- c("Sexe", "\\%")
-
-print.tables(dat_frame_tab2, hline.after=c(-1,0,2), digits=2)
-```
-
-On voit qu'il y a quand même significativement plus d'homme ayant une police d'assurance chez l'assureur que de femme. Possiblement pour la raison que les hommes conduise davantage une voiture.
-
-La variable décrivant le travail du propriétaire du contrat est nommé **polholder_job**. Deux valeurs sont possibles soit "medical" soit "normal". On constate que `r round((summary(data$polholder_job)[c("medical")])/nrow(data)*100, 2)`% des assurés on un travail de type médical alors qu'il y en a `r round((summary(data$polholder_job)[c("normal")])/nrow(data)*100, 2)`% qui ont un autre type d'emploi.
-
-La variable **policy_caruse** représente les fins d'utilisation du véhicule. 
-
-```{r tabl_caruse, echo=FALSE, results='asis', fig.cap="\\label{tbl:caruse}Usage du vehicule"}
-l1 <- c(summary(data$policy_caruse)[c("commercial")])
-
 l2 <- c(summary(data$policy_caruse)[c("private or freelance work")])
 
 l3 <- c(summary(data$policy_caruse)[c("NA's")])
@@ -275,7 +260,7 @@ On voit que pour les moyens de stationnement les plus populaire sont le garage p
 La variable polholder_BMCevol indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payé lors du dernier renouvellement. Elle prend donc 3 valeurs possibles. 
 
 
-```{r tabl_BM, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
+```{r tabl_BM2, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
 l1 <- c(summary(data$polholder_BMCevol)[c("up")])
 
 l2 <- c(summary(data$polholder_BMCevol)[c("stable")])
