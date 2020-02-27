@@ -536,25 +536,35 @@ ggplot(contrib.long, aes(x=carac, fill=variable, y=value))+
 
 Le partitionnement en k moyennes est utilisé pour classifier les observations en k groupes distincts. La valeur de k est une valeur qu'on transmet pour indiquer le nombre de partitions désirées. Chaque observation sera ensuite assigné à un seul groupe. L'algorithme utilisée pour ce type de partitionnement a pour objectif de minimiser la variance intra-groupe.
 
-Le choix du nombre de groupe peut être choisit à l'aide du diagramme d'éboulis par la méthode du coude. Ainsi en ce réferant au graphique YYY de la section "Analyse en composantes principales", on devrait faire le partitionnement sur 6 groupes distincts. En effet le choix s'effectue pour que le nombre de composantes apporte individuellement un pourcentage de variance expliquée significatif. On s'arrête sur la composante principale qui ce situe dans le "pli de coude", soit juste avant le dernier plateau.
+Le choix du nombre de groupe peut être choisit à l'aide de la méthode du coude. Ainsi en ce réferant au graphique suivant, on devrait faire le partitionnement sur 2 groupes distincts. On s'arrête la valeur de $k$ qui ce situe dans le "pli de coude", soit juste avant le dernier plateau du diagramme d'éboulis. Il est à noter que le nombre d'observations a été réduit pour pouvoir faire le diagramme d'éboulis. Notre jeu de données étant trop volumineux, ce qui engendrait des erreurs d'exécution. L'échantillion utilisé a été extrait aléatoirement et sans remise pour avoir une représentation adéquate et la moins biaisé possible.
 
-Voici le graphique obtenu pour le partitionnement en $k$ moyennes :
-```{R , echo = FALSE, include = TRUE}
-K <- 6
+```{R , echo = FALSE}
+set.seed(123)
+echantillon <- sample(nrow(Data_num), size = 8000, replace = FALSE) 
+
+fviz_nbclust(Data_num[echantillon, ], kmeans, k.max=7, method = "wss")
+```
+
+En ayant en tête le nombre de groupe nécessaire pour la classification, on effectue le partitionnement et on obtient le graphique suivant :
+
+```{R , echo = FALSE}
+K <- 2
 kmoyennes <- kmeans(Data_num, K, nstart=5)
-Donnees_acp <- PCA(Data_num, ncp = 6,  scale = FALSE, graph = FALSE)
+
+Donnees_acp <- PCA(Data_num,  scale = FALSE, graph = FALSE)
 
 composante1 <- Donnees_acp$ind$coord[,1]
 composante2 <- Donnees_acp$ind$coord[,2]
-
 groupe <- as.factor(kmoyennes$cluster)
 
 ggplot() + 
   geom_point(aes(composante1, composante2, color = groupe)) + 
   theme_minimal()
+
 ```
 
-De ce graphique, on peut conclure que le partionnement c'est fait vraiment que sur les montants des primes. 
+De ce graphique, on peut conclure que le partionnement c'est fait sur la première composante principale. Les assurés représentant moins de risque ce retrouve dans le groupe 2 tandis que les assurés plus risqués ce retrouve dans le groupe 1. Ainsi, le montant des primes typiques seraient d'environ 300\$ ou moins pour le deuxième groupe et de plus de 300\$ 
+
 
 \newpage
 
