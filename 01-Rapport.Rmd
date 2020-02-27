@@ -232,32 +232,6 @@ On voit que pour les moyens de stationnement les plus populaire sont le garage p
 La variable polholder_BMCevol indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payé lors du dernier renouvellement. Elle prend donc 3 valeurs possibles. 
 
 
-```{r tabl_BM, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
-l1 <- c(summary(data$polholder_BMCevol)[c("up")])
-
-l2 <- c(summary(data$polholder_BMCevol)[c("stable")])
-
-l3 <- c(summary(data$polholder_BMCevol)[c("down")])
-
-ligne_name <- c("Hausse", "Inchangée", "Baisse")
-tableau_BM <- cbind(ligne_name ,rbind(l1 , l2, l3))
-
-
-ligne_name <- c("Sous un abri d'auto", "Terrase de stationnement", "Stationnement privé", "Garage", "Rue", "Garage sous-terrain", "Autre", "Données manquantes")
-tableau_garage <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7, l8))
-
-dat_frame_tab4 <- as.data.frame(tableau_garage)
-
-colnames(dat_frame_tab4) <- c("Moyen de stationnement", "Nombre d'observation")
-
-print.tables(dat_frame_tab4, hline.after=c(-1,0,8), digits=2, align = c("l", "l", "c"))
-```
-
-On voit que pour les moyens de stationnement les plus populaire sont le garage privé et la rue. Il y a des données manquantes, elles seront traitées plus loin dans le rapport.
-
-La variable polholder_BMCevol indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payé lors du dernier renouvellement. Elle prend donc 3 valeurs possibles. 
-
-
 ```{r tabl_BM2, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
 l1 <- c(summary(data$polholder_BMCevol)[c("up")])
 
@@ -275,7 +249,7 @@ colnames(dat_frame_tab5) <- c("Prime de renouvellement", "Nombre d'observation")
 print.tables(dat_frame_tab5, hline.after=c(-1,0,3), digits=2, align = c("l", "l", "c"))
 ```
 
-On constate que la plupart des contrats ont été inchangé ou ont connu des baisses au niveau des primes. (C'est un résultat étonnant, faudrait commenter la -dessus ???) 
+On constate que la plupart des contrats ont été inchangé ou ont connu des baisses au niveau des primes. **(C'est un résultat étonnant, faudrait commenter la -dessus ???)**
 
 La variable vehicl_region représente une région de l'union européenne. Il y a 14 régions, elles sont numérotés mais nous savons pas à quel emplacement géographique cela correspond. Voici un diagramme pour visualiser comment les contrats sont dsipersées dans chacune des régions.
 
@@ -310,10 +284,10 @@ La variable **vehicl_powerkw** représente la puissance du moteur de la voiture 
 
 ```{r tabl_powerkw, echo=FALSE, results='asis', fig.cap="\\label{tbl:powerkw}Tableaux de fréquence des catégories de puissance de moteur"}
 
-c1_avant <- levels(data.init$vehicl_powerkw)
+c1_avant <- gsub(" kW", "", levels(data.init$vehicl_powerkw))
 c2_avant <- unname(summary(data.init$vehicl_powerkw))
 
-c1_apres <- levels(data$vehicl_powerkw)
+c1_apres <- gsub(" kW", "", levels(data$vehicl_powerkw))
 c2_apres <- unname(summary(data$vehicl_powerkw))
 
 tableau_powerkw_avant <- cbind(c1_avant, c2_avant)
@@ -322,8 +296,8 @@ tableau_powerkw_apres <- cbind(c1_apres, c2_apres)
 tab_avant <- as.data.frame(tableau_powerkw_avant)
 tab_apres <- as.data.frame(tableau_powerkw_apres)
 
-colnames(tab_avant) <- c("Puissance", "Nombre d'observation")
-colnames(tab_apres) <- c("Puissance", "Nombre d'observation")
+colnames(tab_avant) <- c("Puissance (kW)", "Nombre d'observation")
+colnames(tab_apres) <- c("Puissance (kW)", "Nombre d'observation")
 
 t1 <- kable(tab_avant, format = "latex", align = c("c", "r"), booktabs = TRUE)
 t2 <- kable(tab_apres, format = "latex", align = c("c", "r"),  booktabs = TRUE)
@@ -414,6 +388,10 @@ grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
 
 Beaucoup de véhicule ont été achetés lorsqu'il était neuf (vehicl_purchase = 0). En examinant les véhicules conduits par es assurés on remarque qu'il y a peu de véhicule neuf et le nombre de véhicule est croissant en fonction de l'utilisation jusqu'à 13 ans puis décroit par la suite. On retrouve un grand nombre de véhicule assuré avec 18 ans d'usage, il est fort probable que cela correspondre aux véhicules de plus de 18 ans. 
 
+
+## Variable endogène en fonction des variables explicatives
+
+Il est intéressant de voir comment se comporte la variable endogène en fonction des différentes variables explicatives. Bien sûr, nos variables explicatives comme décrit plus tôt ne sont pas toutes de même type il en résulte donc qu'elles n'auront
 
 
 \newpage
@@ -560,6 +538,8 @@ De ce graphique, on peut conclure que le partionnement c'est fait vraiment que s
 
 # Conclusion
 
+
+Puisque la variable réponse **lapse** est une variable catégorielle pour laquelle deux valeurs sont possibles soit le renouvellement ou soit la résignation. Pour la suite on pourrait s'intéresser à modéliser la probabilité de renouveller ou bien de résigner. Pour résoudre ce problème il serait possible d'utiliser un modèle linéaire avec régression logistique. Dans ce cas, la prédiction de la régression corresponderait à la probabilité désiré. Si on s'intéresse plutôt à une prédiction tant qu'au renouvellement ou à la résignation. Dans ce cas là il serait possible d'utiliser encore le modèle linéaire avec régression logistique ou bien un autre modèle de classification supervisé. 
 
 \newpage
 
