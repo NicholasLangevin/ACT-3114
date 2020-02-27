@@ -80,15 +80,14 @@ data$prem_freqperyear <- factor(data$prem_freqperyear, order = TRUE, levels = c(
 data$prem_index <- data$prem_final / data$prem_last - 1
 
 # Traitement de la variable vehicl_powerkw: regroupement en 4 groupe
-data$vehicl_powerkw_na <- data$vehicl_powerkw
-data[data$vehicl_powerkw_na == "125-300 kW", ]$vehicl_powerkw_na <- NA
+#data$vehicl_powerkw_na <- data$vehicl_powerkw
+#data[data$vehicl_powerkw_na == "125-300 kW", ]$vehicl_powerkw_na <- NA
 data[data$vehicl_powerkw %in% c("150 kW","175 kW","200 kW","225 kW","250 kW","275 kW","300 kW"), ]$vehicl_powerkw <- "125-300 kW"
 data <- droplevels(data)
 data$vehicl_powerkw <- factor(data$vehicl_powerkw, order = TRUE, levels = c("25-50 kW", "75 kW", "100 kW", "125-300 kW"))
 table(data$vehicl_powerkw)
 
-data <- data %>% select(-vehicl_powerkw_na)
-data.traiter <- data
+data
 ```
 
 ```{R, FonctionPrintTable, echo = FALSE, include = FALSE, warning = FALSE}
@@ -179,6 +178,7 @@ ggplot(data, aes(x = policy_age))+
   geom_bar() +
   labs(x = "Âge de la police", y = "Fréquence") + 
   theme_bw() 
+
 ```
 
 
@@ -240,44 +240,24 @@ Beaucoup de véhicule ont été achetés lorsqu'il était neuf (vehicl_purchase 
 ```{R, ProportionDeValeursManquante, echo = FALSE, results='asis'}
 nb_manquant <- round(apply(data, 2, FUN = function(x) sum(is.na(x)))/nrow(data) * 100,2)
 ```
-La base de données contenait seulement trois variables avec des valeurs manquante. La variable indiquant la difference d'âge entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, celle indiquant l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et la variable indiquant le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron des valeurs manquantes. On remarque que les trois variables manquantes semblent liées entres-elles. En effet, la totalité des cas manquants pour la variable *polholder_diffdriver* sont aussi manquants pour les deux autres variables nommées précédemmment. En ce qui concerne les variables *policy_caruse* et *vehicl_garage*, elles sont majoritairement manquantes pour une variable seulement mais quelques exceptions subsistent.
+La base de données contenait seulement trois variables avec des valeurs manquante. La variable indiquant la difference d'âge entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, celle indiquant l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et la variable indiquant le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron de non réponse. On remarque que la variable *polholder_diffdriver* semble avoir un patron de non réponse monotone avec les deux autres. Par contre, puisqu'il y a seulement 12 cas, nous allons pas tenir compte de ce lien lors de l'imputation des données. Pour ce qui est des variables *policy_caruse* et *vehicl_garage*, on remarque qu'il sont parfois manquante en même temps, mais seulement pour une minorité de cas.
 
-```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}ddd"}
-#pattern.matrix <- md.pattern(data, rotate.names = TRUE)
+```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}todo"}
+# pattern.matrix <- md.pattern(data, rotate.names = TRUE)
 missing.pathern <- aggr(data, combined = TRUE, ylabs="",labels=c("","","","diffdriver","","","","caruse","","","","","","","","","garage","",""), sortVars=TRUE)
 ```
 
-Ensuite, dans le but de déterminer si les données manquantes sont MCAR, nous avons effectué le test d'hypothèse suivant
+Premièrement, dans le but déterminer si le données manquantes sont MCAR, le test d'hypothese suivant à été effectué
 \begin{align*}
   H_0:&\: \text{Le données sont MCAR} \\
   H_1:&\: \text{Le données ne sont pas MCAR}
 \end{align*}
-La statistique a été calculé avec le test *MCAR de Little* et une p-value inférieure à 1% a été obtenue. Avec un niveau de signification de 1%, il est possible de rejeter l'hypothèse, soit que les données sont de type MCAR. Il est à noter qu'il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Cela est dû au fait que puisque les données proviennent d'un compagnie inconnue, nous n'avons pas d'information sur la méthode de récolte de données et il nous est impossible de trouver des patrons qui pourraient provoquer des données de type NMAR. En conséquence, nous considérerons que nos données sont MAR. De ce sens, en effectuant des tests khi-carré pour la variable *polholder_diffdriver*, il a été remarqué que l'information sur la différence entre le détenteur de police et le conducteur nous indique que les variables sont toujours manquantes dans le cas ou le travail du détenteur de la police est dans le domaine de la médecine et que la durée de la police d'assurance est d'au moins 4 ans. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
+Pour conclure que les données sont MCAR, il est nécéssaire d'accepter $H_0$ pour toutes les variables. Par contre, un seul refus de cette hypothèse sera néséssaire permetra de conclure l'hypothèse alternative, c'est a dire que les données ne sont pas MCAR. Pour effectuer le test avec une variable catégorielle, il sera nécéssaire d'utilisé une statistique khi-carré alors que pour une variable numérique, une statistique student sera utilisée.
 
-Pour l'imputation des données, la méthode d'imputation multiples à été choisie. Pour des restrictions de temps de calcul, cinq itérations de régression stochastique ont été fait. Pour la variable *policy_caruse*, une régression logistique a été effectué puisque la variable catégorielle comporte deux niveaux. Pour les variables *vehicl_garage* et *polholder_diffdriver*, qui sont des variables catégorielles non-ordonées, une régression polynomiale a été utilisée.
-
-```{R, ImputationDesDonnees, echo = FALSE, eval=FALSE, warning = FALSE}
-methode <- c("sample","sample","sample","polyreg","sample","sample","sample","logreg","sample","sample","sample","sample","sample","sample","sample","sample","polyreg","sample","sample")
-donnees.imp <- mice(data, m=5, method=methode, print=TRUE, seed=1095)
-summary(donnees.imp)
-
-data.compl <- mice::complete(donnees.imp)
-save(data.compl,file="dataCompletTraiter.Rda")
-# Il ne reste bien plus de donnees.
-apply(data.compl, 2, FUN = function(x) sum(is.na(x)))
-```
-```{R, LoadImputationDesDonnees, echo = FALSE, result=FALSE, warning = FALSE}
-load("dataCompletTraiter.Rda")
-```
-
-
-```{R, TraitementDesValeursManquantes, echo = FALSE, eval = FALSE, warning = FALSE}
-data <- data.traiter %>% select(-vehicl_powerkw_na)
-# Get number of NA value for each variables
-apply(data, 2, FUN = function(x) sum(is.na(x)))
-pattern.matrix <- md.pattern(data, rotate.names = TRUE)
-
+```{r TraitementDesValeursManquantes, echo=FALSE, results=FALSE}
 test.MCAR <- function(var.data, na_var.data){
+  # Détermine automatique si la variable est catégorielle ou
+  # nuérique et utilise le bon test approprié.
   if(is.numeric(data[[var.data]])){
     round(t.test(data[[var.data]][is.na(data[[na_var.data]])],
                     data[[var.data]][!is.na(data[[na_var.data]])],var.equal=FALSE)[["p.value"]], 5) 
@@ -285,29 +265,37 @@ test.MCAR <- function(var.data, na_var.data){
     round(chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct=FALSE)[["p.value"]], 5)
   }
 }
-# Tester pour la variable vehicl_garage
+# Test pour vehicl_garage
 sapply(names(data  %>% select(-vehicl_garage)), FUN=test.MCAR, na_var.data = "vehicl_garage")
- 
-
-# teste pour la variable polholder_diffdriver
+# Test pour policy_caruse
+sapply(names(data  %>% select(-policy_caruse)), FUN=test.MCAR, na_var.data = "policy_caruse")
+# Test pour polholder_diffdriver
 sapply(names(data  %>% select(-polholder_diffdriver, -vehicl_garage, -policy_caruse)), FUN=test.MCAR, na_var.data = "polholder_diffdriver")
-# On rejete H0(MCAR)a 5% pour polholder_job et policy_age: On remarque que  
-# tout les cas manquant pour la variable polholder_diffdriver sont polholder_job=medical
-# policy_age sont plus vielle > 3-4
-data[is.na(data$polholder_diffdriver), c("lapse", "polholder_job", "policy_age", "polholder_diffdriver", "vehicl_garage")]
-
-sapply(names(data  %>% select(-vehicl_garage)), FUN=test.MCAR, na_var.data = "vehicl_garage")
-
-table(data$polholder_diffdriver[data$polholder_job == "medical"])
-table(data$polholder_job)
-
-stat <- LittleMCAR(data)
-names(stat)
-stat$chi.square
-stat$df
-nrow(data)
-round(pchisq(stat$chi.square, stat$df, lower.tail = FALSE), 18)
 ```
+
+En ce qui concerne les variables *vehicl_garage* et *policy_caruse*, plusieurs statistiques observé permette de rejeté l'hypothèse null en faveur de l'hypothèse alternative à un niveau significatif de $0.001%$. Par contre, dans le cas de *polholder_diffdriver*, seulement la variables *polholder_job* permet de rejeter $H_0$, c'est à dire que les données manquantes sont complètement aléatoirement
+
+Il est à noter qu'il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Cela est dû au fait que puisque les données proviennent d'un compagnie inconnue, nous n'avons pas d'information sur la méthode de récolte de données et il nous est impossible de trouver des patrons qui pourraient provoquer des données de type NMAR. En conséquence, nous considérerons que nos données sont MAR. De ce sens, en effectuant des tests khi-carré pour la variable *polholder_diffdriver*, il a été remarqué que l'information sur la différence entre le détenteur de police et le conducteur nous indique que les variables sont toujours manquantes dans le cas ou le travail du détenteur de la police est dans le domaine de la médecine. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
+
+Pour l'imputation des données, la méthode d'imputation multiples à été choisie. Pour des restrictions de temps de calcul, cinq itérations de régression stochastique ont été fait. Pour la variable *policy_caruse*, une régression logistique a été effectué puisque la variable catégorielle comporte deux niveaux. Pour les variables *vehicl_garage* et *polholder_diffdriver*, qui sont des variables catégorielles non-ordonées, une régression polynomiale a été utilisée.
+
+```{R, ImputationDesDonnees, echo = FALSE, eval=FALSE, warning = FALSE}
+summary(data[,c("vehicl_garage", "policy_caruse", "polholder_diffdriver")])
+# Choix des methode
+methode <- c("sample","sample","polyreg","sample","sample","sample","logreg","sample","sample","sample","sample","sample","sample","sample","sample","polyreg","sample","sample", "sample")
+donnees.imp <- mice(data %>% select(-lapse), m=1, method=methode, print=FALSE, seed=1095)
+summary(donnees.imp)
+data.compl <- mice::complete(donnees.imp)
+data.compl <- cbind(data$lapse, data.compl)
+
+# Summary apres semble similaire a avant
+summary(data.compl[,c("vehicl_garage", "policy_caruse", "polholder_diffdriver")])
+# Il ne reste bien plus de donnees.
+apply(data.compl, 2, FUN = function(x) sum(is.na(x)))
+```
+
+
+
 
 
 \newpage
