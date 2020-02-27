@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  26 FEB 2020 23:36
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  27 FEB 2020 00:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**01-01-Pretraitement.tex
-(./01-01-Pretraitement.tex
+**01-Rapport.tex
+(./01-Rapport.tex
 LaTeX2e <2017-04-15>
 Babel <3.10> and hyphenation patterns for 84 language(s) loaded.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/base/article.cls
@@ -803,72 +803,347 @@ Package grffile Info: Option `multidot' is set to `true'.
 Package grffile Info: Option `extendedchars' is set to `false'.
 Package grffile Info: Option `space' is set to `true'.
 Package grffile Info: \Gin@ii of package `graphicx' fixed on input line 486.
-) (/usr/local/texlive/2017/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2017/05/19 3.10 The Babel package
-(/usr/local/texlive/2017/texmf-dist/tex/generic/babel-french/frenchb.ldf
-Language: frenchb 2017/04/30 v3.3a French support from the babel system
-(/usr/local/texlive/2017/texmf-dist/tex/generic/babel/babel.def
-File: babel.def 2017/05/19 3.10 Babel common definitions
-\babel@savecnt=\count116
-\U@D=\dimen127
-)
-\l@acadian = a dialect from \language\l@french 
-\l@canadien = a dialect from \language\l@french 
-\FB@nonchar=\count117
-\FBcolonsp=\toks25
-\FBthinsp=\toks26
-Package babel Info: Making : an active character on input line 362.
-Package babel Info: Making ; an active character on input line 363.
-Package babel Info: Making ! an active character on input line 364.
-Package babel Info: Making ? an active character on input line 365.
-\FBguillsp=\toks27
-\FBguill@level=\count118
-\FB@everypar=\toks28
-\FB@Mht=\dimen128
-\mc@charclass=\count119
-\mc@charfam=\count120
-\mc@charslot=\count121
-\std@mcc=\count122
-\dec@mcc=\count123
-\listindentFB=\skip48
-\descindentFB=\skip49
-\labelwidthFB=\skip50
-\leftmarginFB=\skip51
-\parindentFFN=\dimen129
-\FBfnindent=\skip52
-)) (/usr/local/texlive/2017/texmf-dist/tex/latex/carlisle/scalefnt.sty) (/usr/l
-ocal/texlive/2017/texmf-dist/tex/latex/booktabs/booktabs.sty
+) (/usr/local/texlive/2017/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2016/04/27 v1.618033 publication quality tables
-\heavyrulewidth=\dimen130
-\lightrulewidth=\dimen131
-\cmidrulewidth=\dimen132
-\belowrulesep=\dimen133
-\belowbottomsep=\dimen134
-\aboverulesep=\dimen135
-\abovetopsep=\dimen136
-\cmidrulesep=\dimen137
-\cmidrulekern=\dimen138
-\defaultaddspace=\dimen139
-\@cmidla=\count124
-\@cmidlb=\count125
-\@aboverulesep=\dimen140
-\@belowrulesep=\dimen141
-\@thisruleclass=\count126
-\@lastruleclass=\count127
-\@thisrulewidth=\dimen142
+\heavyrulewidth=\dimen127
+\lightrulewidth=\dimen128
+\cmidrulewidth=\dimen129
+\belowrulesep=\dimen130
+\belowbottomsep=\dimen131
+\aboverulesep=\dimen132
+\abovetopsep=\dimen133
+\cmidrulesep=\dimen134
+\cmidrulekern=\dimen135
+\defaultaddspace=\dimen136
+\@cmidla=\count116
+\@cmidlb=\count117
+\@aboverulesep=\dimen137
+\@belowrulesep=\dimen138
+\@thisruleclass=\count118
+\@lastruleclass=\count119
+\@thisrulewidth=\dimen139
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 70.
-(./01-01-Pretraitement.aux
-! Undefined control sequence.
-l.25 \babel@aux
-               {french}{} 
-Here is how much of TeX's memory you used:
- 13092 strings out of 492995
- 185475 string characters out of 6132704
- 306413 words of memory out of 5000000
- 16542 multiletter control sequences out of 15000+600000
- 4403 words of font info for 15 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 34i,0n,38p,328b,423s stack positions out of 5000i,500n,10000p,200000b,80000s
+(./01-Rapport.aux
 
-!  ==> Fatal error occurred, no output PDF file produced!
+LaTeX Warning: Label `' multiply defined.
+
+
+LaTeX Warning: Label `' multiply defined.
+
+
+LaTeX Warning: Label `' multiply defined.
+
+
+LaTeX Warning: Label `' multiply defined.
+
+
+LaTeX Warning: Label `' multiply defined.
+
+
+LaTeX Warning: Label `' multiply defined.
+
+)
+\openout1 = `01-Rapport.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 75.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 75.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 75.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/lm/t1lmr.fd
+File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Info: Redefining \microtypecontext on input line 75.
+Package microtype Info: Generating PDF output.
+Package microtype Info: Character protrusion enabled (level 2).
+Package microtype Info: Using protrusion set `basicmath'.
+Package microtype Info: Automatic font expansion enabled (level 2),
+(microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
+Package microtype Info: Using default expansion set `basictext'.
+Package microtype Info: No adjustment of tracking.
+Package microtype Info: No adjustment of interword spacing.
+Package microtype Info: No adjustment of character kerning.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/microtype/mt-cmr.cfg
+File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
+(RS)
+) (/usr/local/texlive/2017/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count120
+\scratchdimen=\dimen140
+\scratchbox=\box28
+\nofMPsegments=\count121
+\nofMParguments=\count122
+\everyMPshowfont=\toks25
+\MPscratchCnt=\count123
+\MPscratchDim=\dimen141
+\MPnumerator=\count124
+\makeMPintoPDFobject=\count125
+\everyMPtoPDFconversion=\toks26
+) (/usr/local/texlive/2017/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+(/usr/local/texlive/2017/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+\AtBeginShipoutBox=\box29
+Package hyperref Info: Link coloring ON on input line 75.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
+(/usr/local/texlive/2017/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
+)
+\c@section@level=\count126
+)
+LaTeX Info: Redefining \ref on input line 75.
+LaTeX Info: Redefining \pageref on input line 75.
+LaTeX Info: Redefining \nameref on input line 75.
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=469.75502pt
+* \textheight=650.43001pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+[1
+
+{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./01-R
+apport.toc
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 3.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/lm/ot1lmr.fd
+File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 3.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omllmm.fd
+File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 3.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omslmsy.fd
+File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 3.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omxlmex.fd
+File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 3.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 3.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 3.
+LaTeX Font Info:    Try loading font information for U+msa on input line 3.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+) (/usr/local/texlive/2017/texmf-dist/tex/latex/microtype/mt-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 3.
+(/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (/usr/local/texlive/2017/texmf-dist/tex/latex/microtype/mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+))
+\tf@toc=\write3
+\openout3 = `01-Rapport.toc'.
+
+[2] [3] [4]
+<01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf, id=55, 352.31625pt x 
+213.79875pt>
+File: 01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf Graphic file (typ
+e pdf)
+<use 01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_vehicl_region-1.pd
+f used on input line 340.
+(pdftex.def)             Requested size: 352.31538pt x 213.79822pt.
+[5]
+<01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf, id=63, 351.3125pt 
+x 213.79875pt>
+File: 01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf Graphic file (
+type pdf)
+<use 01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_prem_freqperyear-1
+.pdf used on input line 359.
+(pdftex.def)             Requested size: 351.31163pt x 213.79822pt.
+
+<01-Rapport_files/figure-latex/graph_polholder_age-1.pdf, id=65, 351.3125pt x 2
+14.8025pt>
+File: 01-Rapport_files/figure-latex/graph_polholder_age-1.pdf Graphic file (typ
+e pdf)
+<use 01-Rapport_files/figure-latex/graph_polholder_age-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_polholder_age-1.pd
+f used on input line 436.
+(pdftex.def)             Requested size: 351.31699pt x 214.80524pt.
+[6 <./01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf>]
+<01-Rapport_files/figure-latex/graph_policy_age-1.pdf, id=82, 351.3125pt x 214.
+8025pt>
+File: 01-Rapport_files/figure-latex/graph_policy_age-1.pdf Graphic file (type p
+df)
+<use 01-Rapport_files/figure-latex/graph_policy_age-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_policy_age-1.pdf u
+sed on input line 459.
+(pdftex.def)             Requested size: 351.31699pt x 214.80524pt.
+
+<01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf, id=84, 351.3125pt
+ x 214.8025pt>
+File: 01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf Graphic file 
+(type pdf)
+<use 01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_policy_nbcontract-
+1.pdf used on input line 475.
+(pdftex.def)             Requested size: 351.31699pt x 214.80524pt.
+[7 <./01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf>] [8 <./01-Rap
+port_files/figure-latex/graph_polholder_age-1.pdf> <./01-Rapport_files/figure-l
+atex/graph_policy_age-1.pdf>]
+
+LaTeX Warning: Reference `tbl:summaryPrimes' on page 9 undefined on input line 
+488.
+
+
+<01-Rapport_files/figure-latex/graph_age-1.pdf, id=121, 351.3125pt x 213.79875p
+t>
+File: 01-Rapport_files/figure-latex/graph_age-1.pdf Graphic file (type pdf)
+<use 01-Rapport_files/figure-latex/graph_age-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_age-1.pdf used on 
+input line 525.
+(pdftex.def)             Requested size: 351.31163pt x 213.79822pt.
+[9 <./01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf>]
+<01-Rapport_files/figure-latex/MissingPattern-1.pdf, id=135, 417.56pt x 181.678
+76pt>
+File: 01-Rapport_files/figure-latex/MissingPattern-1.pdf Graphic file (type pdf
+)
+<use 01-Rapport_files/figure-latex/MissingPattern-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/MissingPattern-1.pdf use
+d on input line 562.
+(pdftex.def)             Requested size: 417.5717pt x 181.68384pt.
+[10 <./01-Rapport_files/figure-latex/graph_age-1.pdf> <./01-Rapport_files/figur
+e-latex/MissingPattern-1.pdf>]
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 581.
+
+(/usr/local/texlive/2017/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [11]
+<01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf, id=167, 463.7325pt x 313.
+17pt>
+File: 01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (type pd
+f)
+<use 01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf us
+ed on input line 673.
+(pdftex.def)             Requested size: 463.73842pt x 313.174pt.
+[12 <./01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf>]
+<01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf, id=180, 461.725pt x 308.1
+5125pt>
+File: 01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pd
+f)
+<use 01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf us
+ed on input line 703.
+(pdftex.def)             Requested size: 461.72388pt x 308.15048pt.
+[13 <./01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf>]
+<01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf, id=193, 453.695pt x 315.1
+775pt>
+File: 01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (type pd
+f)
+<use 01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf>
+Package pdftex.def Info: 01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf us
+ed on input line 728.
+(pdftex.def)             Requested size: 453.6939pt x 315.17673pt.
+
+Overfull \hbox (264.37657pt too wide) in paragraph at lines 727--729
+[]\T1/lmr/m/n/10 (-20) Voici le graphique obtenu pour le par-ti-tion-nement en 
+$\OML/lmm/m/it/10 k$ \T1/lmr/m/n/10 (-20) moyennes : [] 
+ []
+
+[14 <./01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf>] [15] [16]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 755.
+[17]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 755.
+(./01-Rapport.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 755.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 755.
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 755.
+ ) 
+Here is how much of TeX's memory you used:
+ 13175 strings out of 492995
+ 191727 string characters out of 6132704
+ 297761 words of memory out of 5000000
+ 16402 multiletter control sequences out of 15000+600000
+ 48882 words of font info for 83 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 34i,10n,38p,484b,372s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
+texlive/2017/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2017/t
+exmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}</usr/local/texlive/2017/texmf-dist/
+fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type
+1/public/lm/lmbx12.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/l
+m/lmmi10.pfb></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmr10.pf
+b></usr/local/texlive/2017/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/loca
+l/texlive/2017/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/
+2017/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on 01-Rapport.pdf (17 pages, 1311282 bytes).
+PDF statistics:
+ 301 PDF objects out of 1000 (max. 8388607)
+ 242 compressed objects within 3 object streams
+ 59 named destinations out of 1000 (max. 500000)
+ 8339 words of extra memory for PDF output out of 10000 (max. 10000000)
+

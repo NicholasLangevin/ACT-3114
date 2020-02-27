@@ -1,12 +1,11 @@
 ---
-header-includes: \usepackage[french]{babel} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
-  linkcolor=blue, filecolor=magenta, urlcolor=cyan, }
+header-includes: \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
+  linkcolor=blue, filecolor=magenta, urlcolor=cyan}
 output:
   pdf_document: default
   html_document:
     df_print: paged
 ---
-
 \newpage
 \begin{flushright}
     \textbf{Équipe 8}
@@ -36,6 +35,7 @@ output:
     Université Laval \\
     27 février 2020
 \end{center}
+
 
 \newpage
 
@@ -90,12 +90,9 @@ data[data$vehicl_powerkw %in% c("150 kW","175 kW","200 kW","225 kW","250 kW","27
 data <- droplevels(data)
 data$vehicl_powerkw <- factor(data$vehicl_powerkw, order = TRUE, levels = c("25-50 kW", "75 kW", "100 kW", "125-300 kW"))
 table(data$vehicl_powerkw)
-
-data
 ```
 
 ```{R, FonctionPrintTable, echo = FALSE, include = FALSE, warning = FALSE}
-
 print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1), digits=3, ...){
   print(xtable(dat, digits = digits,
              caption=caption,
@@ -112,6 +109,7 @@ print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1),
 
 Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement d'une police d'assurance, représenté par la variable "lapse" dans ce cas-ci, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. On pourra distincguer les statuts de renouvellement comme étant affiché à annulé("Cancellation") ou à renouvellement ("Renew") selon le cas approprié. 
 Ce jeu de données est intéressant du fait qu'il permettera au fur de l'analyse de nous indiquer les variables types ayant un impact sur la décision de renouvellement de police des assurés d'une compagnie d'assurance X. En plus d'être un problème de nature actuarielle, le jeu de données choisi pourra nous permettre d'entammer une ouverture des réflexions possibles lorsque nous aurons à travailler dans une compagnie d'assurance. Étant trois personnes intéressés par l'assurance de dommages, ce problème nous semblait des plus appropriés et intéressant face à nos intérêts communs. Le nombre d'observations est également intéressant car il nous permettera de porter des conclusions précise avec assez de crédibilité sans toutefois être avoir à travailler avec un jeu de données inutilement trop volumineux. De plus, chaque variable explicative semble à prime à bord intéressante pour l'analyse et assez pertinente, ce que nous pourrons découvrir dans l'élaboration de ce travail pratique.
+
 
 \newpage
 ```{r setup, include=FALSE}
