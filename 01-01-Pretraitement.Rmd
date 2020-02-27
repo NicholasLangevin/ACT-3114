@@ -1,5 +1,5 @@
 ---
-header-includes: \usepackage[french]{babel} \usepackage{hyperref} \hypersetup{ colorlinks=true,
+header-includes: \usepackage[french]{babel} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan, }
 output:
   pdf_document: default
@@ -42,6 +42,7 @@ output:
 \tableofcontents
 ```{R, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
 library(CASdatasets)
+library(knitr)
 library(tidyverse)
 library(mice)
 library(xtable)
@@ -75,6 +76,9 @@ data[data$policy_caruse == "unknown", ]$policy_caruse <- NA
 
 # Reordonnement de la variable prem_freqperyear en facteur ordonnée (ordinal)
 data$prem_freqperyear <- factor(data$prem_freqperyear, order = TRUE, levels = c("1 per year", "2 per year", "4 per year", "12 per year"))
+
+# Regions
+data$vehicl_region <- factor(data$vehicl_region, order = TRUE, levels = c("Reg1", "Reg2", "Reg3", "Reg4", "Reg5", "Reg6", "Reg7", "Reg8", "Reg9", "Reg10", "Reg11", "Reg12", "Reg13", "Reg14"))
 
 # Creation d un nouvelle variable prem_index=prem_final/prem_last
 data$prem_index <- data$prem_final / data$prem_last - 1
@@ -116,36 +120,153 @@ knitr::opts_chunk$set(echo = TRUE)
 # Analyse exploratoire des données
 
 ## Variable réponse
-La variable lapse indique si l'assuré à renouveller ou non sa police lors du renouvellement. Il s'agit de la variable exogène. Initialement, le choix du client était indiqué par une variable binaire. Si le client désirait résigner sa police lapse prenait la valeur 1, autrement elle prenait la valeur 0. À des fins de simplification et pour que la visualisation en soit augmentée pour la suite, nous avons converti la variable en variable catégorielle à deux niveau. La variable prendra maintenant la valeur **`r levels(data$lapse)[1]`** si le client résigne sa police et de **`r levels(data$lapse)[2]`** s'il la renouvelle.
+La variable lapse indique si l'assuré à renouveller ou non sa police lors du renouvellement. Il s'agit de la variable exogène. Initialement, le choix du client était indiqué par une variable binaire. Si le client désirait résigner sa police lapse prenait la valeur 1, autrement elle prenait la valeur 0. À des fins de simplification et pour que la visualisation en soit amiliorée pour la suite, nous avons converti la variable en variable catégorielle à deux niveaux. La variable prendra maintenant la valeur **`r levels(data$lapse)[2]`** si le client résigne sa police et de **`r levels(data$lapse)[1]`** s'il la renouvelle.
 
 On constate qu'il y a `r nrow(data)` clients qui ont renouvelé alors qu'il y en a `r nrow(data[data$lapse == "renouvellement", ])` qui ont renouveller leur police d'assurance, se qui représente une proportion de `r round(nrow(data[data$lapse == "renouvellement",])/nrow(data)*100, 2)`%. La variable réponse n'est donc pas symétrique et il sera important d'en tenir compte lors de la modélisation. Pour mieux comprendre la cause de leur résignation et ainsi arriver à modéliser la variable de renouvellement de police, il sera nécessaire de faire l'analyse de variables explicatives contenus dans ce jeu de données. 
 
 ## Variables catégorielle
 
 La variable **polholder_diffdriver** représente la différence de statut qui pourrait avoir entre le propriétaire de la police et le conducteur principale.
-FAIRE UN PETIT RÉSUMÉ DU NOMBRE D'OBS DANS CHAQUE CATEGORIE. (TABLEAU) 
 
-La variable **polholder_gender** représente le sexe du propriétaire de la police. Voici la répartition du sexe du propriétaire de la police d'assurance.
-ÉCRIRE LE NOMBRE PAR CATEGORIE (%)
+```{r tabl_statut, echo=FALSE, results='asis', fig.cap="\\label{tbl:statutdiff}Différence de statut"}
+l1 <- c(summary(data$polholder_diffdriver)[c("all drivers > 24")])
 
-La variable décrivant le travail du propriétaire du contrat est nommé **polholder_job**. Deux valeurs sont possibles soit "medical" soit "normal". 
-ÉCRIRE EN POURCENTAGE (%)
+l2 <- c(summary(data$polholder_diffdriver)[c("commercial")])
 
-**policy_caruse** représentant les fins d'utilisation du véhicule. ÉCRIRE EN %    
+l3 <- c(summary(data$polholder_diffdriver)[c("learner 17")])
+
+l4 <- c(summary(data$polholder_diffdriver)[c("only partner")])
+
+l5 <- c(summary(data$polholder_diffdriver)[c("same")])
+
+l6 <- c(summary(data$polholder_diffdriver)[c("young drivers")])
+
+l7 <- c(summary(data$polholder_diffdriver)[c("NA's")])
+
+ligne_name <- c("Conducteurs agée de 24+","Commerciale","Conducteur apprenti de 17 ans","Partenaire de couple", "Utilisateur seul", "Jeunes utilisateurs", "Données manquantes")
+tableau_statut <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7))
+
+dat_frame_tab <- as.data.frame(tableau_statut)
+
+colnames(dat_frame_tab) <- c("Statut", "Nombre d'observation")
+
+print.tables(dat_frame_tab, hline.after=c(-1,0,7), digits=2, align = c("l", "l", "c"))
+```
+
+On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l,assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicules est partagé par de jeunes conducteurs alors qu'il y a `r summary(data$polholder_diffdriver)[c("all drivers > 24")]`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noté qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
+
+
+La variable **polholder_gender** représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
+
+
+```{r tabl_sexe, echo=FALSE, results='asis', fig.cap="\\label{tbl:sexeass}Sexe des assures"}
+p1 <- c(round(summary(data$polholder_gender)[c("Male")]/nrow(data)*100, 2))
+
+p2 <- c(round(summary(data$polholder_gender)[c("Female")]/nrow(data)*100, 2))
+
+ligne_name <- c("Homme", "Femme")
+tableau_sexe <- cbind(ligne_name ,rbind(p1 , p2))
+
+dat_frame_tab2 <- as.data.frame(tableau_sexe)
+
+colnames(dat_frame_tab2) <- c("Sexe", "\\%")
+
+print.tables(dat_frame_tab2, hline.after=c(-1,0,2), digits=2)
+```
+
+On voit qu'il y a quand même significativement plus d'homme ayant une police d'assurance chez l'assureur que de femme. Possiblement pour la raison que les hommes conduise davantage une voiture.
+
+La variable décrivant le travail du propriétaire du contrat est nommé **polholder_job**. Deux valeurs sont possibles soit "medical" soit "normal". On constate que `r round((summary(data$polholder_job)[c("medical")])/nrow(data)*100, 2)`% des assurés on un travail de type médical alors qu'il y en a `r round((summary(data$polholder_job)[c("normal")])/nrow(data)*100, 2)`% qui ont un autre type d'emploi.
+
+La variable **policy_caruse** représente les fins d'utilisation du véhicule. 
+
+```{r tabl_caruse, echo=FALSE, results='asis', fig.cap="\\label{tbl:caruse}Usage du vehicule"}
+l1 <- c(summary(data$policy_caruse)[c("commercial")])
+
+l2 <- c(summary(data$policy_caruse)[c("private or freelance work")])
+
+l3 <- c(summary(data$policy_caruse)[c("NA's")])
+
+
+ligne_name <- c("Commerciale","Privé ou aller travailler","Données manquantes")
+tableau_caruse <- cbind(ligne_name ,rbind(l1 , l2, l3))
+
+dat_frame_tab3 <- as.data.frame(tableau_caruse)
+
+colnames(dat_frame_tab3) <- c("Usage", "Nombre d'observation")
+
+print.tables(dat_frame_tab3, hline.after=c(-1,0,3), digits=2, align = c("l", "l", "c"))
+```
 
 On constate qu'il y a un nombre considérable de données manquantes et très peu de véhicule pour un usage commerciale.
 
 De sont côté, **vehicl_garage** décrit le type de stationnement de la voiture. Voici la répartition des types de stationnement.
 
-On voit que les moyens de stationnement les plus populaire sont le garage privé et la rue.
+```{r tabl_garage, echo=FALSE, results='asis', fig.cap="\\label{tbl:garage}Type de stationnement"}
+l1 <- c(summary(data$vehicl_garage)[c("carport")])
 
-**TODO:** polholder_BMCevol \\
-**TODO:** vehicl_region
+l2 <- c(summary(data$vehicl_garage)[c("parking deck")])
 
+l3 <- c(summary(data$vehicl_garage)[c("private estate")])
+
+l4 <- c(summary(data$vehicl_garage)[c("private garage")])
+
+l5 <- c(summary(data$vehicl_garage)[c("street")])
+
+l6 <- c(summary(data$vehicl_garage)[c("underground garage")])
+
+l7 <- c(summary(data$vehicl_garage)[c("other")])
+
+l8 <- c(summary(data$vehicl_garage)[c("NA's")])
+
+ligne_name <- c("Sous un abri d'auto", "Terrase de stationnement", "Stationnement privé", "Garage", "Rue", "Garage sous-terrain", "Autre", "Données manquantes")
+tableau_garage <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7, l8))
+
+dat_frame_tab4 <- as.data.frame(tableau_garage)
+
+colnames(dat_frame_tab4) <- c("Moyen de stationnement", "Nombre d'observation")
+
+print.tables(dat_frame_tab4, hline.after=c(-1,0,8), digits=2, align = c("l", "l", "c"))
+```
+
+On voit que pour les moyens de stationnement les plus populaire sont le garage privé et la rue. Il y a des données manquantes, elles seront traitées plus loin dans le rapport.
+
+La variable polholder_BMCevol indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payé lors du dernier renouvellement. Elle prend donc 3 valeurs possibles. 
+
+
+```{r tabl_BM, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
+l1 <- c(summary(data$polholder_BMCevol)[c("up")])
+
+l2 <- c(summary(data$polholder_BMCevol)[c("stable")])
+
+l3 <- c(summary(data$polholder_BMCevol)[c("down")])
+
+ligne_name <- c("Hausse", "Inchangée", "Baisse")
+tableau_BM <- cbind(ligne_name ,rbind(l1 , l2, l3))
+
+dat_frame_tab5 <- as.data.frame(tableau_BM)
+
+colnames(dat_frame_tab5) <- c("Prime de renouvellement", "Nombre d'observation")
+
+print.tables(dat_frame_tab5, hline.after=c(-1,0,3), digits=2, align = c("l", "l", "c"))
+```
+
+On constate que la plupart des contrats ont été inchangé ou ont connu des baisses au niveau des primes. (C'est un résultat étonnant, faudrait commenter la -dessus ???) 
+
+La variable vehicl_region représente une région de l'union européenne. Il y a 14 régions, elles sont numérotés mais nous savons pas à quel emplacement géographique cela correspond. Voici un diagramme pour visualiser comment les contrats sont dsipersées dans chacune des régions.
+
+```{r graph_vehicl_region, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:vehiclregion}Distribution des régions des détenteurs de police, représenté par la variable \\textbf{polholder\\_age}"}
+ggplot(data, aes(x = vehicl_region))+
+  geom_bar() +
+  labs(x = "Région", y = "Fréquence") + 
+  theme_bw() + theme(axis.text.x = element_text(angle = 20))
+```
+
+Les assurés sont répartis dans toutes les régions on note toutefois que la région 4 est la région pour laquelle il y a le plus d'assurés.
 
 
 ## Variable ordinal
-Variable catégorielle ordinale **prem_freqperyear** représentant la fréquence par année à laquelle la prime est payable. Les fréquence possible est mensuelle, trimestrielle, semestrielle ou annuelle.
+La variable catégorielle ordinale **prem_freqperyear** représente la fréquence par année à laquelle la prime est payable. Les fréquence possible est mensuelle, trimestrielle, semestrielle ou annuelle.
 
 ```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:freqperyearAndvehiclGarage}todo"}
 ggplot.premfreqperyear <- ggplot(data, aes(x = prem_freqperyear))+
@@ -159,7 +280,45 @@ grid.arrange(ggplot.premfreqperyear, ggplot.vehicl_garage,  ncol=2)
 ```
 On voit qu'un peu moins de la moitié des clients paient la prime en un seul versement, environ un quart des clients paient trimestriellement, et le dernier quart est partagé par la prime payable semestriellement et mensuellement.
 
-**vehicl_powerkw ICI**
+
+La variable **vehicl_powerkw** représente la puissance du moteur de la voiture conduit exprimé en chevaux moteurs. Initialement, cette variable contient 11 niveaux possibles. Cependant, en regardant les niveaux, nous avons constaté que les données pour cette variable n'ont pas été collectées uniformément puisque certaines catégories sont comprises dans une autre catégorie. Un des niveaux correspond aux véhicules d'une puissance se situant entre 125 et 300. Il y a aussi des groupes pour lequels la puissance se trouve entre l'interval du groupe présenté précédement, certains avec très peu d'observations d'autres avec un peu plus d'observations. Or, puisqu'on ne sait pas la puissance des voitures se trouvant dans le groupe de puissance 125-300 et que celui-ci comprend un grand nombre d'observation nous avons opté pour l'option d'ajouter les groupes pour lesquels leur puissance se situait entre 125 et 300 chevaux. Pour facilité la représentation du traitement effectué sur la variable **vehicl_powerkw** voici un tableau de fréquence avant traitement et tableau après traitement.
+
+
+```{r tabl_powerkw, echo=FALSE, results='asis', fig.cap="\\label{tbl:powerkw}Tableaux de fréquence des catégories de puissance de moteur"}
+
+c1_avant <- levels(data.init$vehicl_powerkw)
+c2_avant <- unname(summary(data.init$vehicl_powerkw))
+
+c1_apres <- levels(data$vehicl_powerkw)
+c2_apres <- unname(summary(data$vehicl_powerkw))
+
+tableau_powerkw_avant <- cbind(c1_avant, c2_avant)
+tableau_powerkw_apres <- cbind(c1_apres, c2_apres)
+
+tab_avant <- as.data.frame(tableau_powerkw_avant)
+tab_apres <- as.data.frame(tableau_powerkw_apres)
+
+colnames(tab_avant) <- c("Puissance", "Nombre d'observation")
+colnames(tab_apres) <- c("Puissance", "Nombre d'observation")
+
+t1 <- kable(tab_avant, format = "latex", align = c("c", "r"), booktabs = TRUE)
+t2 <- kable(tab_apres, format = "latex", align = c("c", "r"),  booktabs = TRUE)
+
+cat(c("\\begin{table}[!htb]
+    \\begin{minipage}{.5\\linewidth}
+      \\caption{}
+      \\centering",
+        t1,
+    "\\end{minipage}%
+    \\begin{minipage}{.5\\linewidth}
+      \\centering
+        \\caption{}",
+        t2,
+    "\\end{minipage} 
+\\end{table}"
+))  
+```
+
 
 ## Variable numérique
 La variable **polholder_age** est une variable numérique discrète représentant l'âge du propriétaire de la police d'assurance. La \autoref{fig:polholderAge} représente la distribution de âges des assurés.
@@ -167,7 +326,7 @@ La variable **polholder_age** est une variable numérique discrète représentan
 ggplot(data, aes(x = polholder_age))+
   geom_bar() +
   labs(x = "Âge du détenteur de police", y = "Fréquence") + 
-  theme_bw()  
+  theme_bw() + facet_grid(~polholder_gender)
 ```
 L'âge minimal parmis les assuré est de 19 ans et l'âge maximal est de 85 ans. On constate qu'il y a une forte proportion d'assuré entre 30 et 45 ans. Il pourra être pertinent d'analyser si les assurés de plus de 45 ans sont présent en moins grand nombre dû au fait que les primes sont trop élevé et font d'avantage d'appel pour comparer les primes ailleurs ce qui les mènent vers la résignation. 
 
