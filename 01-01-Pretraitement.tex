@@ -1,5 +1,4 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
 \PassOptionsToPackage{hyphens}{url}
 %
 \documentclass[
@@ -10,13 +9,13 @@
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% Use upquote if available, for straight quotes in verbatim environments
+% use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \IfFileExists{microtype.sty}{% use microtype if available
   \usepackage[]{microtype}
@@ -36,9 +35,9 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
+  pdfborder={0 0 0},
+  breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -49,14 +48,25 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-% Set default figure placement to htbp
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-2}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
 \makeatother
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
 \usepackage[french]{babel} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan, }
 
 \author{}
@@ -532,101 +542,6 @@ véhicules de plus de 18 ans.
 \hypertarget{traitement-des-valeurs-manquantes}{%
 \section{Traitement des valeurs
 manquantes}\label{traitement-des-valeurs-manquantes}}
-
-La base de données contenait seulement trois variables avec des valeurs
-manquante. La variable indiquant la difference d'âge entre le détenteur
-de police et le conducteur est manquante à 0.05\%, celle indiquant
-l'utilité du vehicule est manquante à 15.1\% et la variable indiquant le
-type de garage où est entreposé le vehicule est manquante à 6.83\%. La
-\autoref{fig:missingPatern} montre le patron de non réponse. On remarque
-que la variable \emph{polholder\_diffdriver} semble avoir un patron de
-non réponse monotone avec les deux autres. Par contre, puisqu'il y a
-seulement 12 cas, nous allons pas tenir compte de ce lien lors de
-l'imputation des données. Pour ce qui est des variables
-\emph{policy\_caruse} et \emph{vehicl\_garage}, on remarque qu'il sont
-parfois manquante en même temps, mais seulement pour une minorité de
-cas.
-
-\begin{figure}
-
-{\centering \includegraphics{01-01-Pretraitement_files/figure-latex/MissingPattern-1} 
-
-}
-
-\caption{\label{fig:missingPatern}todo}\label{fig:MissingPattern}
-\end{figure}
-
-Premièrement, dans le but déterminer si le données manquantes sont MCAR,
-le test d'hypothese suivant à été effectué \begin{align*}
-  H_0:&\: \text{Le données sont MCAR} \\
-  H_1:&\: \text{Le données ne sont pas MCAR}
-\end{align*} Pour conclure que les données sont MCAR, il est nécéssaire
-d'accepter \(H_0\) pour toutes les variables. Par contre, un seul refus
-de cette hypothèse sera néséssaire permetra de conclure l'hypothèse
-alternative, c'est a dire que les données ne sont pas MCAR. Pour
-effectuer le test avec une variable catégorielle, il sera nécéssaire
-d'utilisé une statistique khi-carré alors que pour une variable
-numérique, une statistique student sera utilisée.
-
-\begin{verbatim}
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-
-## Warning in chisq.test(data[[var.data]], is.na(data[[na_var.data]]), correct =
-## FALSE): Chi-squared approximation may be incorrect
-\end{verbatim}
-
-En ce qui concerne les variables \emph{vehicl\_garage} et
-\emph{policy\_caruse}, plusieurs statistiques observé permette de rejeté
-l'hypothèse null en faveur de l'hypothèse alternative à un niveau
-significatif de \(0.001%
-\). Par contre, dans le cas de \emph{polholder\_diffdriver}, seulement
-la variables \emph{polholder\_job} permet de rejeter \(H_0\), c'est à
-dire que les données manquantes sont complètement aléatoirement
-
-Il est à noter qu'il n'est pas possible de vérifier avec certitude si
-les données sont MAR ou NMAR. Cela est dû au fait que puisque les
-données proviennent d'un compagnie inconnue, nous n'avons pas
-d'information sur la méthode de récolte de données et il nous est
-impossible de trouver des patrons qui pourraient provoquer des données
-de type NMAR. En conséquence, nous considérerons que nos données sont
-MAR. De ce sens, en effectuant des tests khi-carré pour la variable
-\emph{polholder\_diffdriver}, il a été remarqué que l'information sur la
-différence entre le détenteur de police et le conducteur nous indique
-que les variables sont toujours manquantes dans le cas ou le travail du
-détenteur de la police est dans le domaine de la médecine. Ceci renforce
-l'idée que le patrons de non réponse pour cette variable dépend des
-variables observés dans le jeux de données.
-
-Pour l'imputation des données, la méthode d'imputation multiples à été
-choisie. Pour des restrictions de temps de calcul, cinq itérations de
-régression stochastique ont été fait. Pour la variable
-\emph{policy\_caruse}, une régression logistique a été effectué puisque
-la variable catégorielle comporte deux niveaux. Pour les variables
-\emph{vehicl\_garage} et \emph{polholder\_diffdriver}, qui sont des
-variables catégorielles non-ordonées, une régression polynomiale a été
-utilisée.
 
 \newpage
 
