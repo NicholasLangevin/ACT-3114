@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2020.2.26)  27 FEB 2020 21:45
 =======
 This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  27 FEB 2020 20:28
 >>>>>>> biblio
+=======
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  27 FEB 2020 21:38
+>>>>>>> table
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -828,23 +832,7 @@ Package: booktabs 2016/04/27 v1.618033 publication quality tables
 \@thisrulewidth=\dimen139
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 70.
-(./01-Rapport.aux
-
-LaTeX Warning: Label `' multiply defined.
-
-
-LaTeX Warning: Label `' multiply defined.
-
-
-LaTeX Warning: Label `' multiply defined.
-
-
-LaTeX Warning: Label `' multiply defined.
-
-
-LaTeX Warning: Label `' multiply defined.
-
-)
+No file 01-Rapport.aux.
 \openout1 = `01-Rapport.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 75.
@@ -962,52 +950,56 @@ LaTeX Info: Redefining \nameref on input line 75.
 
 [1
 
-{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./01-R
-apport.toc
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 3.
+{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+\tf@toc=\write3
+\openout3 = `01-Rapport.toc'.
+
+[2] [3]
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 181.
+
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 3.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 181.
+
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 3.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 181
+.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 3.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 181
+.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 3.
+(Font)              <10> on input line 181.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 3.
+(Font)              <7> on input line 181.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 3.
-LaTeX Font Info:    Try loading font information for U+msa on input line 3.
+(Font)              <5> on input line 181.
+LaTeX Font Info:    Try loading font information for U+msa on input line 181.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2017/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 3.
+LaTeX Font Info:    Try loading font information for U+msb on input line 181.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (/usr/local/texlive/2017/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
-))
-\tf@toc=\write3
-\openout3 = `01-Rapport.toc'.
-
-[2] [3] [4]
-<01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf, id=57, 352.31625pt x 
+) [4]
+<01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf, id=35, 352.31625pt x 
 213.79875pt>
 File: 01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf Graphic file (typ
 e pdf)
 <use 01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_vehicl_region-1.pd
+<<<<<<< HEAD
 <<<<<<< HEAD
 f  used on input line 306.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
@@ -1021,10 +1013,18 @@ f used on input line 321.
 <01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf, id=58, 351.3125pt 
 x 213.79875pt>
 >>>>>>> biblio
+=======
+f used on input line 317.
+(pdftex.def)             Requested size: 352.31538pt x 213.79822pt.
+[5]
+<01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf, id=45, 351.3125pt 
+x 213.79875pt>
+>>>>>>> table
 File: 01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf Graphic file (
 type pdf)
 <use 01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_prem_freqperyear-1
+<<<<<<< HEAD
 <<<<<<< HEAD
 .pdf  used on input line 346.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
@@ -1266,4 +1266,22 @@ PDF statistics:
  67 named destinations out of 1000 (max. 500000)
  8347 words of extra memory for PDF output out of 10000 (max. 10000000)
 >>>>>>> biblio
+=======
+.pdf used on input line 352.
+(pdftex.def)             Requested size: 351.31163pt x 213.79822pt.
+! Missing number, treated as zero.
+<to be read again> 
+                   \protect 
+l.360 ...kslash{}begin\{minipage\}\{.5\linewidth\}
+                                                   
+Here is how much of TeX's memory you used:
+ 12974 strings out of 492995
+ 187583 string characters out of 6132704
+ 295899 words of memory out of 5000000
+ 16288 multiletter control sequences out of 15000+600000
+ 36645 words of font info for 61 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 34i,8n,38p,280b,362s stack positions out of 5000i,500n,10000p,200000b,80000s
+>>>>>>> table
 
+!  ==> Fatal error occurred, no output PDF file produced!

@@ -59,6 +59,7 @@ require(FactoMineR)
 require(factoextra)
 require(plotly)
 library(cluster)
+require(scale)
 ```
 
 ```{R, TraitementDesDonnees, echo = FALSE, include = FALSE, warning = FALSE}
@@ -111,7 +112,7 @@ print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1),
 
 # Introduction
 
-Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement de polices d'assurance, représenté par la variable "lapse" dans ce cas-ci, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. On pourra distinguer les statuts de renouvellement comme étant affiché à résigné ("Resignation") ou à renouvellement ("Renew") selon le cas approprié. 
+Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement de polices d'assurance, représenté par la variable "lapse" dans ce cas-ci, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. On pourra distinguer les statuts de renouvellement comme étant affiché à résigné ("Resignation"") ou à renouvellement ("Renouvellement") selon le cas approprié. 
 Ce jeu de données est intéressant du fait qu'il permettera au fur de l'analyse de nous indiquer les variables types ayant un impact sur la décision de renouvellement de police des assurés d'une compagnie d'assurance X. En plus d'être un problème de nature actuarielle, le jeu de données choisi pourra nous permettre d'entammer une ouverture des réflexions possibles lorsque nous aurons à travailler dans une compagnie d'assurance. Étant trois personnes intéressés par l'assurance de dommages, ce problème nous semblait des plus appropriés et intéressant face à nos intérêts communs. Le nombre d'observations est également intéressant car il nous permettera de porter des conclusions précise avec assez de crédibilité sans toutefois être avoir à travailler avec un jeu de données inutilement trop volumineux. De plus, chaque variable explicative semble à prime à bord intéressante pour l'analyse et assez pertinente, ce que nous pourrons découvrir dans l'élaboration de ce travail pratique.
 
 
@@ -132,7 +133,7 @@ On constate qu'il y a `r nrow(data)` clients dont `r nrow(data[data$lapse == "re
 
 Cette variable représente la différence de statut qui pourrait avoir entre le propriétaire de la police et le conducteur principal.
 
-```{r tabl_statut, echo=FALSE, results='asis', fig.cap="\\label{tbl:statutdiff}Différence de statut"}
+```{r tabl_statut, echo=FALSE, results='asis'}
 l1 <- c(summary(data$polholder_diffdriver)[c("all drivers > 24")])
 
 l2 <- c(summary(data$polholder_diffdriver)[c("commercial")])
@@ -148,13 +149,16 @@ l6 <- c(summary(data$polholder_diffdriver)[c("young drivers")])
 l7 <- c(summary(data$polholder_diffdriver)[c("NA's")])
 
 ligne_name <- c("Conducteurs agée de 24+","Commerciale","Conducteur apprenti de 17 ans","Partenaire de couple", "Utilisateur seul", "Jeunes utilisateurs", "Données manquantes")
-tableau_statut <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7))
+dist <- round(as.vector(rbind(l1 , l2, l3, l4, l5, l6, l7)/nrow(data)), 4)
+
+tableau_statut <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7), scales::percent(dist, suffix =" \\%", accuracy = 0.01))
 
 dat_frame_tab <- as.data.frame(tableau_statut)
 
-colnames(dat_frame_tab) <- c("Statut", "Nombre d'observation")
+colnames(dat_frame_tab) <- c("Statut", "Nombre d'observation", "Distribution")
 
-print.tables(dat_frame_tab, hline.after=c(-1,0,7), digits=2, align = c("l", "l", "c"))
+print.tables(dat_frame_tab, hline.after=c(-1,0,7), digits=2, align = c("l", "l", "c", "r"),
+             caption="Distribution de la différence de statut entre le conducteur et le détenteur de la police", label="tbl:statutdiff")
 ```
 
 On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l,assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicules est partagé par de jeunes conducteurs alors qu'il y a `r summary(data$polholder_diffdriver)[c("all drivers > 24")]`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noté qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
@@ -162,18 +166,22 @@ On constate que la plupart des voitures assurées est utilisée seulement par le
 La variable **polholder_gender** représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
 
 
-```{r tabl_sexe, echo=FALSE, results='asis', fig.cap="\\label{tbl:sexeass}Sexe des assures"}
-p1 <- c(round(summary(data$polholder_gender)[c("Male")]/nrow(data)*100, 2))
-p2 <- c(round(summary(data$polholder_gender)[c("Female")]/nrow(data)*100, 2))
+```{r tabl_sexe, echo=FALSE, results='asis'}
+p1 <- summary(data$polholder_gender)[c("Male")]
+p2 <- summary(data$polholder_gender)[c("Female")]
 
 ligne_name <- c("Homme", "Femme")
-tableau_sexe <- cbind(ligne_name ,rbind(p1 , p2))
+dist <- round(as.vector(rbind(p1, p2)/nrow(data)), 4)
+tableau_sexe <- cbind(ligne_name ,rbind(p1 , p2), scales::percent(dist, suffix =" \\%", accuracy = 0.01))
 
-dat_frame_tab2 <- as.data.frame(tableau_sexe)
+dat_frame_tab <- as.data.frame(tableau_sexe)
 
-colnames(dat_frame_tab2) <- c("Sexe", "\\%")
+colnames(dat_frame_tab) <- c("Sexe", "Nombre d'observation", "Distribution")
 
-print.tables(dat_frame_tab2, hline.after=c(-1,0,2), digits=2)
+print.tables(dat_frame_tab, hline.after=c(-1,0,2), digits=2, 
+             align = c("l", "l", "c", "r"),
+             caption="Distribution du sexe du détenteur de police",
+             label="tbl:polholderGender")
 ```
 
 On voit qu'il y a significativement plus d'homme ayant une police d'assurance chez cet assureur que de femme. 
@@ -189,15 +197,18 @@ l2 <- c(summary(data$policy_caruse)[c("private or freelance work")])
 
 l3 <- c(summary(data$policy_caruse)[c("NA's")])
 
-
+dist <- round(as.vector(rbind(l1, l2, l3)/nrow(data)), 4)
 ligne_name <- c("Commerciale","Privé ou aller travailler","Données manquantes")
-tableau_caruse <- cbind(ligne_name ,rbind(l1 , l2, l3))
+tableau_caruse <- cbind(ligne_name ,rbind(l1 , l2, l3), scales::percent(dist, suffix =" \\%", accuracy = 0.01))
 
 dat_frame_tab3 <- as.data.frame(tableau_caruse)
 
-colnames(dat_frame_tab3) <- c("Usage", "Nombre d'observation")
+colnames(dat_frame_tab3) <- c("Usage", "Nombre d'observation", "Distribution")
 
-print.tables(dat_frame_tab3, hline.after=c(-1,0,3), digits=2, align = c("l", "l", "c"))
+print.tables(dat_frame_tab3, digits=2, 
+             align = c("l", "l", "c", "r"),
+             caption="Distribution de l'utilisation du véhicule",
+             label="tbl:policyCaruse")
 ```
 
 On constate qu'il y a un nombre considérable de données manquantes et très peu de véhicule pour un usage commerciale.
@@ -221,14 +232,18 @@ l7 <- c(summary(data$vehicl_garage)[c("other")])
 
 l8 <- c(summary(data$vehicl_garage)[c("NA's")])
 
+dist <- round(as.vector(rbind(l1, l2, l3, l4, l5, l6, l7, l8)/nrow(data)), 4)
 ligne_name <- c("Sous un abri d'auto", "Terrase de stationnement", "Stationnement privé", "Garage", "Rue", "Garage sous-terrain", "Autre", "Données manquantes")
-tableau_garage <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7, l8))
+tableau_garage <- cbind(ligne_name ,rbind(l1 , l2, l3, l4, l5, l6, l7, l8), scales::percent(dist, suffix =" \\%", accuracy = 0.01))
 
 dat_frame_tab4 <- as.data.frame(tableau_garage)
 
-colnames(dat_frame_tab4) <- c("Moyen de stationnement", "Nombre d'observation")
+colnames(dat_frame_tab4) <- c("Moyen de stationnement", "Nombre d'observation", "Distribution")
 
-print.tables(dat_frame_tab4, hline.after=c(-1,0,8), digits=2, align = c("l", "l", "c"))
+print.tables(dat_frame_tab4, digits=2, 
+             align = c("l", "l", "c", "r"),
+             caption="Distribution du type de stationnement",
+             label="tbl:policyGarage")
 ```
 
 On voit que pour les moyens de stationnement les plus populaire sont le garage privé et la rue. Il y a des données manquantes, elles seront traitées plus loin dans le rapport.
@@ -243,14 +258,18 @@ l2 <- c(summary(data$polholder_BMCevol)[c("stable")])
 
 l3 <- c(summary(data$polholder_BMCevol)[c("down")])
 
+dist <- round(as.vector(rbind(l1, l2, l3)/nrow(data)), 4)
 ligne_name <- c("Hausse", "Inchangée", "Baisse")
-tableau_BM <- cbind(ligne_name ,rbind(l1 , l2, l3))
+tableau_BM <- cbind(ligne_name ,rbind(l1 , l2, l3), scales::percent(dist, suffix =" \\%", accuracy = 0.01))
 
 dat_frame_tab5 <- as.data.frame(tableau_BM)
 
-colnames(dat_frame_tab5) <- c("Prime de renouvellement", "Nombre d'observation")
+colnames(dat_frame_tab5) <- c("Prime de renouvellement", "Nombre d'observation", "Distribution")
 
-print.tables(dat_frame_tab5, hline.after=c(-1,0,3), digits=2, align = c("l", "l", "c"))
+print.tables(dat_frame_tab5, digits=2, 
+             align = c("l", "l", "c", "r"),
+             caption="Distribution de l'indice Bonus-Malus",
+             label="tbl:policyBM")
 ```
 
 On constate que la plupart des contrats sont demeurés stables ou ont connus des baisses au niveau des primes.
@@ -275,9 +294,6 @@ On voit qu'un peu moins de la moitié des clients paient la prime en un seul ver
 La variable **vehicl_powerkw** représente la puissance du moteur de la voiture conduit exprimé en chevaux moteurs. Initialement, cette variable contiennait 11 niveaux. Cependant, certains niveaux visait des valeurs fixes tandis que d'autres étaient défini à l'aide d'intervalle. Des doublons de niveaux figuraient par défaut dans la liste dû à certaines intervalles trop englobante. Afin d'uniformiser la mesure de cette variable, nous avons regroupé certains niveaux ensemble, soit tous les niveaux représentant une puissance de 125 à 300 chevaux moteurs. Cette modification a touché peut de cas était nécessaire pour l'obtention d'une interprétation adéquate des données. On peut d'ailleurs observé les proportions de chaque niveau avant et après modification dans les table 6 et 7.
 
 
-TITRE TABLE6 : Distribution de la variable Vehicl_powerkw pour chacune des catégories (avant modification)
-TITRE TABLE7 : Distribution de la variable Vehicl_powerkw pour chacune des catégories (après modification)
-
 ```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:freqperyearAndvehiclGarage}todo"}
 ggplot.premfreqperyear <- ggplot(data, aes(x = prem_freqperyear))+
   geom_bar() + theme_bw() + ggtitle("(1)") + theme(axis.text.x = element_text(angle = 90)) 
@@ -291,34 +307,37 @@ grid.arrange(ggplot.premfreqperyear, ggplot.vehicl_garage,  ncol=2)
 
 
 ```{r tabl_powerkw, echo=FALSE, results='asis', fig.cap="\\label{tbl:powerkw}Tableaux de fréquence des catégories de puissance de moteur"}
-
 c1_avant <- gsub(" kW", "", levels(data.init$vehicl_powerkw))
 c2_avant <- unname(summary(data.init$vehicl_powerkw))
+c3_avant <- round(as.numeric(c2_avant)/nrow(data), 4)
+c3_avant <- scales::percent(c3_avant, suffix =" \\%", accuracy = 0.01)
 
 c1_apres <- gsub(" kW", "", levels(data$vehicl_powerkw))
 c2_apres <- unname(summary(data$vehicl_powerkw))
+c3_apres <- round(as.numeric(c2_apres)/nrow(data), 4)
+c3_apres <- scales::percent(c3_apres, suffix =" \\%", accuracy = 0.01)
 
-tableau_powerkw_avant <- cbind(c1_avant, c2_avant)
-tableau_powerkw_apres <- cbind(c1_apres, c2_apres)
+tableau_powerkw_avant <- cbind(c1_avant, c2_avant, c3_avant)
+tableau_powerkw_apres <- cbind(c1_apres, c2_apres, c3_apres)
 
 tab_avant <- as.data.frame(tableau_powerkw_avant)
 tab_apres <- as.data.frame(tableau_powerkw_apres)
 
-colnames(tab_avant) <- c("Puissance (kW)", "Nombre d'observation")
-colnames(tab_apres) <- c("Puissance (kW)", "Nombre d'observation")
+colnames(tab_avant) <- c("Puissance (kW)", "Nombre d'observation", "Distribution")
+colnames(tab_apres) <- c("Puissance (kW)", "Nombre d'observation", "Distribution")
 
-t1 <- kable(tab_avant, format = "latex", align = c("c", "r"), booktabs = TRUE)
-t2 <- kable(tab_apres, format = "latex", align = c("c", "r"),  booktabs = TRUE)
+t1 <- kable(tab_avant, format = "latex", align = c("c", "c", "r"), booktabs = TRUE)
+t2 <- kable(tab_apres, format = "latex", align = c("c", "c", "r"),  booktabs = TRUE)
 
 cat(c("\\begin{table}[!htb]
     \\begin{minipage}{.5\\linewidth}
-      \\caption{}
+      \\caption{Distribution de la variable Vehicl_powerkw pour chacune des catégories (avant modification)}
       \\centering",
         t1,
     "\\end{minipage}%
     \\begin{minipage}{.5\\linewidth}
       \\centering
-        \\caption{}",
+        \\caption{Distribution de la variable Vehicl_powerkw pour chacune des catégories (après modification)}",
         t2,
     "\\end{minipage} 
 \\end{table}"
@@ -422,9 +441,6 @@ prem_pure <- ggplot(data, aes(y = prem_pure, x = lapse, color = polholder_gender
 
 
 grid.arrange(prem_final, prem_last, prem_market, prem_pure,  ncol=2, nrow = 2)
-
-```
-
 
 \newpage
 
