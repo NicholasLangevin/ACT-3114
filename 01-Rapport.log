@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2020.2.26)  27 FEB 2020 19:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2020.2.26)  27 FEB 2020 20:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -527,78 +527,78 @@ File: 01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf Graphic file (typ
 e pdf)
 <use 01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_vehicl_region-1.pd
-f  used on input line 311.
+f  used on input line 307.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
-<01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf, id=58, 361.35pt x 
+[5]
+<01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf, id=66, 361.35pt x 
 223.83624pt>
 File: 01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf Graphic file (
 type pdf)
 <use 01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_prem_freqperyear-1
-.pdf  used on input line 328.
+.pdf  used on input line 347.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
-[5]
-<01-Rapport_files/figure-latex/graph_polholder_age-1.pdf, id=68, 361.35pt x 223
+[6 <./01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf>]
+<01-Rapport_files/figure-latex/graph_polholder_age-1.pdf, id=80, 361.35pt x 223
 .83624pt>
 File: 01-Rapport_files/figure-latex/graph_polholder_age-1.pdf Graphic file (typ
 e pdf)
 <use 01-Rapport_files/figure-latex/graph_polholder_age-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_polholder_age-1.pd
-f  used on input line 406.
+f  used on input line 405.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
-<01-Rapport_files/figure-latex/graph_policy_age-1.pdf, id=70, 361.35pt x 223.83
+<01-Rapport_files/figure-latex/graph_policy_age-1.pdf, id=82, 361.35pt x 223.83
 624pt>
 File: 01-Rapport_files/figure-latex/graph_policy_age-1.pdf Graphic file (type p
 df)
 <use 01-Rapport_files/figure-latex/graph_policy_age-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_policy_age-1.pdf  
-used on input line 429.
+used on input line 432.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
-[6 <./01-Rapport_files/figure-latex/graph_vehicl_region-1.pdf>] [7 <./01-Rappor
-t_files/figure-latex/graph_prem_freqperyear-1.pdf> <./01-Rapport_files/figure-l
-atex/graph_polholder_age-1.pdf>]
-<01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf, id=101, 361.35pt 
-x 223.83624pt>
+<01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf, id=84, 361.35pt x
+ 223.83624pt>
 File: 01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf Graphic file 
 (type pdf)
 <use 01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_policy_nbcontract-
-1.pdf  used on input line 445.
+1.pdf  used on input line 448.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
 
-LaTeX Warning: Reference `tbl:summaryPrimes' on page 8 undefined on input line 
-458.
+LaTeX Warning: Reference `tbl:summaryPrimes' on page 7 undefined on input line 
+461.
 
-[8 <./01-Rapport_files/figure-latex/graph_policy_age-1.pdf>]
-<01-Rapport_files/figure-latex/graph_age-1.pdf, id=114, 361.35pt x 223.83624pt>
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
+70.
+(c:/texlive/2019/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [7 <./01-Rapport_files/figure-latex/graph_prem_freqperyear-1.pdf>] [8 <./01-R
+apport_files/figure-latex/graph_polholder_age-1.pdf> <./01-Rapport_files/figure
+-latex/graph_policy_age-1.pdf>]
+<01-Rapport_files/figure-latex/graph_age-1.pdf, id=115, 361.35pt x 223.83624pt>
 
 File: 01-Rapport_files/figure-latex/graph_age-1.pdf Graphic file (type pdf)
 <use 01-Rapport_files/figure-latex/graph_age-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/graph_age-1.pdf  used on
- input line 495.
+ input line 504.
 (pdftex.def)             Requested size: 361.34912pt x 223.8357pt.
 [9 <./01-Rapport_files/figure-latex/graph_policy_nbcontract-1.pdf>]
-<01-Rapport_files/figure-latex/MissingPattern-1.pdf, id=127, 469.755pt x 216.81
+<01-Rapport_files/figure-latex/MissingPattern-1.pdf, id=128, 469.755pt x 216.81
 pt>
 File: 01-Rapport_files/figure-latex/MissingPattern-1.pdf Graphic file (type pdf
 )
 <use 01-Rapport_files/figure-latex/MissingPattern-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/MissingPattern-1.pdf  us
-ed on input line 544.
+ed on input line 554.
 (pdftex.def)             Requested size: 469.75386pt x 216.80946pt.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
-63.
-(c:/texlive/2019/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [10 <./01-Rapport_files/figure-latex/graph_age-1.pdf>] [11 <./01-Rapport_file
-s/figure-latex/MissingPattern-1.pdf>] [12]
+[10 <./01-Rapport_files/figure-latex/graph_age-1.pdf>] [11 <./01-Rapport_files/
+figure-latex/MissingPattern-1.pdf>] [12]
 <01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf, id=159, 469.755pt x 325.2
 15pt>
 File: 01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (type pd
 f)
 <use 01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf  u
-sed on input line 655.
+sed on input line 665.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [13 <./01-Rapport_files/figure-latex/unnamed-chunk-3-1.pdf>]
 <01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf, id=171, 469.755pt x 325.2
@@ -607,33 +607,24 @@ File: 01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pd
 f)
 <use 01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf  u
-sed on input line 685.
+sed on input line 695.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [14 <./01-Rapport_files/figure-latex/unnamed-chunk-5-1.pdf>]
-<01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf, id=181, 469.755pt x 325.2
-15pt>
-File: 01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (type pd
-f)
-<use 01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf>
-Package pdftex.def Info: 01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf  u
-sed on input line 711.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-<01-Rapport_files/figure-latex/unnamed-chunk-7-1.pdf, id=182, 469.755pt x 325.2
+<01-Rapport_files/figure-latex/unnamed-chunk-7-1.pdf, id=181, 469.755pt x 325.2
 15pt>
 File: 01-Rapport_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pd
 f)
 <use 01-Rapport_files/figure-latex/unnamed-chunk-7-1.pdf>
 Package pdftex.def Info: 01-Rapport_files/figure-latex/unnamed-chunk-7-1.pdf  u
-sed on input line 716.
+sed on input line 724.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[15 <./01-Rapport_files/figure-latex/unnamed-chunk-6-1.pdf>] [16 <./01-Rapport_
-files/figure-latex/unnamed-chunk-7-1.pdf>] [17] [18]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 768.
-[19]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 768.
+[15 <./01-Rapport_files/figure-latex/unnamed-chunk-7-1.pdf>] [16] [17]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 776.
+[18]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 776.
 (./01-Rapport.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 768.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 768.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 776.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 776.
 
 LaTeX Warning: There were undefined references.
 
@@ -642,25 +633,25 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 13151 strings out of 480997
- 193894 string characters out of 5916099
- 479945 words of memory out of 5000000
- 28286 multiletter control sequences out of 15000+600000
- 576900 words of font info for 93 fonts, out of 8000000 for 9000
+ 13142 strings out of 480997
+ 193544 string characters out of 5916099
+ 479971 words of memory out of 5000000
+ 28281 multiletter control sequences out of 15000+600000
+ 576817 words of font info for 92 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,10n,42p,809b,472s stack positions out of 5000i,500n,10000p,200000b,80000s
-{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/texlive/2019/tex
-mf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/texlive/2019/texmf-dist/fonts/enc/dvip
-s/lm/lm-mathit.enc}<c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmbx10.pfb
+ 41i,10n,42p,809b,471s stack positions out of 5000i,500n,10000p,200000b,80000s
+{c:/texlive/2019/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/texlive/2019/tex
+mf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/texlive/2019/texmf-dist/fonts/enc/
+dvips/lm/lm-ec.enc}<c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmbx10.pfb
 ><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/texlive/2019/
 texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/texlive/2019/texmf-dist/fonts/t
 ype1/public/lm/lmr10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmr7
 .pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/texlive/2
 019/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on 01-Rapport.pdf (19 pages, 1306054 bytes).
+Output written on 01-Rapport.pdf (18 pages, 1302281 bytes).
 PDF statistics:
- 302 PDF objects out of 1000 (max. 8388607)
- 249 compressed objects within 3 object streams
- 62 named destinations out of 1000 (max. 500000)
- 8352 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 291 PDF objects out of 1000 (max. 8388607)
+ 241 compressed objects within 3 object streams
+ 61 named destinations out of 1000 (max. 500000)
+ 8347 words of extra memory for PDF output out of 10000 (max. 10000000)
 

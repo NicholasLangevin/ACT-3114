@@ -2,12 +2,12 @@
 \contentsline {section}{Analyse exploratoire des données}{4}{section*.3}%
 \contentsline {subsection}{Variable réponse}{4}{section*.4}%
 \contentsline {subsection}{Variables catégorielles nominales}{4}{section*.5}%
-\contentsline {subsection}{Variables catégorielles ordinales}{6}{section*.6}%
-\contentsline {subsection}{Variables numériques discrètes}{6}{section*.7}%
+\contentsline {subsection}{Variables catégorielles ordinales}{5}{section*.6}%
+\contentsline {subsection}{Variables numériques discrètes}{7}{section*.7}%
 \contentsline {subsection}{Variables numériques continues}{9}{section*.8}%
 \contentsline {section}{Traitement des valeurs manquantes}{10}{section*.9}%
 \contentsline {section}{Analyse en composantes principales}{13}{section*.10}%
 \contentsline {section}{Partitionnement en k moyennes}{15}{section*.11}%
-\contentsline {section}{Conclusion}{17}{section*.12}%
-\contentsline {section}{Bibliographie}{18}{section*.13}%
-\contentsline {section}{Annexe}{19}{section*.14}%
+\contentsline {section}{Conclusion}{16}{section*.12}%
+\contentsline {section}{Bibliographie}{17}{section*.13}%
+\contentsline {section}{Annexe}{18}{section*.14}%

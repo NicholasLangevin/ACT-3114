@@ -155,10 +155,7 @@ print.tables(dat_frame_tab, hline.after=c(-1,0,7), digits=2, align = c("l", "l",
 
 On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l,assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicules est partagé par de jeunes conducteurs alors qu'il y a `r summary(data$polholder_diffdriver)[c("all drivers > 24")]`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noté qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
 
-    
-**polholder_gender**
-
-Cette variable représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
+La variable **polholder_gender** représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
 
 
 ```{r tabl_sexe, echo=FALSE, results='asis', fig.cap="\\label{tbl:sexeass}Sexe des assures"}
@@ -176,17 +173,10 @@ print.tables(dat_frame_tab2, hline.after=c(-1,0,2), digits=2)
 ```
 
 On voit qu'il y a significativement plus d'homme ayant une police d'assurance chez cet assureur que de femme. 
-    
-\newpage    
 
-**polholder_job**
+La variable **polholder_job** est, quant à elle, celle décrivant le travail du propriétaire du contrat. Deux valeurs sont possibles soit "medical" soit "normal". On constate que `r round((summary(data$polholder_job)[c("medical")])/nrow(data)*100, 2)`% des assurés on un travail de type médical alors qu'il y en a `r round((summary(data$polholder_job)[c("normal")])/nrow(data)*100, 2)`% qui ont un autre type d'emploi.
 
-Cette variable est, quant à elle, celle décrivant le travail du propriétaire du contrat. Deux valeurs sont possibles soit "medical" soit "normal". On constate que `r round((summary(data$polholder_job)[c("medical")])/nrow(data)*100, 2)`% des assurés on un travail de type médical alors qu'il y en a `r round((summary(data$polholder_job)[c("normal")])/nrow(data)*100, 2)`% qui ont un autre type d'emploi.
-    
-
-**policy_caruse**
-
-Cette variable représente les fins d'utilisation du véhicule. 
+La variable **policy_caruse** représente les fins d'utilisation du véhicule. 
 
 ```{r tabl_caruse, echo=FALSE, results='asis', fig.cap="\\label{tbl:caruse}Usage du vehicule"}
 l1 <- c(summary(data$policy_caruse)[c("commercial")])
@@ -241,7 +231,7 @@ On voit que pour les moyens de stationnement les plus populaire sont le garage p
 
 La variable **polholder_BMCevol** indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payée lors du dernier renouvellement.
 
-
+TITRE : Distribution la variable polholder_BMCevol
 ```{r tabl_BM2, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
 l1 <- c(summary(data$polholder_BMCevol)[c("up")])
 
@@ -263,7 +253,7 @@ On constate que la plupart des contrats sont demeurés stables ou ont connus des
 
 La variable **vehicl_region** représente la région habitée par le détenteur de la police et plus particulièrement une région faisant partie de l'union européenne. Il y a 14 régions et elles sont numérotés mais nous savons pas à quel emplacement géographique cela correspond. La figure 1 suivante permet de visualiser la disperssion des contrats dans les diverse régions. Il est ainsi possible d'observer que certaines régions sont prédominantes comme la région 4, 7 et 8 par exemple.
 
-```{r graph_vehicl_region, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:vehiclregion}Distribution des régions des détenteurs de police, représenté par la variable \\textbf{vehicl\\_region}"}
+```{r graph_vehicl_region, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:vehiclregion}Distribution des régions habités par les détenteurs de police, représenté par la variable \\textbf{vehicl\\_region}"}
 ggplot(data, aes(x = vehicl_region))+
   geom_bar() +
   labs(x = "Région", y = "Fréquence") + 
@@ -273,7 +263,16 @@ ggplot(data, aes(x = vehicl_region))+
 
 
 ## Variables catégorielles ordinales
-La variable catégorielle ordinale **prem_freqperyear** représente la fréquence par année à laquelle la prime est payable. Les fréquence possible est mensuelle, trimestrielle, semestrielle ou annuelle.
+
+La variable catégorielle ordinale **prem_freqperyear** représente la fréquence par année à laquelle la prime est payable. Les fréquences possibles sont mensuelle, trimestrielle, semestrielle ou annuelle.
+
+On voit qu'un peu moins de la moitié des clients paient la prime en un seul versement, environ un quart des clients paient trimestriellement, et le dernier quart est partagé par la prime payable semestriellement et mensuellement.
+
+La variable **vehicl_powerkw** représente la puissance du moteur de la voiture conduit exprimé en chevaux moteurs. Initialement, cette variable contiennait 11 niveaux. Cependant, certains niveaux visait des valeurs fixes tandis que d'autres étaient défini à l'aide d'intervalle. Des doublons de niveaux figuraient par défaut dans la liste dû à certaines intervalles trop englobante. Afin d'uniformiser la mesure de cette variable, nous avons regroupé certains niveaux ensemble, soit tous les niveaux représentant une puissance de 125 à 300 chevaux moteurs. Cette modification a touché peut de cas était nécessaire pour l'obtention d'une interprétation adéquate des données. On peut d'ailleurs observé les proportions de chaque niveau avant et après modification dans les table 6 et 7.
+
+
+TITRE TABLE6 : Distribution de la variable Vehicl_powerkw pour chacune des catégories (avant modification)
+TITRE TABLE7 : Distribution de la variable Vehicl_powerkw pour chacune des catégories (après modification)
 
 ```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:freqperyearAndvehiclGarage}todo"}
 ggplot.premfreqperyear <- ggplot(data, aes(x = prem_freqperyear))+
@@ -285,10 +284,6 @@ ggplot.vehicl_garage <- ggplot(data, aes(x = vehicl_garage))+
 
 grid.arrange(ggplot.premfreqperyear, ggplot.vehicl_garage,  ncol=2)
 ```
-On voit qu'un peu moins de la moitié des clients paient la prime en un seul versement, environ un quart des clients paient trimestriellement, et le dernier quart est partagé par la prime payable semestriellement et mensuellement.
-
-
-La variable **vehicl_powerkw** représente la puissance du moteur de la voiture conduit exprimé en chevaux moteurs. Initialement, cette variable contient 11 niveaux possibles. Cependant, en regardant les niveaux, nous avons constaté que les données pour cette variable n'ont pas été collectées uniformément puisque certaines catégories sont comprises dans une autre catégorie. Un des niveaux correspond aux véhicules d'une puissance se situant entre 125 et 300. Il y a aussi des groupes pour lequels la puissance se trouve entre l'interval du groupe présenté précédement, certains avec très peu d'observations d'autres avec un peu plus d'observations. Or, puisqu'on ne sait pas la puissance des voitures se trouvant dans le groupe de puissance 125-300 et que celui-ci comprend un grand nombre d'observation nous avons opté pour l'option d'ajouter les groupes pour lesquels leur puissance se situait entre 125 et 300 chevaux. Pour facilité la représentation du traitement effectué sur la variable **vehicl_powerkw** voici un tableau de fréquence avant traitement et tableau après traitement.
 
 
 ```{r tabl_powerkw, echo=FALSE, results='asis', fig.cap="\\label{tbl:powerkw}Tableaux de fréquence des catégories de puissance de moteur"}
@@ -326,19 +321,22 @@ cat(c("\\begin{table}[!htb]
 ))  
 ```
 
+\newpage
 
 ## Variables numériques discrètes
+
 La variable **polholder_age** est une variable numérique discrète représentant l'âge du propriétaire de la police d'assurance. La \autoref{fig:polholderAge} représente la distribution de âges des assurés.
-```{r graph_polholder_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:polholderAge}Distribution de l'âge des détenteurs de polices dans la base de données, représenter par la variable \\textbf{polholder\\_age}"}
+
+```{r graph_polholder_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:polholderAge}Distribution de l'âge des détenteurs de polices dans la base de données, représenté par la variable \\textbf{polholder\\_age}"}
 ggplot(data, aes(x = polholder_age))+
   geom_bar() +
   labs(x = "Âge du détenteur de police", y = "Fréquence") + 
   theme_bw() + facet_grid(~polholder_gender)
 ```
-L'âge minimal parmis les assuré est de 19 ans et l'âge maximal est de 85 ans. On constate qu'il y a une forte proportion d'assuré entre 30 et 45 ans. Il pourra être pertinent d'analyser si les assurés de plus de 45 ans sont présent en moins grand nombre dû au fait que les primes sont trop élevé et font d'avantage d'appel pour comparer les primes ailleurs ce qui les mènent vers la résignation. 
 
+L'âge des détenteurs de police de cette compagnie d'assurance ce situe entre 19 et 85 ans inclusivement. On constate qu'il y a une forte proportion d'assuré entre 30 et 45 ans. La distribution est toutefois similaire que ce soit pour les hommes ou pour les femmes, en gardant en tête que les hommes sont présent en plus grand nombre. Il pourra être pertinent d'analyser dans la suite de ce travail pratique si les assurés de plus de 45 ans sont présent en moins grand nombre dû au fait que les primes sont trop élevé et compare davantage les primes entre les divers assureurs sur le marché avant de souscrire à une assurance auprès de cet assureur directement. 
 
-Le nombre d'année sans résignation de la police d'assurance depuis la première année assurée est représenté par la variable umérique discrète **policy_age**. Avec l'aide de la \autoref{fig:policyAge} on constate une forte décroissance du nombre d'assurée pour le nombre d'années depuis l'entré en vigueur pour les 3 premières années pour ensuite ce stabilisé par la suite.
+Le nombre d'année sans résignation de la police d'assurance depuis la première année assurée est représenté par la variable umérique discrète **policy_age**. La \autoref{fig:policyAge} nous permet de constater que la plupart des assurés renouvelle leur police pour 3 années avant de résigné et une faible partie des assurés renouvelle pour plus de 3 années de suite.  Le maximum est observé à 17 ans.
 ```{r graph_policy_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:policyAge}Distribution de l'âge pour laquelle une police est en vigeur, représenter par la variable \\textbf{policy\\_age}"}
 ggplot(data, aes(x = policy_age))+
   geom_bar() +
@@ -348,7 +346,7 @@ ggplot(data, aes(x = policy_age))+
 ```
 
 
-En ce qui concerne la variable discrète **policy_nbcontract** représentant le nombre de contrat, ou risque, que l'assuré possède chez l'assureur. L'histogramme illustré à la \autoref{fig:policyNbcontract} fait resortir le fait qu'il y a une forte concentration d'assuré pour lesquels le nombre de contrat qu'ils ont chez l'assureur est inférieur à 5. On peut aussi voir que certains assurés ont jusqu'à 15 contrats. 
+En ce qui concerne la variable discrète **policy_nbcontract**, elle représente le nombre de contrat que l'assuré possède chez l'assureur. L'histogramme illustré à la \autoref{fig:policyNbcontract} fait resortir le fait qu'il y a une forte concentration d'assuré pour lesquels le nombre de contrat est inférieur à 5. On peut aussi voir que certains assurés ont jusqu'à un maximum de 15 contrats. 
 
 ```{r graph_policy_nbcontract, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:policyNbcontract}Distribution du nombre de contrats par police, représenter par la variable \\textbf{policy\\_nbcontract}"}
 ggplot(data, aes(x = policy_nbcontract))+
@@ -358,7 +356,11 @@ ggplot(data, aes(x = policy_nbcontract))+
 ```
 
 
-Il y a plusieurs variables numériques continues relatives à la prime. La variable **prem_final** représente le montant de la prime proposé pour le renouvellement par l'assureur alors que **prem_last** représente le montant payé lors du dernier renouvellement. La variable prem_market est la prime qui serait chargée selon le marché. La variable prem_pure est la prime qui représente les coûts espérés pour un assuré. Le \autoref{tbl:summaryPrimes} montre les distributions de chaqune des primes. Par contre, une prime seul peut difficilement expliquer pourquoi un assuré voudrais résigné car si l'assuré mérite réellement sa prime, il n'aurait pas intérêt à aller chez un concurant. Par contre, si lors de sont renouvellement, il voit sont montant d'assurance augmenter d'un grand poucentage, il serat tenté d'aller voir ayeur. C'est pourquoi la variable **prem_index** à été crée et ajouté à notre jeu de données. celle-ci représente le pourcentage d'augmentation de la prime, sois la prime final divisé par la prime du dernier terme.
+Il y a plusieurs variables numériques continues relatives à la prime. La variable **prem_final** représente le montant de la prime proposé pour le renouvellement par l'assureur, la variable **prem_last** représente le montant payé lors du dernier renouvellement, la variable **prem_market** est la prime qui serait chargée selon le marché et la variable **prem_pure** représente la prime des coûts espérés. Le \autoref{tbl:summaryPrimes} montre leur distribution. 
+
+Une prime seule peut difficilement expliquer pourquoi un assuré voudrait résigner sa police d'assurance car si sa prime est représentative de son risque réel, il n'aurait pas intérêt à changer d'assureur.
+Par contre, si lors de son renouvellement, il voit sa prime grandement augmenter, il sera d'avantage sujet à vouloir changer d'assureur pour réduire ces coûts. 
+
 ```{r stats_prem, echo=FALSE, results='asis', fig.cap="\\label{tbl:summaryPrimes}Distribution des variables consernant les primes de l'assuré"}
 stats_final <- c(summary(data$prem_final)[c(1, 3, 4, 6)], sd(data$prem_final))
 
@@ -368,20 +370,20 @@ stats_market <- c(summary(data$prem_market)[c(1, 3, 4, 6)], sd(data$prem_market)
 
 stats_pure <- c(summary(data$prem_pure)[c(1, 3, 4, 6)], sd(data$prem_pure))
 
-stats_index <- c(summary(data$prem_index)[c(1, 3, 4, 6)], sd(data$prem_index))
-
 prime_type <- c("Final","Last","Market","Pure", "Index (\\%)")
-tableau_stats <- cbind(prime_type ,rbind(round(stats_final, 2), round(stats_last, 2), round(stats_market, 2), round(stats_pure, 2), round(stats_index, 2)))
+tableau_stats <- cbind(prime_type ,rbind(round(stats_final, 2), round(stats_last, 2), round(stats_market, 2), round(stats_pure, 2)))
 
 dat_frame_tab <- as.data.frame(tableau_stats)
 
 colnames(dat_frame_tab) <- c("Prime (\\$)", "Minimum", "Médiane", "Moyenne", "Maximum", "Écart-type")
 
-print.tables(dat_frame_tab, hline.after=c(-1,0,4,5), digits=2, align = c("l", "l", rep("c",5)))
+print.tables(dat_frame_tab, hline.after=c(-1,0,4,4), digits=2, align = c("l", "l", rep("c",5)))
 ```
 
 
-Les deux prochaines variables sont en lien avec l'aĝe du véhicule, il s'agit de variables numériques discrètes. La variable vehicl_agepurchase représente l'âge du véhicule lorsque l'assuré a acheté le véhicule. La variable vehicl_age représente l'aĝe du véhicule actuellement. 
+Les deux prochaines variables sont en lien avec l'aĝe du véhicule, il s'agit de variables numériques discrètes. La variable **vehicl_agepurchase** représente l'âge du véhicule lors de la transaction pour l'achat du véhicule. La variable **vehicl_age** représente, quant à elle, l'aĝe actuel du véhicule, soit dans ce cas l'âge actuel du véhicule au moment ou les données ont été prises. 
+
+TITRE : distribution de l'âge des véhicules assurés au moment de l'achat du véhicule comparativement au moment de la prise de données.
 
 ```{r graph_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:}todo"}
 agepurchase_vehicule <- ggplot(data, aes(x = vehicl_agepurchase))+
@@ -395,7 +397,7 @@ grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
 
 ```
 
-Beaucoup de véhicule ont été achetés lorsqu'il était neuf (vehicl_purchase = 0). En examinant les véhicules conduits par es assurés on remarque qu'il y a peu de véhicule neuf et le nombre de véhicule est croissant en fonction de l'utilisation jusqu'à 13 ans puis décroit par la suite. On retrouve un grand nombre de véhicule assuré avec 18 ans d'usage, il est fort probable que cela correspondre aux véhicules de plus de 18 ans. 
+Beaucoup de véhicules ont été achetés lorsqu'il était neuf, soit les valeurs indiquant 0 an. On remarque également qu'il y a peu de véhicule neuf lors du moment de la prise de données et que le nombre de véhicule est croissant en fonction de l'âge actuel jusqu'à 13 ans puis la tendance inverse est observé pour les âge supérieur à 13 ans. Étant donné qu'un véhicule âgé de 18 ans spécifiquement ne devrait raisonnablement pas être l'âge le plus fréquent, on conclut que cette valeur comprend 18 ans mais également tous les âges supérieurs.
 
 
 ## Variables numériques continues
@@ -534,7 +536,7 @@ Le choix du nombre de groupe peut être choisit à l'aide de la méthode du coud
 set.seed(123)
 echantillon <- sample(nrow(Data_num), size = 8000, replace = FALSE) 
 
-fviz_nbclust(Data_num[echantillon, ], kmeans, k.max=7, method = "wss")
+#fviz_nbclust(Data_num[echantillon, ], kmeans, k.max=7, method = "wss")
 ```
 
 En ayant en tête le nombre de groupe nécessaire pour la classification, on effectue le partitionnement et on obtient le graphique suivant :
