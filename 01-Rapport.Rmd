@@ -44,6 +44,7 @@ output:
 \newpage
 
 \tableofcontents
+
 ```{R, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
 library(CASdatasets)
 library(knitr)
@@ -128,10 +129,8 @@ La variable lapse indique si l'assuré à renouveller ou non sa police lors du r
 On constate qu'il y a `r nrow(data)` clients dont `r nrow(data[data$lapse == "renouvellement", ])` qui ont renouveller leur police d'assurance, ce qui représente une proportion de `r round(nrow(data[data$lapse == "renouvellement",])/nrow(data)*100, 2)`%. La variable réponse n'est donc pas symétrique et il sera important d'en tenir compte lors de la modélisation. L'analyse des variables explicatives contenus dans ce jeu de données nous permettera de mieux comprendre les causes de résignation et de créer des patrons pour ainsi arriver à bien modéliser la variable de renouvellement de police.
 
 ## Variables catégorielles nominales
-  
-**polholder_diffdriver**
 
-Cette variable représente la différence de statut qui pourrait avoir entre le propriétaire de la police et le conducteur principal.
+La variable **polholder_diffdriver** représente la différence de statut qui pourrait avoir entre le propriétaire de la police et le conducteur principal.
 
 ```{r tabl_statut, echo=FALSE, results='asis'}
 l1 <- c(summary(data$polholder_diffdriver)[c("all drivers > 24")])
@@ -161,7 +160,7 @@ print.tables(dat_frame_tab, hline.after=c(-1,0,7), digits=2, align = c("l", "l",
              caption="Distribution de la différence de statut entre le conducteur et le détenteur de la police", label="tbl:statutdiff")
 ```
 
-On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l,assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicules est partagé par de jeunes conducteurs alors qu'il y a `r summary(data$polholder_diffdriver)[c("all drivers > 24")]`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noté qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
+On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l'assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicule est partagé par de jeunes conducteurs alors qu'il y a `r round(summary(data$polholder_diffdriver)[c("all drivers > 24")]/nrow(data)*100, 2)`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noté qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
 
 La variable **polholder_gender** représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
 
@@ -250,7 +249,6 @@ On voit que pour les moyens de stationnement les plus populaire sont le garage p
 
 La variable **polholder_BMCevol** indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payée lors du dernier renouvellement.
 
-TITRE : Distribution la variable polholder_BMCevol
 ```{r tabl_BM2, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
 l1 <- c(summary(data$polholder_BMCevol)[c("up")])
 
@@ -294,13 +292,13 @@ On voit qu'un peu moins de la moitié des clients paient la prime en un seul ver
 La variable **vehicl_powerkw** représente la puissance du moteur de la voiture conduit exprimé en chevaux moteurs. Initialement, cette variable contiennait 11 niveaux. Cependant, certains niveaux visait des valeurs fixes tandis que d'autres étaient défini à l'aide d'intervalle. Des doublons de niveaux figuraient par défaut dans la liste dû à certaines intervalles trop englobante. Afin d'uniformiser la mesure de cette variable, nous avons regroupé certains niveaux ensemble, soit tous les niveaux représentant une puissance de 125 à 300 chevaux moteurs. Cette modification a touché peut de cas était nécessaire pour l'obtention d'une interprétation adéquate des données. On peut d'ailleurs observé les proportions de chaque niveau avant et après modification dans les table 6 et 7.
 
 
-```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:freqperyearAndvehiclGarage}todo"}
+```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="Distribution des variables \\textbf{prem\\_freqperyear} et \\textbf{vehicl\\_garage}."}
 ggplot.premfreqperyear <- ggplot(data, aes(x = prem_freqperyear))+
-  geom_bar() + theme_bw() + ggtitle("(1)") + theme(axis.text.x = element_text(angle = 90)) 
+  geom_bar() + theme_bw() + ggtitle("(1)") + theme(axis.text.x = element_text(angle = 90)) + ylab("Fréquence") + xlab("Fréquence de paiement de la prime")
  
 
 ggplot.vehicl_garage <- ggplot(data, aes(x = vehicl_garage))+
-  geom_bar() + theme_bw() + ggtitle("(2)") + theme(axis.text.x = element_text(angle = 90)) 
+  geom_bar() + theme_bw() + ggtitle("(2)") + theme(axis.text.x = element_text(angle = 90)) + ylab("Fréquence") + xlab("Place de stationnement")
 
 grid.arrange(ggplot.premfreqperyear, ggplot.vehicl_garage,  ncol=2)
 ```
@@ -371,8 +369,7 @@ ggplot(data, aes(x = policy_nbcontract))+
 
 Les deux prochaines variables sont en lien avec l'aĝe du véhicule, il s'agit de variables numériques discrètes. La variable **vehicl_agepurchase** représente l'âge du véhicule lors de la transaction pour l'achat du véhicule. La variable **vehicl_age** représente, quant à elle, l'aĝe actuel du véhicule, soit dans ce cas l'âge actuel du véhicule au moment ou les données ont été prises. 
 
-TITRE : distribution de l'âge des véhicules assurés au moment de l'achat du véhicule comparativement au moment de la prise de données.
-```{r graph_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:}todo"}
+```{r graph_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:}Distribution de l'âge des véhicules assurés au moment de l'achat du véhicule comparativement au moment de la prise de données."}
 agepurchase_vehicule <- ggplot(data, aes(x = vehicl_agepurchase))+
   geom_bar() + theme_bw() + ggtitle("(1)") + xlab("Âge à l'achat") + ylab("Fréquence")
 
@@ -388,12 +385,12 @@ Beaucoup de véhicules ont été achetés lorsqu'il était neuf, soit les valeur
 
 ## Variables numériques continues
 
-Il y a plusieurs variables numériques continues relatives à la prime. La variable **prem_final** représente le montant de la prime proposé pour le renouvellement par l'assureur, la variable **prem_last** représente le montant payé lors du dernier renouvellement, la variable **prem_market** est la prime qui serait chargée selon le marché et la variable **prem_pure** représente la prime des coûts espérés. Le \autoref{tbl:summaryPrimes} montre leur distribution. 
+Il y a plusieurs variables numériques continues relatives à la prime. La variable **prem_final** représente le montant de la prime proposé pour le renouvellement par l'assureur, la variable **prem_last** représente le montant payé lors du dernier renouvellement, la variable **prem_market** est la prime qui serait chargée selon le marché et la variable **prem_pure** représente la prime des coûts espérés. Le Tableau 7 montre leur distribution. 
 
 Une prime seule peut difficilement expliquer pourquoi un assuré voudrait résigner sa police d'assurance car si sa prime est représentative de son risque réel, il n'aurait pas intérêt à changer d'assureur.
 Par contre, si lors de son renouvellement, il voit sa prime grandement augmenter, il sera d'avantage sujet à vouloir changer d'assureur pour réduire ces coûts. 
 
-```{r stats_prem, echo=FALSE, results='asis', fig.cap="\\label{tbl:summaryPrimes}Distribution des variables consernant les primes de l'assuré", warning=FALSE}
+```{r stats_prem, echo=FALSE, results='asis', fig.cap="\\label{prime}Distribution des variables consernant les primes de l'assuré", warning=FALSE}
 stats_final <- c(summary(data$prem_final)[c(1, 3, 4, 6)], sd(data$prem_final))
 
 stats_last <- c(summary(data$prem_last)[c(1, 3, 4, 6)], sd(data$prem_last))
@@ -409,7 +406,7 @@ dat_frame_tab <- as.data.frame(tableau_stats)
 
 colnames(dat_frame_tab) <- c("Prime (\\$)", "Minimum", "Médiane", "Moyenne", "Maximum", "Écart-type")
 
-print.tables(dat_frame_tab, digits=2, align = c("l", "l", rep("c",5)), caption = "Distribution des 4 types de primes")
+print.tables(dat_frame_tab, digits=2, align = c("l", "l", rep("c",5)), caption = "Distribution des quatres types de primes")
 ```
 
 Dans les représentations de la \autoref{fig:BoitesMoustache}, on observe que la distribution des variables **prem_last** et **prem_pure** ce rapproche de peu en ce qui concerne la moyenne et la variance des observations. Le variable **prem_final** diffère par sa variance plus élevée et la variable **prem_market** par sa moyenne qui est beaucoup plus faible. On remarque également, qu'en général, la variance reliée au détenteur de police de genre féminin est plus élevée ce qui s'explique par la proportion moins élevée de détenteur de police féminin. Pour les moyennes, elles sont semblables de ce côté, ce qui porte à croire que les primes ne sont pas influencées par le genre et c'est positif car ce serait un bais de stéréotype en cas contraire.
@@ -559,9 +556,9 @@ echantillon <- sample(nrow(Data_num), size = 8000, replace = FALSE)
 fviz_nbclust(Data_num[echantillon, ], kmeans, k.max=7, method = "wss")
 ```
 
-En ayant en tête le nombre de groupe nécessaire pour la classification, on effectue le partitionnement et on obtient le graphique suivant :
+En ayant en tête le nombre de groupe nécessaire pour la classification, on effectue le partitionnement et on obtient le graphique présenté à la \autoref{fig:kmeans}.
 
-```{R, echo = FALSE, include = TRUE, fig.with=4, fig.height=4, fig.align="center", fig.cap="Représentation des deux groupes formés par l'algorithme des $k$-moyenne dans le système d'axe des deux première dimention de l'analyse en composante principal."}
+```{R, echo = FALSE, include = TRUE, fig.with=4, fig.height=4, fig.align="center", fig.cap="\\label{fig:kmeans}Représentation des deux groupes formés par l'algorithme des $k$-moyenne dans le système d'axe des deux première dimention de l'analyse en composante principal."}
 K <- 2
 kmoyennes <- kmeans(Data_num, K, nstart=5)
 
@@ -580,8 +577,8 @@ ggplot() +
 De ce graphique, on peut conclure que le partionnement c'est fait sur la première composante principale. Les assurés représentant moins de risque ce retrouve dans le groupe 2 tandis que les assurés plus risqués ce retrouve dans le groupe 1. Ainsi, le montant des primes typiques seraient d'environ 300\$ ou moins pour le deuxième groupe et de plus de 300\$ 
 
 
-\newpage
 
+\newpage
 # Conclusion
 
 Comme mentionné précédemment, le jeu de données analysé dans ce travail pratique provient du paquetage "CASdatasets". Nous avons choisi ce jeu de données dans le but de modéliser le statut de renouvellement de polices d'assurance pour une compagnie et une année d'observation inconnu. Les variables explicatives touchent les caractéristiques liées aux primes payés, à l'assuré visé par la police d'assurance et au véhicule assuré.
