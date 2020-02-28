@@ -107,7 +107,7 @@ print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1),
 
 # Introduction
 
-Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement d'une police d'assurance, représenté par la variable "lapse" dans ce cas-ci, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. On pourra distincguer les statuts de renouvellement comme étant affiché à annulé("Cancellation") ou à renouvellement ("Renew") selon le cas approprié. 
+Les données qui seront analysées dans ce rapport proviennent du jeu de données "eudirectlapse" du paquetage "CASdatasets" de R. Dans le but de modéliser le statut de renouvellement de polices d'assurance, représenté par la variable "lapse" dans ce cas-ci, il sera d'abord nécessaire de visualiser et de pré-traiter les données observées des 23 060 polices d'assurance. Il est à noter que la durée d'observation est de un an et que l'année visée et la compagnie demeurent inconnue. On pourra distinguer les statuts de renouvellement comme étant affiché à résigné ("Resignation") ou à renouvellement ("Renew") selon le cas approprié. 
 Ce jeu de données est intéressant du fait qu'il permettera au fur de l'analyse de nous indiquer les variables types ayant un impact sur la décision de renouvellement de police des assurés d'une compagnie d'assurance X. En plus d'être un problème de nature actuarielle, le jeu de données choisi pourra nous permettre d'entammer une ouverture des réflexions possibles lorsque nous aurons à travailler dans une compagnie d'assurance. Étant trois personnes intéressés par l'assurance de dommages, ce problème nous semblait des plus appropriés et intéressant face à nos intérêts communs. Le nombre d'observations est également intéressant car il nous permettera de porter des conclusions précise avec assez de crédibilité sans toutefois être avoir à travailler avec un jeu de données inutilement trop volumineux. De plus, chaque variable explicative semble à prime à bord intéressante pour l'analyse et assez pertinente, ce que nous pourrons découvrir dans l'élaboration de ce travail pratique.
 
 
@@ -120,11 +120,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Variable réponse
 La variable lapse indique si l'assuré à renouveller ou non sa police lors du renouvellement. Il s'agit de la variable exogène. Initialement, le choix du client était indiqué par une variable binaire. Si le client désirait résigner sa police lapse prenait la valeur 1, autrement elle prenait la valeur 0. À des fins de simplification et pour que la visualisation en soit amiliorée pour la suite, nous avons converti la variable en variable catégorielle à deux niveaux. La variable prendra maintenant la valeur **`r levels(data$lapse)[2]`** si le client résigne sa police et de **`r levels(data$lapse)[1]`** s'il la renouvelle.
 
-On constate qu'il y a `r nrow(data)` clients qui ont renouvelé alors qu'il y en a `r nrow(data[data$lapse == "renouvellement", ])` qui ont renouveller leur police d'assurance, se qui représente une proportion de `r round(nrow(data[data$lapse == "renouvellement",])/nrow(data)*100, 2)`%. La variable réponse n'est donc pas symétrique et il sera important d'en tenir compte lors de la modélisation. Pour mieux comprendre la cause de leur résignation et ainsi arriver à modéliser la variable de renouvellement de police, il sera nécessaire de faire l'analyse de variables explicatives contenus dans ce jeu de données. 
+On constate qu'il y a `r nrow(data)` clients dont `r nrow(data[data$lapse == "renouvellement", ])` qui ont renouveller leur police d'assurance, ce qui représente une proportion de `r round(nrow(data[data$lapse == "renouvellement",])/nrow(data)*100, 2)`%. La variable réponse n'est donc pas symétrique et il sera important d'en tenir compte lors de la modélisation. L'analyse des variables explicatives contenus dans ce jeu de données nous permettera de mieux comprendre les causes de résignation et de créer des patrons pour ainsi arriver à bien modéliser la variable de renouvellement de police.
 
-## Variables catégorielle
+## Variables catégorielles nominales
+  
+**polholder_diffdriver**
 
-La variable **polholder_diffdriver** représente la différence de statut qui pourrait avoir entre le propriétaire de la police et le conducteur principale.
+Cette variable représente la différence de statut qui pourrait avoir entre le propriétaire de la police et le conducteur principal.
 
 ```{r tabl_statut, echo=FALSE, results='asis', fig.cap="\\label{tbl:statutdiff}Différence de statut"}
 l1 <- c(summary(data$polholder_diffdriver)[c("all drivers > 24")])
@@ -153,13 +155,14 @@ print.tables(dat_frame_tab, hline.after=c(-1,0,7), digits=2, align = c("l", "l",
 
 On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l,assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicules est partagé par de jeunes conducteurs alors qu'il y a `r summary(data$polholder_diffdriver)[c("all drivers > 24")]`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noté qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
 
+    
+**polholder_gender**
 
-La variable **polholder_gender** représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
+Cette variable représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
 
 
 ```{r tabl_sexe, echo=FALSE, results='asis', fig.cap="\\label{tbl:sexeass}Sexe des assures"}
 p1 <- c(round(summary(data$polholder_gender)[c("Male")]/nrow(data)*100, 2))
-
 p2 <- c(round(summary(data$polholder_gender)[c("Female")]/nrow(data)*100, 2))
 
 ligne_name <- c("Homme", "Femme")
@@ -172,11 +175,18 @@ colnames(dat_frame_tab2) <- c("Sexe", "\\%")
 print.tables(dat_frame_tab2, hline.after=c(-1,0,2), digits=2)
 ```
 
-On voit qu'il y a quand même significativement plus d'homme ayant une police d'assurance chez l'assureur que de femme. Possiblement pour la raison que les hommes conduise davantage une voiture.
+On voit qu'il y a significativement plus d'homme ayant une police d'assurance chez cet assureur que de femme. 
+    
+\newpage    
 
-La variable décrivant le travail du propriétaire du contrat est nommé **polholder_job**. Deux valeurs sont possibles soit "medical" soit "normal". On constate que `r round((summary(data$polholder_job)[c("medical")])/nrow(data)*100, 2)`% des assurés on un travail de type médical alors qu'il y en a `r round((summary(data$polholder_job)[c("normal")])/nrow(data)*100, 2)`% qui ont un autre type d'emploi.
+**polholder_job**
 
-La variable **policy_caruse** représente les fins d'utilisation du véhicule. 
+Cette variable est, quant à elle, celle décrivant le travail du propriétaire du contrat. Deux valeurs sont possibles soit "medical" soit "normal". On constate que `r round((summary(data$polholder_job)[c("medical")])/nrow(data)*100, 2)`% des assurés on un travail de type médical alors qu'il y en a `r round((summary(data$polholder_job)[c("normal")])/nrow(data)*100, 2)`% qui ont un autre type d'emploi.
+    
+
+**policy_caruse**
+
+Cette variable représente les fins d'utilisation du véhicule. 
 
 ```{r tabl_caruse, echo=FALSE, results='asis', fig.cap="\\label{tbl:caruse}Usage du vehicule"}
 l1 <- c(summary(data$policy_caruse)[c("commercial")])
@@ -198,7 +208,7 @@ print.tables(dat_frame_tab3, hline.after=c(-1,0,3), digits=2, align = c("l", "l"
 
 On constate qu'il y a un nombre considérable de données manquantes et très peu de véhicule pour un usage commerciale.
 
-De sont côté, **vehicl_garage** décrit le type de stationnement de la voiture. Voici la répartition des types de stationnement.
+De sont côté, la variable **vehicl_garage** décrit le type de stationnement de la voiture. Voici la répartition des types de stationnement.
 
 ```{r tabl_garage, echo=FALSE, results='asis', fig.cap="\\label{tbl:garage}Type de stationnement"}
 l1 <- c(summary(data$vehicl_garage)[c("carport")])
@@ -229,7 +239,7 @@ print.tables(dat_frame_tab4, hline.after=c(-1,0,8), digits=2, align = c("l", "l"
 
 On voit que pour les moyens de stationnement les plus populaire sont le garage privé et la rue. Il y a des données manquantes, elles seront traitées plus loin dans le rapport.
 
-La variable polholder_BMCevol indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payé lors du dernier renouvellement. Elle prend donc 3 valeurs possibles. 
+La variable **polholder_BMCevol** indique si la prime de renouvellement à connue une hausse, une baisse ou est demeuré stable par rapport à la prime payée lors du dernier renouvellement.
 
 
 ```{r tabl_BM2, echo=FALSE, results='asis', fig.cap="\\label{tbl:BM}Bonus Malus"}
@@ -249,21 +259,20 @@ colnames(dat_frame_tab5) <- c("Prime de renouvellement", "Nombre d'observation")
 print.tables(dat_frame_tab5, hline.after=c(-1,0,3), digits=2, align = c("l", "l", "c"))
 ```
 
-On constate que la plupart des contrats ont été inchangé ou ont connu des baisses au niveau des primes. **(C'est un résultat étonnant, faudrait commenter la -dessus ???)**
+On constate que la plupart des contrats sont demeurés stables ou ont connus des baisses au niveau des primes. **(C'est un résultat étonnant, faudrait commenter la -dessus ???)**
 
-La variable vehicl_region représente une région de l'union européenne. Il y a 14 régions, elles sont numérotés mais nous savons pas à quel emplacement géographique cela correspond. Voici un diagramme pour visualiser comment les contrats sont dsipersées dans chacune des régions.
+La variable **vehicl_region** représente la région habitée par le détenteur de la police et plus particulièrement une région faisant partie de l'union européenne. Il y a 14 régions et elles sont numérotés mais nous savons pas à quel emplacement géographique cela correspond. La figure 1 suivante permet de visualiser la disperssion des contrats dans les diverse régions. Il est ainsi possible d'observer que certaines régions sont prédominantes comme la région 4, 7 et 8 par exemple.
 
-```{r graph_vehicl_region, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:vehiclregion}Distribution des régions des détenteurs de police, représenté par la variable \\textbf{polholder\\_age}"}
+```{r graph_vehicl_region, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:vehiclregion}Distribution des régions des détenteurs de police, représenté par la variable \\textbf{vehicl\\_region}"}
 ggplot(data, aes(x = vehicl_region))+
   geom_bar() +
   labs(x = "Région", y = "Fréquence") + 
   theme_bw() + theme(axis.text.x = element_text(angle = 20))
 ```
 
-Les assurés sont répartis dans toutes les régions on note toutefois que la région 4 est la région pour laquelle il y a le plus d'assurés.
 
 
-## Variable ordinal
+## Variables catégorielles ordinales
 La variable catégorielle ordinale **prem_freqperyear** représente la fréquence par année à laquelle la prime est payable. Les fréquence possible est mensuelle, trimestrielle, semestrielle ou annuelle.
 
 ```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:freqperyearAndvehiclGarage}todo"}
@@ -318,7 +327,7 @@ cat(c("\\begin{table}[!htb]
 ```
 
 
-## Variable numérique
+## Variables numériques discrètes
 La variable **polholder_age** est une variable numérique discrète représentant l'âge du propriétaire de la police d'assurance. La \autoref{fig:polholderAge} représente la distribution de âges des assurés.
 ```{r graph_polholder_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:polholderAge}Distribution de l'âge des détenteurs de polices dans la base de données, représenter par la variable \\textbf{polholder\\_age}"}
 ggplot(data, aes(x = polholder_age))+
@@ -389,7 +398,7 @@ grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
 Beaucoup de véhicule ont été achetés lorsqu'il était neuf (vehicl_purchase = 0). En examinant les véhicules conduits par es assurés on remarque qu'il y a peu de véhicule neuf et le nombre de véhicule est croissant en fonction de l'utilisation jusqu'à 13 ans puis décroit par la suite. On retrouve un grand nombre de véhicule assuré avec 18 ans d'usage, il est fort probable que cela correspondre aux véhicules de plus de 18 ans. 
 
 
-## Variable endogène en fonction des variables explicatives
+## Variables numériques continues
 
 Il est intéressant de voir comment se comporte la variable endogène en fonction des différentes variables explicatives. Bien sûr, nos variables explicatives comme décrit plus tôt ne sont pas toutes de même type il en résulte donc qu'elles n'auront pas toutes la même représentation visuelle par rapport à la variable endogène.
 
@@ -553,12 +562,17 @@ De ce graphique, on peut conclure que le partionnement c'est fait sur la premiè
 
 # Conclusion
 
+Comme mentionné précedemment, le jeu de données analysées dans ce travail pratique provient du paquetage "CASdatasets". Nous avons choisi ce jeu de données dans le but de modéliser le statut de renouvellement de polices d'assurance pour une compagnie et une année d'observation inconnu. Les variables explicatives touchent les caractéristiques liés aux primes payés, à l'assuré visé par la police d'assurance et au véhicule assuré.
 
-Puisque la variable réponse **lapse** est une variable catégorielle pour laquelle deux valeurs sont possibles soit le renouvellement ou soit la résignation. Pour la suite on pourrait s'intéresser à modéliser la probabilité de renouveller ou bien de résigner. Pour résoudre ce problème il serait possible d'utiliser un modèle linéaire avec régression logistique. Dans ce cas, la prédiction de la régression corresponderait à la probabilité désiré. Si on s'intéresse plutôt à une prédiction tant qu'au renouvellement ou à la résignation. Dans ce cas là il serait possible d'utiliser encore le modèle linéaire avec régression logistique ou bien un autre modèle de classification supervisé. 
+PARLER DE L'ANALYSE EXPLORATOIRE ET DU PRÉTRAITEMENT 
+
+Puisque la variable réponse **lapse** est une variable catégorielle pour laquelle deux valeurs sont possibles , soit renouvellement ou résignation, il sera intéressant pour la suite de modéliser la probabilité qu'un assuré renouvelle ou résigne pour la prochaine année. Un modèle linéaire avec régression logistique sera ainsi a élaborer. La prédiction de la régression corresponderait, dans ce cas, à la probabilité désirée. Dans le cas ou on s'intéressait d'avantage à une prédiction de cette variable réponse, il sera possible d'utiliser un modèle linéaire avec régression logistique ou bien un autre modèle de classification supervisé. 
 
 \newpage
 
 # Bibliographie
+
+
 
 
 \newpage
