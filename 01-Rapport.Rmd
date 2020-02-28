@@ -1,6 +1,10 @@
 ---
 header-includes: \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan}
+bibliography: biblio.bib
+bibliographystyle: apalike
+nocite: | 
+  @*
 output:
   pdf_document: default
   html_document:
@@ -582,10 +586,10 @@ Puisque la variable réponse **lapse** est une variable catégorielle pour laque
 
 \newpage
 
-# Bibliographie
+# Bibliography
 
-
-
+::: {#refs}
+:::
 
 \newpage
 
@@ -594,3 +598,4 @@ Puisque la variable réponse **lapse** est une variable catégorielle pour laque
 Description du jeu de données soumis sur le forum :
 
 Notre jeu de données représente le statut de renouvellement pour 23 060 polices d'assurance basées sur un an d'observation. Les données receuillies proviennent d'une compagnie d'assurance inconnue dont l'année d'observation est également inconnue.
+
