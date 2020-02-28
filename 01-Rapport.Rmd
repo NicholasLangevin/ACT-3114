@@ -249,7 +249,7 @@ colnames(dat_frame_tab5) <- c("Prime de renouvellement", "Nombre d'observation")
 print.tables(dat_frame_tab5, hline.after=c(-1,0,3), digits=2, align = c("l", "l", "c"))
 ```
 
-On constate que la plupart des contrats sont demeurés stables ou ont connus des baisses au niveau des primes. **(C'est un résultat étonnant, faudrait commenter la -dessus ???)**
+On constate que la plupart des contrats sont demeurés stables ou ont connus des baisses au niveau des primes.
 
 La variable **vehicl_region** représente la région habitée par le détenteur de la police et plus particulièrement une région faisant partie de l'union européenne. Il y a 14 régions et elles sont numérotés mais nous savons pas à quel emplacement géographique cela correspond. La figure 1 suivante permet de visualiser la disperssion des contrats dans les diverse régions. Il est ainsi possible d'observer que certaines régions sont prédominantes comme la région 4, 7 et 8 par exemple.
 
@@ -356,6 +356,26 @@ ggplot(data, aes(x = policy_nbcontract))+
 ```
 
 
+Les deux prochaines variables sont en lien avec l'aĝe du véhicule, il s'agit de variables numériques discrètes. La variable **vehicl_agepurchase** représente l'âge du véhicule lors de la transaction pour l'achat du véhicule. La variable **vehicl_age** représente, quant à elle, l'aĝe actuel du véhicule, soit dans ce cas l'âge actuel du véhicule au moment ou les données ont été prises. 
+
+TITRE : distribution de l'âge des véhicules assurés au moment de l'achat du véhicule comparativement au moment de la prise de données.
+```{r graph_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:}todo"}
+agepurchase_vehicule <- ggplot(data, aes(x = vehicl_agepurchase))+
+  geom_bar() + theme_bw() + ggtitle("(1)") 
+
+age_vehicule <- ggplot(data, aes(x = vehicl_age))+
+  geom_bar()+ theme_bw() + ggtitle("(2)") 
+
+
+grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
+
+```
+
+Beaucoup de véhicules ont été achetés lorsqu'il était neuf, soit les valeurs indiquant 0 an. On remarque également qu'il y a peu de véhicule neuf lors du moment de la prise de données et que le nombre de véhicule est croissant en fonction de l'âge actuel jusqu'à 13 ans puis la tendance inverse est observé pour les âge supérieur à 13 ans. Étant donné qu'un véhicule âgé de 18 ans spécifiquement ne devrait raisonnablement pas être l'âge le plus fréquent, on conclut que cette valeur comprend 18 ans mais également tous les âges supérieurs.
+
+
+## Variables numériques continues
+
 Il y a plusieurs variables numériques continues relatives à la prime. La variable **prem_final** représente le montant de la prime proposé pour le renouvellement par l'assureur, la variable **prem_last** représente le montant payé lors du dernier renouvellement, la variable **prem_market** est la prime qui serait chargée selon le marché et la variable **prem_pure** représente la prime des coûts espérés. Le \autoref{tbl:summaryPrimes} montre leur distribution. 
 
 Une prime seule peut difficilement expliquer pourquoi un assuré voudrait résigner sa police d'assurance car si sa prime est représentative de son risque réel, il n'aurait pas intérêt à changer d'assureur.
@@ -380,34 +400,26 @@ colnames(dat_frame_tab) <- c("Prime (\\$)", "Minimum", "Médiane", "Moyenne", "M
 print.tables(dat_frame_tab, hline.after=c(-1,0,4,4), digits=2, align = c("l", "l", rep("c",5)))
 ```
 
+Dans les représentations de la \autoref{fig:BoitesMoustache}, on observe que la distribution des variables **prem_last** et **prem_pure** ce rapproche de peu en ce qui concerne la moyenne et la variance des observations. Les variable **prem_final** diffère par sa variance plus élevée et la variable **prem_market** par sa moyenne qui est beaucoup plus faible. On remarque également, qu'en générale, la variance reliée au détenteur de police de genre féminin est plus élevée ce qui s'explique par la proportion moins élevée de détenteur de police féminin. Pour les moyennes, elles sont semblables de ce côté, ce qui porte à croire que les primes ne sont pas influencées par le genre et c'est un positif car ce serait un bais de stéréotype.
 
-Les deux prochaines variables sont en lien avec l'aĝe du véhicule, il s'agit de variables numériques discrètes. La variable **vehicl_agepurchase** représente l'âge du véhicule lors de la transaction pour l'achat du véhicule. La variable **vehicl_age** représente, quant à elle, l'aĝe actuel du véhicule, soit dans ce cas l'âge actuel du véhicule au moment ou les données ont été prises. 
+On remarque que les valeurs extrêmes ce situent d'avantage au niveau des détenteur de police ayant renouvellé leur contrat, ce qui est contre intuitif. Cela porte à croire que ce sont de très mauvais risques et qu'ils restent dans cette compagnie car une autre compagnie d'assurance ne pourrait pas leur offrir une meilleur prime.
 
-TITRE : distribution de l'âge des véhicules assurés au moment de l'achat du véhicule comparativement au moment de la prise de données.
+la prime en valeur absolue ne permet pas d expliquer pourquoi un assuter cancel, car il aura probablemenmt la meme prime chez une autrew compagnie.. comparer graph, ce qui poussera un assuré a magaxizer cher un autre assureur est sont pourcentage d augmentation au renouvellemnt. c est pourquoi noius avons crée une variable .. qui egal prem_new / prem_last  - 1
 
-```{r graph_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:}todo"}
-agepurchase_vehicule <- ggplot(data, aes(x = vehicl_agepurchase))+
-  geom_bar() + theme_bw() + ggtitle("(1)") 
+```{r graph_primes, echo=FALSE, fig.width=10, fig.height= 30, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:BoitesMoustache}Diagrammes en boite à moustache pour les différentes primes selon la variable réponse et le genre du détenteur de la police"}
+ 
+prem_final <- ggplot(data, aes(y = prem_final, x = lapse, color = polholder_gender)) + geom_boxplot() + facet_grid() + theme_bw()
 
-age_vehicule <- ggplot(data, aes(x = vehicl_age))+
-  geom_bar()+ theme_bw() + ggtitle("(2)") 
+prem_last <- ggplot(data, aes(y = prem_last, x = lapse, color = polholder_gender)) + geom_boxplot() + facet_grid() + theme_bw()
+
+prem_market <- ggplot(data, aes(y = prem_market, x = lapse, color = polholder_gender)) + geom_boxplot() + facet_grid() + theme_bw()
+
+prem_pure <- ggplot(data, aes(y = prem_pure, x = lapse, color = polholder_gender)) + geom_boxplot() + facet_grid() + theme_bw()
 
 
-grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
+grid.arrange(prem_final, prem_last, prem_market, prem_pure,  ncol=2, nrow = 2)
 
 ```
-
-Beaucoup de véhicules ont été achetés lorsqu'il était neuf, soit les valeurs indiquant 0 an. On remarque également qu'il y a peu de véhicule neuf lors du moment de la prise de données et que le nombre de véhicule est croissant en fonction de l'âge actuel jusqu'à 13 ans puis la tendance inverse est observé pour les âge supérieur à 13 ans. Étant donné qu'un véhicule âgé de 18 ans spécifiquement ne devrait raisonnablement pas être l'âge le plus fréquent, on conclut que cette valeur comprend 18 ans mais également tous les âges supérieurs.
-
-
-## Variables numériques continues
-
-Il est intéressant de voir comment se comporte la variable endogène en fonction des différentes variables explicatives. Bien sûr, nos variables explicatives comme décrit plus tôt ne sont pas toutes de même type il en résulte donc qu'elles n'auront pas toutes la même représentation visuelle par rapport à la variable endogène.
-
-Pour variable continues **(voir lab_partionnement2)**
-
-
-
 
 
 \newpage
@@ -416,19 +428,19 @@ Pour variable continues **(voir lab_partionnement2)**
 ```{R, ProportionDeValeursManquante, echo = FALSE, results='asis'}
 nb_manquant <- round(apply(data, 2, FUN = function(x) sum(is.na(x)))/nrow(data) * 100,2)
 ```
-La base de données contenait seulement trois variables avec des valeurs manquante. La variable indiquant la difference d'âge entre le détenteur de police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, celle indiquant l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et la variable indiquant le type de garage où est entreposé le vehicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron de non réponse. On remarque que la variable *polholder_diffdriver* semble avoir un patron de non réponse monotone avec les deux autres. Par contre, puisqu'il y a seulement 12 cas, nous allons pas tenir compte de ce lien lors de l'imputation des données. Pour ce qui est des variables *policy_caruse* et *vehicl_garage*, on remarque qu'il sont parfois manquante en même temps, mais seulement pour une minorité de cas.
+La base de données contenait seulement trois variables avec des valeurs manquantes. La variable indiquant la différence d'âge entre le détenteur de la police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, celle indiquant l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et la variable indiquant le type de garage où est entreposé le véhicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron de non réponse. On remarque que la variable **polholder_diffdriver** semble avoir un patron de non réponse monotone avec les deux autres. Par contre, puisqu'il y a seulement 12 cas, nous n'allons pas tenir compte de ce lien lors de l'imputation des données. Pour ce qui est des variables **policy_caruse** et **vehicl_garage**, on remarque qu'il sont parfois manquante en même temps, mais seulement pour une minorité de cas.
 
 ```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}todo"}
 # pattern.matrix <- md.pattern(data, rotate.names = TRUE)
 missing.pathern <- aggr(data, combined = TRUE, ylabs="",labels=c("","","","diffdriver","","","","caruse","","","","","","","","","garage","",""), sortVars=TRUE)
 ```
 
-Premièrement, dans le but déterminer si le données manquantes sont MCAR, le test d'hypothese suivant à été effectué
+Premièrement, dans le but déterminer si les données manquantes sont MCAR, le test d'hypothese suivant a été effectué
 \begin{align*}
   H_0:&\: \text{Le données sont MCAR} \\
   H_1:&\: \text{Le données ne sont pas MCAR}
 \end{align*}
-Pour conclure que les données sont MCAR, il est nécéssaire d'accepter $H_0$ pour toutes les variables. Par contre, un seul refus de cette hypothèse sera néséssaire permetra de conclure l'hypothèse alternative, c'est a dire que les données ne sont pas MCAR. Pour effectuer le test avec une variable catégorielle, il sera nécéssaire d'utilisé une statistique khi-carré alors que pour une variable numérique, une statistique student sera utilisée.
+Pour conclure que les données sont MCAR, il est nécessaire d'accepter $H_0$ pour toutes les variables. Par contre, un seul refus de cette hypothèse nous permettera de conclure l'hypothèse alternative, c'est-à-dire que les données ne sont pas MCAR. Pour effectuer le test avec une variable catégorielle, il sera nécéssaire d'utiliser la statistique de khi-carré alors que pour une variable numérique, la statistique la student sera utilisée.
 
 ```{r TraitementDesValeursManquantes, echo=FALSE, results=FALSE}
 test.MCAR <- function(var.data, na_var.data){
@@ -449,11 +461,11 @@ sapply(names(data  %>% select(-policy_caruse)), FUN=test.MCAR, na_var.data = "po
 sapply(names(data  %>% select(-polholder_diffdriver, -vehicl_garage, -policy_caruse)), FUN=test.MCAR, na_var.data = "polholder_diffdriver")
 ```
 
-En ce qui concerne les variables *vehicl_garage* et *policy_caruse*, plusieurs statistiques observé permette de rejeté l'hypothèse null en faveur de l'hypothèse alternative à un niveau significatif de $0.001%$. Par contre, dans le cas de *polholder_diffdriver*, seulement la variables *polholder_job* permet de rejeter $H_0$, c'est à dire que les données manquantes sont completement aléatoire.
+En ce qui concerne les variables **vehicl_garage** et **policy_caruse**, plusieurs statistiques observés permettent de rejeter l'hypothèse nulle à un niveau significatif de $0.001%$. Par contre, dans le cas de **polholder_diffdriver**, seulement la variable **polholder_job** permet de rejeter $H_0$, c'est à dire que les données manquantes ne sont pas complètement aléatoire.
 
-Il est à noter qu'il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Cela est dû au fait que puisque les données proviennent d'un compagnie inconnue, nous n'avons pas d'information sur la méthode de récolte de données et il nous est impossible de trouver des patrons qui pourraient provoquer des données de type NMAR. En conséquence, nous considérerons que nos données sont MAR. De ce sens, en effectuant des tests khi-carré pour la variable *polholder_diffdriver*, il a été remarqué que l'information sur la différence entre le détenteur de police et le conducteur nous indique que les variables sont toujours manquantes dans le cas ou le travail du détenteur de la police est dans le domaine de la médecine. Ceci renforce l'idée que le patrons de non réponse pour cette variable dépend des variables observés dans le jeux de données.
+Il est à noter qu'il n'est pas possible de vérifier avec certitude si les données sont MAR ou NMAR. Cela est dû au fait que puisque les données proviennent d'un compagnie inconnue, nous n'avons pas d'information sur la méthode de récolte des données et il nous est impossible de trouver des patrons qui pourraient provoquer des données de type NMAR. En conséquence, nous considérerons que nos données sont MAR. De ce sens, en effectuant des tests khi-carré pour la variable **polholder_diffdriver**, il a été remarqué que l'information sur la différence entre le détenteur de police et le conducteur nous indique que les variables sont toujours manquantes dans le cas ou le travail du détenteur de la police est dans le domaine de la médecine. Ceci renforce l'idée que le patron de non réponse pour cette variable dépend des variables observés dans le jeux de données, soit que les données sont NMAR mais nous ne pouvons rien conclure de ce côté.
 
-Pour l'imputation des données, la méthode d'imputation multiples à été choisie. Pour des restrictions de temps de calcul, cinq itérations de régression stochastique ont été fait. Pour la variable *policy_caruse*, une régression logistique a été effectué puisque la variable catégorielle comporte deux niveaux. Pour les variables *vehicl_garage* et *polholder_diffdriver*, qui sont des variables catégorielles non-ordonées, une régression polynomiale a été utilisée.
+Pour l'imputation des données, la méthode d'imputation multiples a été choisie et donc utilisée. Pour des restrictions de temps de calcul, cinq itérations de régression stochastique ont été fait. Pour la variable **policy_caruse**, une régression logistique a été effectuée puisque la variable catégorielle comporte deux niveaux. Pour les variables **vehicl_garage** et **polholder_diffdriver**, qui sont des variables catégorielles non-ordonées, une régression polynomiale a été utilisée.
 
 ```{R, ImputationDesDonnees, echo = FALSE, eval=FALSE, warning = FALSE}
 summary(data[,c("vehicl_garage", "policy_caruse", "polholder_diffdriver")])
@@ -469,8 +481,6 @@ summary(data.compl[,c("vehicl_garage", "policy_caruse", "polholder_diffdriver")]
 # Il ne reste bien plus de donnees.
 apply(data.compl, 2, FUN = function(x) sum(is.na(x)))
 ```
-
-
 
 
 
