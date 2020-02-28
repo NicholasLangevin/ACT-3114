@@ -374,10 +374,10 @@ Les deux prochaines variables sont en lien avec l'aĝe du véhicule, il s'agit d
 TITRE : distribution de l'âge des véhicules assurés au moment de l'achat du véhicule comparativement au moment de la prise de données.
 ```{r graph_age, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:}todo"}
 agepurchase_vehicule <- ggplot(data, aes(x = vehicl_agepurchase))+
-  geom_bar() + theme_bw() + ggtitle("(1)") 
+  geom_bar() + theme_bw() + ggtitle("(1)") + xlab("Âge à l'achat") + ylab("Fréquence")
 
 age_vehicule <- ggplot(data, aes(x = vehicl_age))+
-  geom_bar()+ theme_bw() + ggtitle("(2)") 
+  geom_bar()+ theme_bw() + ggtitle("(2)") + xlab("Âge du véhicule") + ylab("Fréquence")
 
 
 grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
@@ -393,7 +393,7 @@ Il y a plusieurs variables numériques continues relatives à la prime. La varia
 Une prime seule peut difficilement expliquer pourquoi un assuré voudrait résigner sa police d'assurance car si sa prime est représentative de son risque réel, il n'aurait pas intérêt à changer d'assureur.
 Par contre, si lors de son renouvellement, il voit sa prime grandement augmenter, il sera d'avantage sujet à vouloir changer d'assureur pour réduire ces coûts. 
 
-```{r stats_prem, echo=FALSE, results='asis', fig.cap="\\label{tbl:summaryPrimes}Distribution des variables consernant les primes de l'assuré"}
+```{r stats_prem, echo=FALSE, results='asis', fig.cap="\\label{tbl:summaryPrimes}Distribution des variables consernant les primes de l'assuré", warning=FALSE}
 stats_final <- c(summary(data$prem_final)[c(1, 3, 4, 6)], sd(data$prem_final))
 
 stats_last <- c(summary(data$prem_last)[c(1, 3, 4, 6)], sd(data$prem_last))
@@ -409,7 +409,7 @@ dat_frame_tab <- as.data.frame(tableau_stats)
 
 colnames(dat_frame_tab) <- c("Prime (\\$)", "Minimum", "Médiane", "Moyenne", "Maximum", "Écart-type")
 
-print.tables(dat_frame_tab, digits=2, align = c("l", "l", rep("c",5)))
+print.tables(dat_frame_tab, digits=2, align = c("l", "l", rep("c",5)), caption = "Distribution des 4 types de primes")
 ```
 
 Dans les représentations de la \autoref{fig:BoitesMoustache}, on observe que la distribution des variables **prem_last** et **prem_pure** ce rapproche de peu en ce qui concerne la moyenne et la variance des observations. Le variable **prem_final** diffère par sa variance plus élevée et la variable **prem_market** par sa moyenne qui est beaucoup plus faible. On remarque également, qu'en général, la variance reliée au détenteur de police de genre féminin est plus élevée ce qui s'explique par la proportion moins élevée de détenteur de police féminin. Pour les moyennes, elles sont semblables de ce côté, ce qui porte à croire que les primes ne sont pas influencées par le genre et c'est positif car ce serait un bais de stéréotype en cas contraire.
@@ -441,7 +441,7 @@ nb_manquant <- round(apply(data, 2, FUN = function(x) sum(is.na(x)))/nrow(data) 
 ```
 La base de données contenait seulement trois variables avec des valeurs manquantes. La variable indiquant la différence d'âge entre le détenteur de la police et le conducteur est manquante à `r nb_manquant[["polholder_diffdriver"]]`%, celle indiquant l'utilité du vehicule est manquante à `r nb_manquant[["policy_caruse"]]`% et la variable indiquant le type de garage où est entreposé le véhicule est manquante à `r nb_manquant[["vehicl_garage"]]`%. La \autoref{fig:missingPatern} montre le patron de non réponse. On remarque que la variable **polholder_diffdriver** semble avoir un patron de non réponse monotone avec les deux autres. Par contre, puisqu'il y a seulement 12 cas, nous n'allons pas tenir compte de ce lien lors de l'imputation des données. Pour ce qui est des variables **policy_caruse** et **vehicl_garage**, on remarque qu'il sont parfois manquante en même temps, mais seulement pour une minorité de cas.
 
-```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}todo"}
+```{R, MissingPattern, echo=FALSE, results="hide", fig.with=3, fig.height=3, fig.align="center", fig.cap="\\label{fig:missingPatern}Patron de non réponse"}
 # pattern.matrix <- md.pattern(data, rotate.names = TRUE)
 missing.pathern <- aggr(data, combined = TRUE, ylabs="",labels=c("","","","diffdriver","","","","caruse","","","","","","","","","garage","",""), sortVars=TRUE)
 ```
@@ -453,7 +453,7 @@ Premièrement, dans le but déterminer si les données manquantes sont MCAR, le 
 \end{align*}
 Pour conclure que les données sont MCAR, il est nécessaire d'accepter $H_0$ pour toutes les variables. Par contre, un seul refus de cette hypothèse nous permettera de conclure l'hypothèse alternative, c'est-à-dire que les données ne sont pas MCAR. Pour effectuer le test avec une variable catégorielle, il sera nécéssaire d'utiliser la statistique de khi-carré alors que pour une variable numérique, la statistique la student sera utilisée.
 
-```{r TraitementDesValeursManquantes, echo=FALSE, results=FALSE}
+```{r TraitementDesValeursManquantes, echo=FALSE, results=FALSE, warning=FALSE}
 test.MCAR <- function(var.data, na_var.data){
   # Détermine automatique si la variable est catégorielle ou
   # nuérique et utilise le bon test approprié.
@@ -494,7 +494,6 @@ apply(data.compl, 2, FUN = function(x) sum(is.na(x)))
 ```
 
 
-
 \newpage
 
 # Analyse en composantes principales
@@ -514,7 +513,7 @@ On doit ensuite choisir le nombre de composantes principales. Cette étape peut 
 ACP <- PCA(Data_num, scale = TRUE)  
 ```
 
-```{R , echo = FALSE, include = TRUE}
+```{R , echo = FALSE, include = TRUE, fig.with=4, fig.height=4, fig.align="center", fig.cap="Diagramme d'éboulis représentant le pourcentage expliquer de la variance pour chaque dimention."}
 fviz_screeplot(ACP)
 ```
 
@@ -531,7 +530,7 @@ ACP$var$contrib
 
 En illustrant les contributions des variables pour les deux premières composantes principales, il est plus facile de visualiser les conclusions mentionnées précédemment.
 
-```{R , message=FALSE, include = TRUE, echo = FALSE}
+```{R, message=FALSE, echo = FALSE, include = TRUE, fig.with=4, fig.height=4, fig.align="center", fig.cap="Représentation de la contribution de chaques variables numériques dans les deux premières dimentions résultant de l'analyse en composante principal."}
 contrib <- data.frame(ACP$var$coord[,1:2])
 contrib$carac <- rownames(contrib)
 contrib.long <- reshape2::melt(contrib)
@@ -553,16 +552,16 @@ Le partitionnement en k moyennes est utilisé pour classifier les observations e
 
 Le choix du nombre de groupe peut être choisit à l'aide de la méthode du coude. Ainsi en ce réferant au graphique suivant, on devrait faire le partitionnement sur 2 groupes distincts. On s'arrête la valeur de $k$ qui ce situe dans le "pli de coude", soit juste avant le dernier plateau du diagramme d'éboulis. Il est à noter que le nombre d'observations a été réduit pour pouvoir faire le diagramme d'éboulis. Notre jeu de données étant trop volumineux, ce qui engendrait des erreurs d'exécution. L'échantillion utilisé a été extrait aléatoirement et sans remise pour avoir une représentation adéquate et la moins biaisé possible.
 
-```{R , echo = FALSE}
+```{R, echo = FALSE, include = TRUE, fig.with=4, fig.height=4, fig.align="center", fig.cap="Diagramme d'éboulis représentant l'erreur intra-groupes pour différent nombre de groupes."}
 set.seed(123)
 echantillon <- sample(nrow(Data_num), size = 8000, replace = FALSE) 
 
-#fviz_nbclust(Data_num[echantillon, ], kmeans, k.max=7, method = "wss")
+fviz_nbclust(Data_num[echantillon, ], kmeans, k.max=7, method = "wss")
 ```
 
 En ayant en tête le nombre de groupe nécessaire pour la classification, on effectue le partitionnement et on obtient le graphique suivant :
 
-```{R , echo = FALSE}
+```{R, echo = FALSE, include = TRUE, fig.with=4, fig.height=4, fig.align="center", fig.cap="Représentation des deux groupes formés par l'algorithme des $k$-moyenne dans le système d'axe des deux première dimention de l'analyse en composante principal."}
 K <- 2
 kmoyennes <- kmeans(Data_num, K, nstart=5)
 
