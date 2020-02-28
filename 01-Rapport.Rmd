@@ -324,24 +324,15 @@ tab_avant <- as.data.frame(tableau_powerkw_avant)
 tab_apres <- as.data.frame(tableau_powerkw_apres)
 
 colnames(tab_avant) <- c("Puissance (kW)", "Nombre d'observation", "Distribution")
-colnames(tab_apres) <- c("Puissance (kW)", "Nombre d'observation", "Distribution")
+colnames(tab_apres) <- c("Puissance (kW)", "Nombre d'observation","Distribution")
 
-t1 <- kable(tab_avant, format = "latex", align = c("c", "c", "r"), booktabs = TRUE)
-t2 <- kable(tab_apres, format = "latex", align = c("c", "c", "r"),  booktabs = TRUE)
 
-cat(c("\\begin{table}[!htb]
-    \\begin{minipage}{.5\\linewidth}
-      \\caption{Distribution de la variable Vehicl_powerkw pour chacune des catégories (avant modification)}
-      \\centering",
-        t1,
-    "\\end{minipage}%
-    \\begin{minipage}{.5\\linewidth}
-      \\centering
-        \\caption{Distribution de la variable Vehicl_powerkw pour chacune des catégories (après modification)}",
-        t2,
-    "\\end{minipage} 
-\\end{table}"
-))  
+
+print.tables(rbind(tab_avant, tab_apres) , digits=2, 
+             align = c("l", "l", "c", "r"),
+             caption="Distribution de la puissance du moteur avant et après modification",
+             label="",
+             hline.after=c(-1,0,10, 15))
 ```
 
 \newpage
@@ -365,7 +356,6 @@ ggplot(data, aes(x = policy_age))+
   geom_bar() +
   labs(x = "Âge de la police", y = "Fréquence") + 
   theme_bw() 
-
 ```
 
 
@@ -391,7 +381,6 @@ age_vehicule <- ggplot(data, aes(x = vehicl_age))+
 
 
 grid.arrange(agepurchase_vehicule, age_vehicule,  ncol=2)
-
 ```
 
 Beaucoup de véhicules ont été achetés lorsqu'il était neuf, soit les valeurs indiquant 0 an. On remarque également qu'il y a peu de véhicule neuf lors du moment de la prise de données et que le nombre de véhicule est croissant en fonction de l'âge actuel jusqu'à 13 ans puis la tendance inverse est observé pour les âge supérieur à 13 ans. Étant donné qu'un véhicule âgé de 18 ans spécifiquement ne devrait raisonnablement pas être l'âge le plus fréquent, on conclut que cette valeur comprend 18 ans mais également tous les âges supérieurs.
@@ -420,7 +409,7 @@ dat_frame_tab <- as.data.frame(tableau_stats)
 
 colnames(dat_frame_tab) <- c("Prime (\\$)", "Minimum", "Médiane", "Moyenne", "Maximum", "Écart-type")
 
-print.tables(dat_frame_tab, hline.after=c(-1,0,4,4), digits=2, align = c("l", "l", rep("c",5)))
+print.tables(dat_frame_tab, digits=2, align = c("l", "l", rep("c",5)))
 ```
 
 Dans les représentations de la \autoref{fig:BoitesMoustache}, on observe que la distribution des variables **prem_last** et **prem_pure** ce rapproche de peu en ce qui concerne la moyenne et la variance des observations. Les variable **prem_final** diffère par sa variance plus élevée et la variable **prem_market** par sa moyenne qui est beaucoup plus faible. On remarque également, qu'en générale, la variance reliée au détenteur de police de genre féminin est plus élevée ce qui s'explique par la proportion moins élevée de détenteur de police féminin. Pour les moyennes, elles sont semblables de ce côté, ce qui porte à croire que les primes ne sont pas influencées par le genre et c'est un positif car ce serait un bais de stéréotype.
@@ -441,6 +430,7 @@ prem_pure <- ggplot(data, aes(y = prem_pure, x = lapse, color = polholder_gender
 
 
 grid.arrange(prem_final, prem_last, prem_market, prem_pure,  ncol=2, nrow = 2)
+```
 
 \newpage
 
