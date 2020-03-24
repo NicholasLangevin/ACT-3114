@@ -1,0 +1,59 @@
+---
+header-includes: \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
+  linkcolor=blue, filecolor=magenta, urlcolor=cyan}
+bibliography: ../biblio.bib
+bibliographystyle: apalike
+nocite: | 
+  @*
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+\newpage
+\begin{flushright}
+    \textbf{Équipe 8}
+\end{flushright}
+
+\begin{center}
+    \vspace{2\baselineskip}
+    Charles Comeau \\
+    (111 185 421) \\
+    \vspace{1\baselineskip}
+    Nicholas Langevin \\
+    (111 184 631) \\
+    \vspace{1\baselineskip}
+    Andréanne Larouche \\
+    (111 190 518) \\
+    \vspace{7\baselineskip}
+    Apprentissage statistique en actuariat\\
+    ACT-3114 \\
+    \vspace{7\baselineskip}
+    {\large
+    \textbf{Analyse des données de renouvellement d'assurance}} \\
+    \vspace{8\baselineskip}
+    présenté à \\
+    Marie-Pier Côté \\
+    \vspace{9\baselineskip}
+    École d’actuariat \\
+    Université Laval \\
+    27 février 2020
+\end{center}
+
+
+\newpage
+
+\tableofcontents
+
+```{R, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
+library(tidyverse)
+```
+
+```{R, LoadingModeles, echo = FALSE, include = FALSE, warning = FALSE}
+# load(file="../modele/<nomDuModele>")
+```
+
+# Bibliographie
+
+::: {#refs}
+:::
