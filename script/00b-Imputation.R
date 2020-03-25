@@ -8,7 +8,7 @@ methode <- c("sample","sample","polyreg","sample","sample","sample","logreg","sa
 donnees.imp <- mice(data %>% select(-lapse), m=1, method=methode, print=FALSE, seed=1096)
 summary(donnees.imp)
 data.compl <- mice::complete(donnees.imp)
-data.compl <- cbind(data$lapse, data.compl)
+data.compl <- cbind(data %>% select(lapse), data.compl)
 
 # Summary apres semble similaire a avant
 summary(data.compl[,c("vehicl_garage", "policy_caruse", "polholder_diffdriver")])
