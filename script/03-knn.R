@@ -4,8 +4,6 @@
 library(tidyverse)
 library(FNN)
 library(caret)
-library(dummies)
-library(pROC)
 
 ## Datasets
 load(file="../data/trainData.RData")
@@ -31,7 +29,7 @@ trControl.knn <- trainControl(method  = "cv", # validation croisée
 fit.knn <- train(lapse ~ .,
                  method     = "knn",
                  preProcess = "scale", # standardisation
-                 tuneGrid   = expand.grid(k = 15:20), # test des k 1:10
+                 tuneGrid   = expand.grid(k = 1:10), # test des k 1:10
                  trControl  = trControl.knn,
                  metric     = "ROC",
                  data       = dataToNumeric(trainData))
@@ -40,7 +38,7 @@ fit.knn
 
 ## Comprehention: 
 # 'knn' -> classification
-# 'KNN:knn.reg' -> regression
+# 'knn.reg' -> regression
 # Ici, on fait de la classification car notre y est un facteur. Par contre, 
 # si on utilise 'knn' la prediction va etre directement 'renouvellement' ou
 # 'resignation'. On ne pourra donc pas utilise une courbe ROC pour evaluer
@@ -51,18 +49,16 @@ fit.knn
 # les predictions. Il cherche a predire le y de la base de donnees test(valid).
 # Il prend un observation de test, calcul la distance euclidienne avec les 
 # observation de train et fait la moyenne des y de train.
-(k <- fit.knn$bestTune)
-modele.knn <- knn.reg(dataToNumeric(trainData, "x", TRUE), 
+(k <- as.numeric(fit.knn$bestTune))
+modele.knn <- knn(dataToNumeric(trainData, "x", TRUE), 
                       dataToNumeric(validData, "x", TRUE), 
-                      dataToNumeric(trainData, "y"), k=k)
+                      trainData$lapse, k=8)
 
-names(modele.knn)
 source("./_utilityFunction.R")
-## TODO: Rajouter cette information au rapport
 table(trainData$lapse)/nrow(trainData) * 100 # Debalancement des donnes ??
-ROC(x, modele.knn$pred, c(0.87, 0.9))
-# Dans tous les cas le modele est mauvais
+pred_binaire <- ifelse(modele.knn == "renouvellement", 0, 1)
+ROC(dataToNumeric(validData, "y"), pred_binaire)
 
 ## Matrice de confusion
-pred_binaire <- ifelse(modele.knn$pred > 0., 1, 0)
+sum(pred_binaire)
 table(dataToNumeric(validData, "y"), pred_binaire)

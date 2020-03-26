@@ -31,15 +31,22 @@ dataToNumeric <- function(data, return = "both", scale = FALSE){
 }
 
 require(RColorBrewer)
-ROC <- function(y, probPred, seuil){
-    pred_binaire <- lapply(seuil, function(seuil) 
-                           ifelse(probPred > seuil, 1, 0))
+ROC <- function(y, probPred, seuil = NULL){
 
     table_roc <- function(etiq, pred) {
       etiq <- etiq[order(pred, decreasing = TRUE)]
       data.frame(TVP = cumsum(etiq)/sum(etiq), # Taux vrais positifs
                  TFP = cumsum(!etiq)/sum(!etiq)) # Taux faux positifs
     }
+
+    if(is.null(seuil)){
+        plot(table_roc(y, probPred), type="l")
+        return(message("ploted"))
+    }
+
+
+    pred_binaire <- lapply(seuil, function(seuil) 
+                           ifelse(probPred > seuil, 1, 0))
 
     n <- length(seuil)
 
@@ -50,7 +57,6 @@ ROC <- function(y, probPred, seuil){
     else
         cols <- brewer.pal(3, "Dark2")
 
-    plot(table_roc(y, pred_binaire[[1]]), type="l", col=cols[1])
     if(n >= 2){
         for(i in seq(2, n)){
             points(table_roc(y, pred_binaire[[i]]), type="l", col=cols[i])
