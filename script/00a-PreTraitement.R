@@ -20,7 +20,7 @@ data[data$policy_caruse == "unknown", ]$policy_caruse <- NA
 data$prem_freqperyear <- factor(data$prem_freqperyear, order = TRUE, levels = c("1 per year", "2 per year", "4 per year", "12 per year"))
 
 # Regions
-data$vehicl_region <- factor(data$vehicl_region, order = TRUE, levels = c("Reg1", "Reg2", "Reg3", "Reg4", "Reg5", "Reg6", "Reg7", "Reg8", "Reg9", "Reg10", "Reg11", "Reg12", "Reg13", "Reg14"))
+data$vehicl_region <- factor(data$vehicl_region, order = FALSE, levels = c("Reg1", "Reg2", "Reg3", "Reg4", "Reg5", "Reg6", "Reg7", "Reg8", "Reg9", "Reg10", "Reg11", "Reg12", "Reg13", "Reg14"))
 
 # Creation d un nouvelle variable prem_index=prem_final/prem_last
 data$prem_index <- data$prem_final / data$prem_last - 1
