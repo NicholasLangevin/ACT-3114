@@ -30,39 +30,19 @@ dataToNumeric <- function(data, return = "both", scale = FALSE){
     stop("argument 'return' out of bound")
 }
 
-require(RColorBrewer)
-ROC <- function(y, probPred, seuil = NULL){
+ROC <- function(y, probPred, add = FALSE, ...){
 
     table_roc <- function(etiq, pred) {
       etiq <- etiq[order(pred, decreasing = TRUE)]
-      data.frame(TVP = cumsum(etiq)/sum(etiq), # Taux vrais positifs
-                 TFP = cumsum(!etiq)/sum(!etiq)) # Taux faux positifs
+      data.frame(TFP = cumsum(!etiq)/sum(!etiq), # Taux faux positifs
+                 TVP = cumsum(etiq)/sum(etiq)) # Taux vrais positifs
     }
 
-    if(is.null(seuil)){
-        plot(table_roc(y, probPred), type="l")
-        return(message("ploted"))
+    if(add)
+        points(table_roc(y, probPred, type="l", add=TRUE, ...))
+    else{
+        plot(table_roc(y, probPred), type="l", main="ROC", 
+            xlab="Taux faux positifs", ylab="Taux vrai positifs", ...)
+        abline(a=0, b=1)
     }
-
-
-    pred_binaire <- lapply(seuil, function(seuil) 
-                           ifelse(probPred > seuil, 1, 0))
-
-    n <- length(seuil)
-
-    if(n > 8)
-        stop("Can't draw more then 8 threshold")
-    else if(n > 3)
-        cols <- brewer.pal(n, "Dark2")
-    else
-        cols <- brewer.pal(3, "Dark2")
-
-    if(n >= 2){
-        for(i in seq(2, n)){
-            points(table_roc(y, pred_binaire[[i]]), type="l", col=cols[i])
-        }
-    }
-
-    label <- scales::percent(seuil, prefix ="Seuil ", accuracy = 1)
-    legend(x="bottomright", legend=label, col=cols, lty=1)
 }

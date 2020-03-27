@@ -7,7 +7,7 @@ library(caret)
 
 ## Datasets
 load(file="../data/trainData.RData")
-load(file="../data/validData.RData")
+load(file="../data/testData.RData")
 
 ## La fonction knn utilise la distance euclidienne, ce qui veut dire
 ##  que nous devons avoir des valeurs numeriques.
@@ -17,10 +17,9 @@ source("./_utilityFunction.R")
 
 ## Recherche du meilleur k
 trControl.knn <- trainControl(method  = "cv", # validation croisée
+                              number  = 4,  # Nombre de plis
                               summaryFunction = twoClassSummary,
                               classProbs = TRUE,
-                              # nombre de plis de la validation croisee
-                              number  = 4, 
                               # Methode de gestion du debalancement des donnees
                               sampling = "smote") 
 
@@ -46,8 +45,8 @@ modele.knn <- knn(dataToNumeric(trainData, "x", TRUE),
 
 source("./_utilityFunction.R")
 table(trainData$lapse)/nrow(trainData) * 100 # Debalancement des donnes ??
-pred_binaire <- ifelse(modele.knn == "renouvellement", 0, 1)
-ROC(dataToNumeric(validData, "y"), pred_binaire)
+## pred_binaire <- ifelse(modele.knn == "renouvellement", 0, 1)
+ROC(dataToNumeric(validData, "y"), modele.knn, col="blue")
 
 ## Matrice de confusion
 table(dataToNumeric(validData, "y"), pred_binaire)
