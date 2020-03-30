@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 load(file="../data/DataImputation.RData")
 
 set.seed(111184631)

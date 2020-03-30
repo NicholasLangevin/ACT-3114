@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 library(dplyr)
 library(mice)
 load(file="../data/DataPreTraitement.RData") # Import as data
