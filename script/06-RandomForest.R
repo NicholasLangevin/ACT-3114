@@ -41,14 +41,14 @@ for(node in 2:30){
                        nodesize = node)
     mtry_opti <- rf_tuning$results$mtry[which.max(rf_tuning$results$ROC)]
     AUC_opti <- rf_tuning$results$ROC[which.max(rf_tuning$results$ROC)]
-    res_opt[node - 1] <- c(node, mtry_opti, AUC_opti)
+    res_opt[node - 1, ] <- c(node, mtry_opti, AUC_opti)
 }
 
+node_opt <- res_opt[which.max(res_opt[, 3]), ][1]
+mtry_opt <- res_opt[which.max(res_opt[, 3]), ][2]
 
-mtry_opti <- rf_tuning$results$mtry[which.max(rf_tuning$results$ROC)]
-
-mod_foret_fin <- randomForest(lapse ~ ., data=trainData, ntree = 100, sampsize = floor(0.5*nrow(trainData)),
-                              nodesize = 19, cp = 0, mtry = mtry_opti, importance = TRUE, keep.forest = TRUE)
+mod_foret_fin <- randomForest(lapse ~ ., data=trainData, ntree = 100, sampsize = floor(0.50*nrow(trainData)),
+                              nodesize = node_opt, cp = 0, mtry = mtry_opt, importance = TRUE, keep.forest = TRUE)
 
 preds.foret <- predict(mod_foret_fin, newdata = testData, type="prob")
 roc(testData$lapse, preds.foret[,2], auc=TRUE, plot=TRUE)
