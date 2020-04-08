@@ -60,21 +60,16 @@ load(file="../data/testData.RData")
 ```{r, knn.bestTune, echo=FALSE}
 load(file="../src/03-knn/knnTrain(fit.knn).rds")
 ```
-Le modèle des _k_ plus proches voisins comprend un seul hyperparamètre, 
-soit le nombre de voisins (_k_) à utilité pour la prédiction. Ce choix a 
-été optimizer en utilisant une validation croisé à 4 plis. La valeur de _k_
-qui maximise l'aire sour la courbe ROC (_fonction d’efficacité du récepteur
-_) est de `r as.numeric(fit.knn$bestTune)`. Ces valeurs, pour chaque valeurs 
-de _k_, sont présenté dans la \autoref{tbl:knn.plot-bestTune}.
+Le modèle des _k_ plus proches voisins calcule les prédictions en utilisantla distance euclédienne, ce qui veut dire que les variables catégorielles non-ordonées doivent être transformées en $(c-1)$ variables binaires. Aussi, les variables catégorielles ordonnées ont été transformées en des variables numériques disctrètes $(1, 2, 3,...)$. Le modèle des _k_ plus proches voisins comprend un seul hyperparamètre, soit le nombre de voisins (_k_) à utilité pour la prédiction. Ce choix a été optimizer en utilisant une validation croisé à 4 plis. La valeur de _k_ qui maximise l'aire sour la courbe ROC (_fonction d’efficacité du récepteur_) est de `r as.numeric(fit.knn$bestTune)`. Ces valeurs, pour chaque valeurs de _k_, sont présenté dans la \autoref{tbl:knn.plot-bestTune}.
 
 ```{r, knn.plot_bestTune, echo=FALSE, results='asis', fig.width=5, fig.asp=.62, fig.align="center", fig.cap="\\label{tbl:knn.plot-bestTune} Valeurs de l'aire sous la courbe ROC en fonction de différentes valeurs de \\emph{k}"}
 plot(fit.knn, xlab = "k", ylab = "AUC (Validation croisée)")
 ```
 
-```{r, knn.plot_ROC, echo=FALSE, message=FALSE, results='asis', fig.width=5, fig.asp=.62, fig.align="center", fig.cap="\\label{tbl:knn.plot-ROC} TODO"}
+```{r, knn.plot_ROC, echo=FALSE, message=FALSE, results='asis', fig.width=5, fig.height=4, fig.align="center", fig.cap="\\label{tbl:knn.plot-ROC} TODO"}
 load(file="../src/03-knn/knnModele(modele.knn).rds")
-# ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
-roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
+ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
+# roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
 ```
 
 

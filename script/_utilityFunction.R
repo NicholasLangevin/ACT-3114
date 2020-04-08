@@ -41,7 +41,7 @@ ROC <- function(y, probPred, add = FALSE, ...){
     if(add)
         points(table_roc(y, probPred, type="l", add=TRUE, ...))
     else{
-        plot(table_roc(y, probPred), type="l", main="ROC", 
+        plot(table_roc(y, probPred), type="l", # main="ROC", 
             xlab="Taux faux positifs", ylab="Taux vrai positifs", ...)
         abline(a=0, b=1)
     }
