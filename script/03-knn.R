@@ -4,6 +4,7 @@
 library(tidyverse)
 library(FNN)
 library(caret)
+library(pROC)
 
 ## Datasets
 load(file="../data/trainData.RData")
@@ -26,11 +27,13 @@ trControl.knn <- trainControl(method  = "cv", # validation croisée
 fit.knn <- train(lapse ~ .,
                  method     = "knn",
                  preProcess = "scale", # standardisation
-                 tuneGrid   = expand.grid(k = 1:10), # test des k 1:10
+                 tuneGrid   = expand.grid(k = 1:20), # test des k 1:10
                  trControl  = trControl.knn,
                  metric     = "ROC",
                  data       = dataToNumeric(trainData))
 fit.knn
+
+save(fit.knn, file="../src/03-knn/knnTrain(fit.knn).rds")
 ## Creation du modele
 
 ## Fonctionnement de la fonction 'knn':
@@ -38,15 +41,18 @@ fit.knn
 # les predictions. Il cherche a predire le y de la base de donnees test(valid).
 # Il prend un observation de test, calcul la distance euclidienne avec les 
 # observation de train et fait la moyenne des y de train.
+load(file="../src/03-knn/knnTrain(fit.knn).rds")
 (k <- as.numeric(fit.knn$bestTune))
-modele.knn <- knn(dataToNumeric(trainData, "x", TRUE), 
-                      dataToNumeric(validData, "x", TRUE), 
-                      trainData$lapse, k=8)
+modele.knn <- knn.reg(dataToNumeric(trainData, "x", TRUE), 
+                      dataToNumeric(testData, "x", TRUE), 
+                      dataToNumeric(trainData, "y"), k=k)
 
 source("./_utilityFunction.R")
 table(trainData$lapse)/nrow(trainData) * 100 # Debalancement des donnes ??
 ## pred_binaire <- ifelse(modele.knn == "renouvellement", 0, 1)
-ROC(dataToNumeric(validData, "y"), modele.knn, col="blue")
+ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
+roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
 
 ## Matrice de confusion
-table(dataToNumeric(validData, "y"), pred_binaire)
+pred_binaire <- ifelse(modele.knn$pred > 0.6, 1, 0)
+table(dataToNumeric(testData, "y"), pred_binaire)

@@ -18,6 +18,7 @@ trControl.tree <- trainControl(method="cv", # Cross-Validation
                                #Methode de gestion du debalancement des donnees
                                sampling = "smote"
                                ) 
+# TODO: Utilise autre chose que l indice de gini
 gridSearch.rpart <- function(maxdepth){
     nResult <- length(maxdepth)
     gridSearchResults <- data.frame(maxdepth = maxdepth,
@@ -96,8 +97,10 @@ gridSearch.rpart2 <- function(grid){
         pred <- predict(tree, newdata=testData)
         gridSearchResults$maxdepth[i] = grid$maxdepth[i]
         gridSearchResults$cp[i] = grid$cp[i]
-        gridSearchResults$ROC[i] = as.numeric(roc(dataToNumeric(testData, "y"), pred[,2])$auc)
+        gridSearchResults$ROC[i] = as.numeric(roc(dataToNumeric(testData, "y"),
+                                                  pred[,2])$auc)
         print(as.numeric(roc(dataToNumeric(testData, "y"), pred[,2])$auc))
+        #
     }
     return(gridSearchResults)
 }

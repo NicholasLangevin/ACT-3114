@@ -49,9 +49,26 @@ output:
 library(tidyverse)
 ```
 
-```{R, LoadingModeles, echo = FALSE, include = FALSE, warning = FALSE}
-# load(file="../modele/<nomDuModele>")
+# Ajustement des modèles
+
+## k plus proches voisins
+
+```{r, knn.bestTune, echo=FALSE}
+load(file="../src/03-knn/knnTrain(fit.knn).rds")
 ```
+Le modèle des _k_ plus proches voisins comprend un seul hyperparamètre, 
+soit le nombre de voisins (_k_) à utilité pour la prédiction. Ce choix a 
+été optimizer en utilisant une validation croisé à 4 plis. La valeur de _k_
+qui maximise l'aire sour la courbe ROC (_fonction d’efficacité du récepteur
+_) est de `r as.numeric(fit.knn$bestTune)`. Ces valeurs, pour chaque valeurs 
+de _k_, sont présenté dans la \autoref{tbl:knn.plot-bestTune}.
+
+```{r, knn.plot_bestTune, echo=FALSE, results='asis', fig.width=5, fig.asp=.62, fig.align="center", fig.cap="\\label{tbl:knn.plot-bestTune} Valeurs de l'aire sous la courbe ROC en fonction de différentes valeurs de \\emph{k}"}
+plot(fit.knn, xlab = "k", ylab = "AUC (Validation croisée)")
+```
+
+
+
 
 # Bibliographie
 
