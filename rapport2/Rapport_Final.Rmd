@@ -45,8 +45,12 @@ output:
 
 \tableofcontents
 
-```{R, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
+```{r, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
 library(tidyverse)
+library(pROC)
+source("../script/_utilityFunction.R")
+load(file="../data/trainData.RData")
+load(file="../data/testData.RData")
 ```
 
 # Ajustement des modèles
@@ -65,6 +69,12 @@ de _k_, sont présenté dans la \autoref{tbl:knn.plot-bestTune}.
 
 ```{r, knn.plot_bestTune, echo=FALSE, results='asis', fig.width=5, fig.asp=.62, fig.align="center", fig.cap="\\label{tbl:knn.plot-bestTune} Valeurs de l'aire sous la courbe ROC en fonction de différentes valeurs de \\emph{k}"}
 plot(fit.knn, xlab = "k", ylab = "AUC (Validation croisée)")
+```
+
+```{r, knn.plot_ROC, echo=FALSE, message=FALSE, results='asis', fig.width=5, fig.asp=.62, fig.align="center", fig.cap="\\label{tbl:knn.plot-ROC} TODO"}
+load(file="../src/03-knn/knnModele(modele.knn).rds")
+# ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
+roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
 ```
 
 
