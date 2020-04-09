@@ -20,18 +20,19 @@ source("./_utilityFunction.R")
 trControl.knn <- trainControl(method  = "cv", # validation croisée
                               number  = 4,  # Nombre de plis
                               summaryFunction = twoClassSummary,
-                              classProbs = TRUE,
-                              # Methode de gestion du debalancement des donnees
-                              sampling = "smote") 
+                              classProbs = TRUE)
+                              # Methode de gestnon du debalancement des donnees
+                              # sampling = "smote") 
 
 fit.knn <- train(lapse ~ .,
                  method     = "knn",
                  preProcess = "scale", # standardisation
-                 tuneGrid   = expand.grid(k = 1:20), # test des k 1:10
+                 tuneGrid   = expand.grid(k = seq(1, 50, by=5), 
                  trControl  = trControl.knn,
                  metric     = "ROC",
                  data       = dataToNumeric(trainData))
 fit.knn
+plot(fit.knn)
 
 save(fit.knn, file="../src/03-knn/knnTrain(fit.knn).rds")
 ## Creation du modele
@@ -45,13 +46,18 @@ load(file="../src/03-knn/knnTrain(fit.knn).rds")
 (k <- as.numeric(fit.knn$bestTune))
 modele.knn <- knn.reg(dataToNumeric(trainData, "x", TRUE), 
                       dataToNumeric(testData, "x", TRUE), 
-                      dataToNumeric(trainData, "y"), k=k)
+                      dataToNumeric(trainData, "y"), k=29)
+
+save(modele.knn, file="../src/03-knn/knnModele(modele.knn).rds")
+load(file="../src/03-knn/knnModele(modele.knn).rds")
 
 source("./_utilityFunction.R")
 table(trainData$lapse)/nrow(trainData) * 100 # Debalancement des donnes ??
+table(testData$lapse)/nrow(testData) * 100 # Debalancement des donnes ??
 ## pred_binaire <- ifelse(modele.knn == "renouvellement", 0, 1)
 ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
 roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
+as.numeric(roc(dataToNumeric(testData, "y"), modele.knn$pred)$auc)
 
 ## Matrice de confusion
 pred_binaire <- ifelse(modele.knn$pred > 0.6, 1, 0)
