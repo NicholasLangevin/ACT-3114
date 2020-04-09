@@ -1,5 +1,5 @@
 ---
-header-includes: \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
+header-includes: \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan}
 bibliography: ../biblio.bib
 bibliographystyle: apalike
@@ -51,6 +51,8 @@ fig.align="center")
 ```{r, LoadingPackages, include = FALSE}
 library(tidyverse)
 library(pROC)
+library(rpart)
+library(rpart.plot)
 source("../script/_utilityFunction.R")
 load(file="../data/trainData.RData")
 load(file="../data/testData.RData")
@@ -62,6 +64,7 @@ load(file="../data/testData.RData")
 
 ```{r, knn.bestTune}
 load(file="../src/03-knn/knnTrain(fit.knn).rds")
+load(file="../src/03-knn/knnTrainWithoutSmote(fit.knn).rds")
 ```
 
 Le modèle des _k_ plus proches voisins calcule les prédictions en utilisant la
@@ -83,8 +86,106 @@ plot(fit.knn, xlab = "k", ylab = "AUC (Validation croisée)")
 
 ```{r, knn.plot_ROC, results='asis', fig.height=4, fig.cap="\\label{tbl:knn.plot-ROC} TODO"}
 load(file="../src/03-knn/knnModele(modele.knn).rds")
-ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
+# ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
 # roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
+```
+\newpage
+
+## Arbre de classification
+
+```{r, tree.bestTune}
+load(file="../src/04-tree/tree.T0.rds")
+load(file="../src/04-tree/tree.gridResult.info.rds")
+load(file="../src/04-tree/tree.gridResult.gini.rds")
+load(file="../src/04-tree/tree.final.rds")
+# fonction de perte
+# procedure choix final
+# presenter les hyperparamètre
+```
+
+Le modèle d'arbre de classification offre la possibilité d'utilisé deux
+fonctions de perte différence. Si _K_ représente le nombre de classe, alors un
+premier choix comme fonction de perte peut être l'indice de _Gini_, defini
+comme
+\begin{align}
+    \mathcal{L}_G = \sum_{k=1}^K \widehat{P}_{mk} (1 - \widehat{P}_{mk}).
+\end{align}
+Dans un deuxième cas, il est possible d'utilisé la _deviance_ négative d'une
+bernouilli (ou encore l'_entropie croisée_) defini comme
+\begin{align}
+    \mathcal{L}_D = \sum_{k=1}^K \widehat{P}_{mk} \ln( \widehat{P}_{mk}).
+\end{align} 
+La procédure d'optimisation des hyperparamètre à été effectuer pour chacune des
+deux fonction de perte. En premier lieux, un arbre complet $T_0$ à été
+entrainer par validation croisée en 10 plis. Celui-ci est défini comme un arbre
+construit avec un paramètre de complexité (_cp_) à 0 ainsi que le nombre 
+minimal d'observation dans chaque feuille (_minbucket_) à 1. Le
+\autoref{fig:tree.plotArbreT0} présente l'erreur obtenu par validation croisée
+pour certaine valeurs de _cp_. Selon cette metrique, le meilleur modèle serait 
+l'arbre racine, ce qui signifie que la prédiction serait la même pour toutes
+les données. La metrique _AUC_ sera considéré par la suite pour l'optimisation
+des hyperparamètres.
+```{r, tree.plotArbreT0, results='asis', fig.height=4, fig.cap="Résultats de la validation croisée pour un arbre complet $T_0$ utilisant \\emph{Gini} comme fonction de perte."}
+plotcp(tree.T0, lty=2, col=2)
+```
+
+\newpage
+Pour la suite, l'optimisation du _cp_ à été efectué sur plusieurs valeurs de
+_minbucket_. La \autoref{tbl:tree.auc} montre les résultat de de l'aire sous la courbe ROC
+(_AUC_) pour différente valeur de _minbucket_ en fonction du _cp_ optimal. À
+droite, la fonction de perte utilisée est l'indice de _Gini_, alors qu'à
+gauche, la fonction de perte utilité est l'_entropie croisée_. Ces valeurs on
+été obtenu par validation croisée à 4 plis.
+
+
+\begin{table}[!ht]
+\caption{\emph{AUC} pour différente valeur de \emph{minbucket} en fonction du 
+\emph{cp} optimal. À gauche, la fonction de perte utilisée est l'indice de 
+\emph{Gini}, à droite l'\emph{entropie croisée}.}
+\label{tbl:tree.auc}
+\begin{minipage}{0.48\linewidth}
+\centering
+\begin{tabular}{ccc}
+\hline
+\multicolumn{3}{c}{Indice de Gini} \\
+```{r, results='asis'}
+Rmd_table(tree.gridResult.gini, caption="", label="",
+          digits=c(0,0,6, 3), hline.after=c(-1, 0, 6, 7, 11), 
+          only.contents = TRUE)
+```
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\linewidth}
+\centering
+\begin{tabular}{ccc}
+\hline
+\multicolumn{3}{c}{Entropie croisée} \\
+```{r, results='asis'}
+Rmd_table(tree.gridResult.info, caption="", label="",
+          digits=c(0,0,6,3), hline.after=c(-1, 0, 5, 6, 11), 
+          only.contents = TRUE)
+```
+\end{tabular}
+\end{minipage}
+\end{table}
+
+```{r, tree.choixHyperparametre, result=FALSE}
+choixCP <- tree.gridResult.gini$cp[which.max(tree.gridResult.gini$ROC)]
+choixMinbucket <- 
+    tree.gridResult.gini$minbucket[which.max(tree.gridResult.gini$ROC)]
+```
+Les résultats, peut importe la fonction de perte utilisé, sont similaire dans
+pour l'hyperparamètres _minbucket_. Par contre, le modèle utilisant l'indice de
+_Gini_ est optimal pour une valeur de _cp_ plus élevé, résultant en un arbre
+moins complexe. Il est donc meileur de prendre ce modele puisqu'il risque
+potentiellement de moins sur-apprendre les données d'apprentissage. Ainsi, le
+modèle choisis utilisira un _cp_ de `r format(choixCP, digits=5, scientific =
+FALSE)`, un _minbucket_ de `r choixMinbucket` et utilisera l'indice de
+_Gini_ comme fonction de perte.
+
+```{r, results='asis', fig.height=4, fig.width=7}
+rpart.plot(tree.final, type=1, fallen.leaves = FALSE, tweak=1.1)
 ```
 
 
