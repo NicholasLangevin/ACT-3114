@@ -14,8 +14,8 @@ library(plyr)
 
 set.seed(783590)
 
-mod_bag <- randomForest(lapse ~ ., data = trainData,
-                        ntree = 300,
+mod_bag_base <- randomForest(lapse ~ ., data = trainData,
+                        ntree = 200,
                         sampsize= nrow(trainData),
                         nodesize = 2,
                         mtry = ncol(trainData[, -1]),
@@ -23,8 +23,10 @@ mod_bag <- randomForest(lapse ~ ., data = trainData,
                         importance = TRUE,
                         keep.forest = TRUE)
 
-plot(1:dim(mod_bag$err.rate)[1], mod_bag$err.rate[,1],
-     type="l", xlab="B", ylab="Taux d'erreur OOB", main="Bagging") ## combien d'arbres ? -> stabilisation a 100 arbres
+plot(1:dim(mod_bag_base$err.rate)[1], mod_bag$err.rate[,1],
+     type="l", xlab="B", ylab="Taux d'erreur OOB") ## combien d'arbres ? -> stabilisation a 100 arbres
+
+
 
 varImpPlot(mod_bag) ## visualiser l'importance des variables 
 

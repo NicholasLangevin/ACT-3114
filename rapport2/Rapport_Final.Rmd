@@ -49,6 +49,7 @@ fig.align="center")
 ```
 
 ```{r, LoadingPackages, include = FALSE}
+library(plyr)
 library(tidyverse)
 library(pROC)
 library(rpart)
@@ -188,6 +189,163 @@ _Gini_ comme fonction de perte.
 rpart.plot(tree.final, type=1, fallen.leaves = FALSE, tweak=1.1)
 ```
 
+
+\newpage
+
+## Un ensemble d’arbres de décision agrégées par bagging
+
+```{r, loading_bagging}
+require(randomForest)
+require(rpart)
+require(rpart.plot)
+require(caret)
+require(pROC)
+
+mod_base_bag <- readRDS("../src/05-Bagging/mod_bag_base.rds")
+result_opt_bag <- readRDS("../src/05-Bagging/result_opt_bag_save.rds")
+result_opt_bag <- as.data.frame(result_opt_bag)
+colnames(result_opt_bag) <- c("nodesize", "AUC")
+
+mod_base_forest <- readRDS("../src/06-RandomForest/mod_forest_base.rds")
+result_opt_forest <- readRDS("../src/06-RandomForest/result_opt_rf_save.rds")
+result_opt_forest <- as.data.frame(result_opt_forest)
+colnames(result_opt_forest) <- c("nodesize", "mtry", "AUC")
+```
+
+Le modèle d'ensemble d’arbres de décision agrégées par bagging permet de d'obtenir
+des prévisions à partir d'un nombre d'arbre de décision, chacun ajuster par un 
+échantillon bootstrap des l'échantillon d'entrainement. Une prévision du bagging
+correspondera à la classe prédite majoritaire (renouvellement ou non renouvellement)
+par les arbres declassifications puisqu'il s'agit d'un problème de classification.
+Chacun des arbres utilise l'indice de Gini comme fonction de perte. Nous avons fait
+ce choix puisque qu'à la section précédente portant sur l'arbre de 
+classification, l'indice de Gini a été préféré à l'entropie croisée.
+
+
+Avant l'optimisation d'hyperparamètre il est nécessaire de déterminer un nombre
+d'arbre suffisant pour améliorer les prévisions. Pour ce faire, nous ajustons
+un modèle bagging avec un nombre d'arbre plus élevé que nécessaire avec
+l'échantillon d'entrainement. Ce modèle bagging de base n'a pas de pas de
+contrainte appliquée sur chacun des arbres puisque ce sera optimiser par
+la suite. Pour déterminer le nombre d'arbre adéquat nous avons tracé un graphique
+du taux d'erreur OOB en fonction du nombre d'arbres.
+
+```{r, plot_OOB_bagging, results='asis', fig.height=4, fig.cap="Taux d'erreur OOB en fonction du nombre d'arbre B"}
+plot(1:dim(mod_base_bag$err.rate)[1], mod_base_bag$err.rate[,1],
+     type="l", xlab="B", ylab="Taux d'erreur OOB")
+```
+
+Comme on peut le voir dans le graphique, le taux d'erreur OOB se stabilise à partir
+d'un nombre d'arbre de 100 et plus. Le nombre d'abre de notre bagging sera donc de 100.
+
+\newpage
+
+L'hyperparamètre qui sera optimisé par la suite pour augmenter les performances
+du bagging est le paramètre de la taille minimale d'un noeud (nodesize) pour chacun
+des arbres du modèle bagging. Des tailles de noeuds mininales partant de 2 allant
+jusqu'à 40 seront testées. Pour l'optimisation, on s'intéressera à maximiser
+la métrique AUC. Pour chaque taille de noeud, un AUC moyen sera calculée à partir
+d'une validation croisée par 4 ensembles. Voici les résultats obtenus de la
+validation croisée.
+
+
+\begin{table}[!ht]
+\begin{minipage}{0.23\linewidth}
+\centering
+\begin{tabular}{cc}
+\hline
+\multicolumn{2}{c}{} \\
+```{r, results='asis'}
+Rmd_table(result_opt_bag[1:10, ], caption="", label="",
+          digits=c(0,0,4), hline.after=c(-1, 0, 10), 
+          only.contents = TRUE)
+```
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.23\linewidth}
+\centering
+\begin{tabular}{cc}
+\hline
+\multicolumn{2}{c}{} \\
+```{r, results='asis'}
+Rmd_table(result_opt_bag[11:20, ], caption="", label="",
+          digits=c(0,0,4), hline.after=c(-1, 0, 10), 
+          only.contents = TRUE)
+```
+\end{tabular}
+\end{minipage}
+\begin{minipage}{0.23\linewidth}
+\centering
+\begin{tabular}{cc}
+\hline
+\multicolumn{2}{c}{} \\
+```{r, results='asis'}
+Rmd_table(result_opt_bag[21:30, ], caption="", label="",
+          digits=c(0,0,4), hline.after=c(-1, 0, 10), 
+          only.contents = TRUE)
+```
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.23\linewidth}
+\centering
+\begin{tabular}{cc}
+\hline
+\multicolumn{2}{c}{} \\
+```{r, results='asis'}
+Rmd_table(result_opt_bag[31:39, ], caption="", label="",
+          digits=c(0,0,4), hline.after=c(-1, 0, 2, 3, 9), 
+          only.contents = TRUE)
+```
+\end{tabular}
+\end{minipage}
+\end{table}
+
+
+On constate que l'AUC est maximisé lorsque nodesize prend une valeure 34. Le modèle d'ensemble d’arbres de décision agrégées par bagging choisi aura donc un nombre d'abres de 100 et une taille minimale d'un noeud pour les arbres de 34.  
+
+\newpage
+
+## Forêt aléatoire
+
+La forêt aléatoire permet elle aussi d'obtenir des prévisions à partir de prévisions aggrégées d'arbre de classification. La fonction de perte utilisée à chaque arbre est encore l'indice de Gini pour la même raison mentionnée dans la section du Bagging. Cependant, un changement par rapport au bagging est la taille de l'échantillon boostrap pour ajuster les arbres. Puisque notre jeu de données est assez volumineux et que cette fois-ci, nous devrons optimiser deux hyperparamètres plutôt qu'un, nous avons choisi de prendre une taille d'échantillon bootsrap correspondant à 50\% de l'échantillon d'entraînement pour réduire les temps de calcul de l'optimisation.
+
+Avant de procéder à l'optimisation il est encore nécessaire de déterminer un nombre d'arbre sufffisant pour la forêt. Pour ce faire, nous avons ajuster un modèle de forêt basique avec un nombre d'arbre plus élevé que nécessaire. Comme pour le bagging, pour déterminer le nombre d'arbre adéquatnous avons tracé un graphique du taux d'erreur OOB en fonction du nombre d'arbres.
+
+```{r, plot_OOB_forest, results='asis', fig.height=4, fig.cap="Taux d'erreur OOB en fonction du nombre d'arbre B"}
+plot(1:dim(mod_base_forest$err.rate)[1], mod_base_forest$err.rate[,1],
+     type="l", xlab="B", ylab="Taux d'erreur OOB")
+```
+
+\newpage
+
+Comme on peut le voir dans le graphique, le taux d'erreur OOB se stabilise à partir
+d'un nombre d'arbre de 100 et plus comme le bagging. Le nombre d'arbres de notre forêt aléatoire sera donc de 100. Il y a deux hyperparamètres qui seront optimisé soient la taille minimale d'un noeud (nodesize) et le nombre de prédicteurs choisi de façon aléatoire (mtry) à chaque embranchement des arbres de la forêt aléatoire. Pour chaque nodesize allant de 5 jusqu'à 40 par multiple de 5, un mtry optimal est obtenu par validation croisée par 5 ensembles. Le métrique d'intérêt de l'optimisatiojn est l'AUC. Ce sont donc, des couples optimaux qui sont obtenu. Voici les résultats obtenus.
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{ccc}
+\hline
+\multicolumn{3}{c}{} \\
+```{r, results='asis'}
+Rmd_table(result_opt_forest, caption="", label="",
+          digits=c(0,0,0,4), hline.after=c(-1, 0, 3, 4, 8), 
+          only.contents = TRUE)
+```
+\end{tabular}
+\end{table}
+
+
+
+On constate que le couples d'hyperparamètres qui a obtenu l'AUC le plus élevé correspond à un nodesize de 20 et un mtry de 10. En somme, la forest aléatoire choisi aura donc les caractéristiques suivantes: 
+
+\begin{itemize}
+\item La taille d'échantillon boostrap est de 50\% de l'échantillon d'entrainement
+\item La forest aléatoire composée de 100 arbres
+\item La taille minimale d'un noeud (nodesize) d'un arbre est de 20 observations
+\item Le nombre de prédicteurs choisis de façon aléatoire (mtry) à chaque embranchement est de 10
+\end{itemize}
 
 \newpage
 
