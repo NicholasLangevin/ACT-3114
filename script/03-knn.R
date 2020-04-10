@@ -27,14 +27,16 @@ trControl.knn <- trainControl(method  = "cv", # validation croisée
 fit.knn <- train(lapse ~ .,
                  method     = "knn",
                  preProcess = "scale", # standardisation
-                 tuneGrid   = expand.grid(k = seq(1, 50, by=5), 
+                 tuneGrid   = expand.grid(k = seq(100, 300, by=5)), 
+                 # tuneGrid   = expand.grid(k = 1:2),
                  trControl  = trControl.knn,
                  metric     = "ROC",
                  data       = dataToNumeric(trainData))
-fit.knn
+
+fit.knn$bestTune
 plot(fit.knn)
 
-save(fit.knn, file="../src/03-knn/knnTrain(fit.knn).rds")
+save(fit.knn, file="../src/03-knn/fit.knn.rds")
 ## Creation du modele
 
 ## Fonctionnement de la fonction 'knn':
@@ -42,23 +44,22 @@ save(fit.knn, file="../src/03-knn/knnTrain(fit.knn).rds")
 # les predictions. Il cherche a predire le y de la base de donnees test(valid).
 # Il prend un observation de test, calcul la distance euclidienne avec les 
 # observation de train et fait la moyenne des y de train.
-load(file="../src/03-knn/knnTrain(fit.knn).rds")
+load(file="../src/03-knn/fit.knn.rds")
 (k <- as.numeric(fit.knn$bestTune))
-modele.knn <- knn.reg(dataToNumeric(trainData, "x", TRUE), 
+knn.final <- knn.reg(dataToNumeric(trainData, "x", TRUE), 
                       dataToNumeric(testData, "x", TRUE), 
-                      dataToNumeric(trainData, "y"), k=29)
+                      dataToNumeric(trainData, "y"), k=k)
 
-save(modele.knn, file="../src/03-knn/knnModele(modele.knn).rds")
-load(file="../src/03-knn/knnModele(modele.knn).rds")
+save(knn.final, file="../src/03-knn/knn.final.rds")
 
 source("./_utilityFunction.R")
 table(trainData$lapse)/nrow(trainData) * 100 # Debalancement des donnes ??
 table(testData$lapse)/nrow(testData) * 100 # Debalancement des donnes ??
 ## pred_binaire <- ifelse(modele.knn == "renouvellement", 0, 1)
-ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
-roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
-as.numeric(roc(dataToNumeric(testData, "y"), modele.knn$pred)$auc)
+ROC(dataToNumeric(testData, "y"), knn.final$pred, col="blue")
+roc(dataToNumeric(testData, "y"), knn.final$pred, plot=TRUE)
+as.numeric(roc(dataToNumeric(testData, "y"), knn.final$pred)$auc)
 
 ## Matrice de confusion
-pred_binaire <- ifelse(modele.knn$pred > 0.6, 1, 0)
+pred_binaire <- ifelse(knn.final$pred > 0.8, 1, 0)
 table(dataToNumeric(testData, "y"), pred_binaire)

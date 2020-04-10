@@ -1,5 +1,5 @@
 ---
-header-includes: \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
+header-includes: \usepackage{multirow} \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan}
 bibliography: ../biblio.bib
 bibliographystyle: apalike
@@ -54,18 +54,177 @@ library(tidyverse)
 library(pROC)
 library(rpart)
 library(rpart.plot)
+library(caret)
+library(glmnet)
 source("../script/_utilityFunction.R")
 load(file="../data/trainData.RData")
 load(file="../data/testData.RData")
 ```
 
+\newpage
+
 # Ajustement des modèles
+
+## Modèle linéaire généralisé avec régularisation Lasso
+
+```{r, lasso.bestTune}
+load(file="../src/02-lasso/lasso.valid.dev.rds")
+load(file="../src/02-lasso/lasso.valid.auc.rds")
+load(file="../src/02-lasso/lasso.pred.dev.rds")
+load(file="../src/02-lasso/lasso.pred.auc.rds")
+```
+
+Comme dans le cas d'un modèle généralisé (_GLM_), la distribution binomial à
+été choisi pour modéliser la probabilité de renouvellement. De plus, le lien
+_logistic_ à été utilisé. Si $\pi_{res}$ représente la probabilité que l'assuré
+résigne sont contrat, alors le modèle peut être écrit comme
+\begin{align}
+    \ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i,
+\end{align}
+où les $(\beta_0, \beta_j)$ sont obtenue en minimisant l'équation suivant
+\begin{align}
+    \min\limits_{(\beta_0, \beta_j)} \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p
+    \beta_j x_j)^2 + \lambda \sum_{j=1}^p |\beta_j|.
+\end{align}
+La fonction de minimisation comprend le paramètre $\lambda$ qui doit être
+déterminé d'avance. La valeur optimal à été choisi par validation croisée à
+$10$ plis. Le \autoref{fig:lasso.valid} montre le resultat de celle-ci pour
+deux metrique différentes, soit la _deviance_ d'une binomial et l'_AUC_.
+Les deux valeurs optimales pour $\lambda$ sont 
+`r format(lasso.valid.dev$lambda.min, digits=5, scientific = FALSE)` et 
+`r format(lasso.valid.auc$lambda.min, digits=5, scientific = FALSE)`
+respectivement.
+
+\begin{figure}
+\centering
+\begin{minipage}{0.48\linewidth}
+```{r, lasso.plotBestLambda.dev}
+plot(lasso.valid.dev)
+```
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\linewidth}
+```{r, lasso.plotBestLambda.auc}
+plot(lasso.valid.auc)
+```
+\end{minipage}
+\caption{Résultats de la validation croisée à $10$ plis selon différentes
+métriques pour déterminer le $\lambda$ optimal. Les valeurs optimales obtenues
+sont de 
+`r format(lasso.valid.dev$lambda.min, digits=5, scientific = FALSE)` pour la 
+\emph{deviance} d'une binomial et de
+`r format(lasso.valid.auc$lambda.min, digits=5, scientific = FALSE)` pour 
+\emph{AUC}.}
+\label{fig:lasso.valid}
+\end{figure}
+
+Selon la valeur optimal de $\lambda$ qui optimise chacune des métriques, les 
+variables qui voient leurs coeficients ($\beta$) rétrécire à
+$0$ sont similaire. Ces variables sont listé dans le 
+\autoref{tbl:lasso.variable0}. Il est intérésant de voir que les variables
+**prem\_pure** et **prem\_last** ne semble pas importantes, ce qui confirme 
+l'hypothèse du premier rapport où la prime absolue n'est pas importante.
+C'est pourquoi initialement la variable 
+**prem\_index = prem\_final / prem\_last** avait été crée. 
+Nous verrons plus tard que cette dernière est importante dans le modele d'arbre. 
+Finalement, il est pertimant de mentionner que c'est prime pure qui est exclut
+du modèle et non la prime final charché au client. Conséquament, ceci montre
+que les caractéristiques du marché impact la probabilité de renouvellement, ce 
+qui est logique puisque il est normal que le taux de rétention d'un assureur
+soit impacté par sa compétivité dans le marché.
+
+```{r, lasso.varShrinked, results='asis'}
+lasso.names <- c("policy caruse", "prem last", "prem pure", "vehicl garage",
+                 "vehicl region", "vehicl region", "vehicl region")
+lasso.level <- c("private or freelance work", "-", "-", "street", "Region 03",
+                 "Region 08", "Region 10")
+dev.name <- c("x","x","x","x","x","x","x")
+auc.name <- c("x","x","x"," ","x","x"," ")
+
+lasso.names0 <- data.frame(Variable=lasso.names, Niveau=lasso.level,
+                           Deviance=dev.name, AUC=auc.name)
+Rmd_table(lasso.names0, label="tbl:lasso.variable0", 
+          caption="Variables qui voient leur coeficient rétricire à $0$ (noté
+          par un x). La colonne \\emph{deviance} représente les variables
+          exclut par le $\\lambda$ optimal selon cette métrique et pareillement
+          pour la colonne \\emph{AUC}.")
+```
+
+Pour déterminer si une prédiction est un résignation où un
+renouvellement, il faut déterminer le seuil optimal qui maximise la sensitivité
+et la spécificité. Celui-ci à été sélectionné selon le critère suivant
+\begin{align}
+    \min\{ (1-\text{sentitivité})^2 + (1-\text{spécificité})^2 \}.
+\end{align}
+
+```{r, lasso.confMatrix}
+roc.dev <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.pred.dev), plot=F, col="red")
+result.coords.dev <- coords(roc.dev, "best", best.method="closest.topleft", ret=c("threshold", "accuracy", "specificity", "sensitivity"), transpose = TRUE)
+spec.dev <- format(result.coords.dev, scientific=FALSE, digits=1)
+
+roc.auc <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.pred.auc), plot=F, col="red")
+# plot(roc.auc, print.thres="best", print.thres.best.method="closest.topleft")
+result.coords.auc <- coords(roc.auc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy", "specificity", "sensitivity"), transpose = TRUE)
+spec.auc <- format(result.coords.auc, scientific=FALSE, digits=1)
+
+
+lasso.predBinaire.dev <- ifelse(lasso.pred.auc > result.coords.dev[1], 1, 0)
+lasso.predBinaire.auc <- ifelse(lasso.pred.auc > result.coords.auc[1], 1, 0)
+
+lasso.confMatrix.dev <- table(testData$lapse, lasso.predBinaire.dev)
+lasso.confMatrix.auc <- table(testData$lapse, lasso.predBinaire.auc)
+lasso.table.dev <- as.data.frame.matrix(lasso.confMatrix.dev)
+lasso.table.auc <- as.data.frame.matrix(lasso.confMatrix.auc)
+```
+
+Ce critère représente le point le plus proche du coin haut gauche de la courbe
+ROC. Puisque les 2 modèles on des courbes ROC similaire, le seuil optimial est
+aussi similaire. Le \autoref{tbl:lasso.confMatrix} montre les tableaux de
+confusion résultant. Dans le cas du modéle utilisant la _deviance_, la
+sensitivity est de `r spec.dev[4]` et la spécificité est de `r spec.dev[3]`.
+Dans le modèle utilisant la _AUC_, la sensitivity est de `r spec.dev[4]` et la
+spécificité est de `r spec.dev[4]`. On remarque que l'erreur la plus fréquente
+dans les deux cas est de prédire le un fausse résignation. Ceci pourrait causé
+des erreurs de rentabilistion au renouvellement puisque la compagnie ne
+passerait pas de grandes augmentations de prime à ces clients par **fausse**
+peur de les perdes.
+
+\begin{table}[!hb]
+\centering
+\caption{Tableau de confusion en utilisant le seuil optimal pour les deux 
+différent modèle.}
+\label{tbl:lasso.confMatrix}
+\begin{minipage}{0.48\linewidth}
+\begin{tabular}{l|cc}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Prédiction} \\
+Deviance: & Renouvellement & Résignation \\
+\hline
+Renouvellement & `r lasso.table.dev[1, 1]` & `r lasso.table.dev[1, 2]` \\
+Résignation    & `r lasso.table.dev[2, 1]` & `r lasso.table.dev[2, 2]` \\
+\hline
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\linewidth}
+\begin{tabular}{l|cc}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Prédiction} \\
+AUC: & Renouvellement & Résignation \\
+\hline
+Renouvellement & `r lasso.table.auc[1, 1]` & `r lasso.table.auc[1, 2]` \\
+Résignation    & `r lasso.table.auc[2, 1]` & `r lasso.table.auc[2, 2]` \\
+\hline
+\end{tabular}
+\end{minipage}
+\end{table}
+
+
+\newpage
 
 ## k plus proches voisins
 
 ```{r, knn.bestTune}
-load(file="../src/03-knn/knnTrain(fit.knn).rds")
-load(file="../src/03-knn/knnTrainWithoutSmote(fit.knn).rds")
+load(file="../src/03-knn/fit.knn.rds")
+load(file="../src/03-knn/knn.final.rds")
 ```
 
 Le modèle des _k_ plus proches voisins calcule les prédictions en utilisant la
@@ -82,11 +241,15 @@ valeurs, pour chaque valeurs de _k_, sont présenté dans la
 
 
 ```{r, knn.plot_bestTune, results='asis', fig.asp=.62, fig.cap="\\label{tbl:knn.plot-bestTune} Valeurs de l'aire sous la courbe ROC en fonction de différentes valeurs de \\emph{k}"}
-plot(fit.knn, xlab = "k", ylab = "AUC (Validation croisée)")
+ggplot(fit.knn, xlab = "k", highlight=TRUE) + 
+    geom_line(col = "steelblue3") +
+    geom_point(col = "steelblue3") + 
+    xlab("k") + 
+    ylab("AUC (Validation Croisée)")
+    # geom_vline(xintercept=240, linetype = 2, col = "red")
 ```
 
 ```{r, knn.plot_ROC, results='asis', fig.height=4, fig.cap="\\label{tbl:knn.plot-ROC} TODO"}
-load(file="../src/03-knn/knnModele(modele.knn).rds")
 # ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
 # roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
 ```

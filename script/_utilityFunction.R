@@ -30,10 +30,16 @@ dataToNumeric <- function(data, return = "both", scale = FALSE){
     stop("argument 'return' out of bound")
 }
 
-ROC <- function(y, probPred, add = FALSE, ...){
+ROC <- function(y, probPred, add = FALSE, seuil, ...){
+
+    # table_roc <- function(etiq, pred) {
+    #   etiq <- etiq[order(pred, decreasing = TRUE)]
+    #   data.frame(TFP = cumsum(!etiq)/sum(!etiq), # Taux faux positifs
+    #              TVP = cumsum(etiq)/sum(etiq)) # Taux vrais positifs
+    # }
 
     table_roc <- function(etiq, pred) {
-      etiq <- etiq[order(pred, decreasing = TRUE)]
+      etiq <- etiq[order(pred, decreasing = FALSE)]
       data.frame(TFP = cumsum(!etiq)/sum(!etiq), # Taux faux positifs
                  TVP = cumsum(etiq)/sum(etiq)) # Taux vrais positifs
     }
@@ -44,6 +50,7 @@ ROC <- function(y, probPred, add = FALSE, ...){
         plot(table_roc(y, probPred), type="l", # main="ROC", 
             xlab="Taux faux positifs", ylab="Taux vrai positifs", ...)
         abline(a=0, b=1)
+        points(sensitivite, specificite, col="red")
     }
 }
 
