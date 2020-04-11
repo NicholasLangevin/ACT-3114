@@ -44,6 +44,7 @@ output:
 \newpage
 
 \tableofcontents
+
 ```{R, LoadingPackages, echo = FALSE, include = FALSE, warning = FALSE}
 library(CASdatasets)
 library(knitr)
@@ -160,7 +161,11 @@ print.tables(dat_frame_tab, hline.after=c(-1,0,7), digits=2, align = c("l", "l",
              caption="Distribution de la différence de statut entre le conducteur et le détenteur de la police", label="tbl:statutdiff")
 ```
 
+<<<<<<< HEAD:01-Rapport.Rmd
 On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l'assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicule est partagé par de jeunes conducteurs alors qu'il y a `r round(summary(data$polholder_diffdriver)[c("all drivers > 24")]/nrow(data)*100, 2)`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noter qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
+=======
+On constate que la plupart des voitures assurées est utilisée seulement par le détenteur de la police ou par l'assuré et son partenaire de couple puisque c'est deux cas représente `r round((summary(data$polholder_diffdriver)[c("only partner")] + summary(data$polholder_diffdriver)[c("same")])/nrow(data)*100, 2)`% des observations. Il y a un pourcentage non négligeable de `r round((summary(data$polholder_diffdriver)[c("young drivers")])/nrow(data)*100, 2)`% pour lequel le véhicule est partagé par de jeunes conducteurs alors qu'il y a `r round(summary(data$polholder_diffdriver)[c("all drivers > 24")]/nrow(data)*100, 2)`% des cas ou le véhicule est plutôt partagé entre des personnes plus agées (24 ans et plus). À noté qu'il y a 12 observations pour lesquelles la variable est manquante. Cela sera traité dans la section traitement des valeurs manquantes. 
+>>>>>>> 60809fcbf121cda8bf1ec803d70809dfdf626020:rapport1/01-Rapport.Rmd
 
 La variable **polholder_gender** représente le sexe du propriétaire de la police. Voici la répartition en pourcentage du sexe pour les propriétaires de police d'assurance.
 
@@ -290,13 +295,20 @@ On voit qu'un peu moins de la moitié des clients paie la prime en un seul verse
 
 La variable **vehicl_powerkw** représente la puissance du moteur de la voiture conduit exprimé en chevaux moteurs. Initialement, cette variable contenait 11 niveaux. Cependant, certains niveaux visaient des valeurs fixes tandis que d'autres étaient définis à l'aide d'intervalle. Des doublons de niveaux figuraient par défaut dans la liste due à certains intervalles trop englobants. Afin d'uniformiser la mesure de cette variable, nous avons regroupé certains niveaux ensemble, soit tous les niveaux représentant une puissance de 125 à 300 chevaux moteurs. Cette modification a touché peut de cas était nécessaire pour l'obtention d'une interprétation adéquate des données. On peut d'ailleurs observer les proportions de chaque niveau avant et après modification dans les tables 6 et 7.
 
+<<<<<<< HEAD:01-Rapport.Rmd
 ```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="\\label{fig:freqperyearAndvehiclGarage}Distribution des variables **prem_freqperyear** et **vehicl_garage**."}
 ggplot.premfreqperyear <- ggplot(data, aes(x = prem_freqperyear))+
   geom_bar() + theme_bw() + ggtitle("(1)") + theme(axis.text.x = element_text(angle = 90))
+=======
+
+```{r graph_prem_freqperyear, echo=FALSE, fig.width=5, fig.asp=.62, fig.align="center",fig.cap="Distribution des variables \\textbf{prem\\_freqperyear} et \\textbf{vehicl\\_garage}."}
+ggplot.premfreqperyear <- ggplot(data, aes(x = prem_freqperyear))+
+  geom_bar() + theme_bw() + ggtitle("(1)") + theme(axis.text.x = element_text(angle = 90)) + ylab("Fréquence") + xlab("Fréquence de paiement de la prime")
+>>>>>>> 60809fcbf121cda8bf1ec803d70809dfdf626020:rapport1/01-Rapport.Rmd
  
 
 ggplot.vehicl_garage <- ggplot(data, aes(x = vehicl_garage))+
-  geom_bar() + theme_bw() + ggtitle("(2)") + theme(axis.text.x = element_text(angle = 90)) 
+  geom_bar() + theme_bw() + ggtitle("(2)") + theme(axis.text.x = element_text(angle = 90)) + ylab("Fréquence") + xlab("Place de stationnement")
 
 grid.arrange(ggplot.premfreqperyear, ggplot.vehicl_garage,  ncol=2)
 ```
@@ -383,12 +395,20 @@ Beaucoup de véhicules ont été achetés lorsqu'il était neuf, soit les valeur
 
 ## Variables numériques continues
 
+<<<<<<< HEAD:01-Rapport.Rmd
 Il y a plusieurs variables numériques continues relatives à la prime. La variable **prem_final** représente le montant de la prime proposé pour le renouvellement par l'assureur, la variable **prem_last** représente le montant payé lors du dernier renouvellement, la variable **prem_market** est la prime qui serait chargée selon le marché et la variable **prem_pure** représente la prime des coûts espérés. Le \autoref{tbl:summaryPrimes1} montre leur distribution. 
+=======
+Il y a plusieurs variables numériques continues relatives à la prime. La variable **prem_final** représente le montant de la prime proposé pour le renouvellement par l'assureur, la variable **prem_last** représente le montant payé lors du dernier renouvellement, la variable **prem_market** est la prime qui serait chargée selon le marché et la variable **prem_pure** représente la prime des coûts espérés. Le Tableau 7 montre leur distribution. 
+>>>>>>> 60809fcbf121cda8bf1ec803d70809dfdf626020:rapport1/01-Rapport.Rmd
 
 Une prime seule peut difficilement expliquer pourquoi un assuré voudrait résigner sa police d'assurance, car si sa prime est représentative de son risque réel, il n'aurait pas intérêt à changer d'assureur.
 Par contre, si lors de son renouvellement, il voit sa prime grandement augmenter, il sera davantage sujet à vouloir changer d'assureur pour réduire ces coûts.
 
+<<<<<<< HEAD:01-Rapport.Rmd
 ```{r stats_prem, echo=FALSE, results='asis', fig.cap="\\label{tbl:summaryPrimes1}Distribution des variables consernant les primes de l'assuré", warning=FALSE}
+=======
+```{r stats_prem, echo=FALSE, results='asis', fig.cap="\\label{prime}Distribution des variables consernant les primes de l'assuré", warning=FALSE}
+>>>>>>> 60809fcbf121cda8bf1ec803d70809dfdf626020:rapport1/01-Rapport.Rmd
 stats_final <- c(summary(data$prem_final)[c(1, 3, 4, 6)], sd(data$prem_final))
 
 stats_last <- c(summary(data$prem_last)[c(1, 3, 4, 6)], sd(data$prem_last))
@@ -575,6 +595,10 @@ ggplot() +
 
 De ce graphique, on peut conclure que le partitionnement s'est fait sur la première composante principale. Les assurés représentant moins de risque se retrouve dans le groupe 2 tandis que les assurés plus risqués se retrouvent dans le groupe 1. Ainsi, le montant des primes typiques serait d'environ 300\$ ou moins pour le deuxième groupe et de plus de 300\$ 
 
+<<<<<<< HEAD:01-Rapport.Rmd
+=======
+
+>>>>>>> 60809fcbf121cda8bf1ec803d70809dfdf626020:rapport1/01-Rapport.Rmd
 \newpage
 # Conclusion
 

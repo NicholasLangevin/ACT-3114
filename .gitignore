@@ -1,4 +1,6 @@
-.log
-.aux
-.pdf
-.toc
+*.log
+*.aux
+*.pdf
+*.toc
+.Rhistory
+*.swp
