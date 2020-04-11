@@ -81,7 +81,8 @@ tree <- rpart(lapse~.,
               minbucket=minbucket)
 
 tree.final <- prune(tree, cp=cp)
-rpart.plot(tree.final, type=0, fallen.leaves = FALSE, tweak=2.2)
+save(tree.final, file="../src/04-tree/tree.final.rds")
+rpart.plot(tree.final, type=1, fallen.leaves = FALSE, tweak=1.4)
 
 ## Test sur les donnees test
 pred <- predict(tree.final, newdata = testData)

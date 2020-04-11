@@ -13,7 +13,7 @@ require(Rborist)
 
 set.seed(3876)
 mod_forest_pre <- randomForest(lapse ~ ., data=trainData,
-                              ntree = 300, 
+                              ntree = 200, 
                               sampsize = floor(0.5*nrow(trainData)),
                               nodesize = 2,
                               cp = 0,
