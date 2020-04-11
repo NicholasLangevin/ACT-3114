@@ -56,6 +56,7 @@ library(rpart)
 library(rpart.plot)
 library(caret)
 library(glmnet)
+require(randomForest)
 source("../script/_utilityFunction.R")
 load(file="../data/trainData.RData")
 load(file="../data/testData.RData")
@@ -241,7 +242,7 @@ valeurs, pour chaque valeurs de _k_, sont présenté dans la
 
 
 ```{r, knn.plot_bestTune, results='asis', fig.asp=.62, fig.cap="\\label{tbl:knn.plot-bestTune} Valeurs de l'aire sous la courbe ROC en fonction de différentes valeurs de \\emph{k}"}
-ggplot(fit.knn, xlab = "k", highlight=TRUE) + 
+ggplot(fit.knn, highlight=TRUE) + 
     geom_line(col = "steelblue3") +
     geom_point(col = "steelblue3") + 
     xlab("k") + 
@@ -358,18 +359,13 @@ rpart.plot(tree.final, type=1, fallen.leaves = FALSE, tweak=1.1)
 ## Un ensemble d’arbres de décision agrégées par bagging
 
 ```{r, loading_bagging}
-require(randomForest)
-require(rpart)
-require(rpart.plot)
-require(caret)
-require(pROC)
-
 mod_base_bag <- readRDS("../src/05-Bagging/mod_bag_base.rds")
 result_opt_bag <- readRDS("../src/05-Bagging/result_opt_bag_save.rds")
 result_opt_bag <- as.data.frame(result_opt_bag)
 colnames(result_opt_bag) <- c("nodesize", "AUC")
 
 mod_base_forest <- readRDS("../src/06-RandomForest/mod_forest_base.rds")
+rest <- readRDS("../src/06-RandomForest/mod_forest_base.rds")
 result_opt_forest <- readRDS("../src/06-RandomForest/result_opt_rf_save.rds")
 result_opt_forest <- as.data.frame(result_opt_forest)
 colnames(result_opt_forest) <- c("nodesize", "mtry", "AUC")
@@ -411,7 +407,15 @@ la métrique AUC. Pour chaque taille de noeud, un AUC moyen sera calculée à pa
 d'une validation croisée par 4 ensembles. Voici les résultats obtenus de la
 validation croisée.
 
+```{r, results='asis', fig.height=3.5}
+colnames(result_opt_bag) <- c("nodesize", "AUC")
+ggplot(result_opt_bag, aes(x=nodesize, y=AUC)) + 
+    geom_line(col="darkred") + 
+    geom_point(col="darkred") + 
+    geom_vline(xintercept = 34, linetype="dashed", size=0.5, col="blue")
+```
 
+<!--
 \begin{table}[!ht]
 \begin{minipage}{0.23\linewidth}
 \centering
@@ -464,7 +468,7 @@ Rmd_table(result_opt_bag[31:39, ], caption="", label="",
 \end{tabular}
 \end{minipage}
 \end{table}
-
+-->
 
 On constate que l'AUC est maximisé lorsque nodesize prend une valeure 34. Le modèle d'ensemble d’arbres de décision agrégées par bagging choisi aura donc un nombre d'abres de 100 et une taille minimale d'un noeud pour les arbres de 34.  
 
