@@ -64,6 +64,35 @@ load(file="../data/testData.RData")
 
 \newpage
 
+# Modèle de base
+
+Pour le modèle de base, nous utiliserons un modèle linéaire généralisé avec une distribution binomiale. plus précisément, il s'agit d'une distribution binomiale avec $m = 1$ donc une distribution Bernouilli. La valeur de y est de 1 lorsque l'assuré résigne et de 0 lorsqu,il renouvèle. On s'intéresse à modéliser la probabilité que l'asssuré ne renouvelle pas son contrat. Pour ce faire, le lien logistic sera utilisée pour faire le lien entre la probabilité et le prédicteur linéaire. Ainsi nous avons
+
+\begin{align}
+    \ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i,
+\end{align}
+
+où nous voulons maximiser la vraisemblance d'une bernouilli. Ainsi les valeurs des paramètres sont obtenue en maximisant l'équation suivante.
+
+\begin{align}
+    \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}
+\end{align}
+
+Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici
+
+
+\begin{itemize}
+\item policy\_caruse: utilisation de l'auto
+\item policy\_nbcontract: nombre de polices du contrat
+\item vehicl\_agepurchase: âge du véhicule lors de l'achat
+\item vehicl\_powerkw: puissance du véhicule
+\item vehicl\_garage: type de stationnement
+\item prem\_pure: prime des coûts espérés
+\item prem\_index: Taux d'augmentation de prime 
+\end{itemize}
+
+C'est donc de dire que ces variables ne seront pas considérés pour les prévisions avec le modèle de base.
+
 # Ajustement des modèles
 
 ## Modèle linéaire généralisé avec régularisation Lasso
