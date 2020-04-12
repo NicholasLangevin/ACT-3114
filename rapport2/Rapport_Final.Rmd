@@ -117,9 +117,9 @@ où les $(\beta_0, \beta_j)$ sont obtenue en minimisant l'équation suivant
     \beta_j x_j)^2 + \lambda \sum_{j=1}^p |\beta_j|.
 \end{align}
 La fonction de minimisation comprend le paramètre $\lambda$ qui doit être
-déterminé d'avance. La valeur optimal à été choisi par validation croisée à
-$10$ plis. Le \autoref{fig:lasso.valid} montre le resultat de celle-ci pour
-deux metrique différentes, soit la _deviance_ d'une binomial et l'_AUC_.
+déterminé d'avance. La valeur optimale a été choisie par validation croisée à
+$10$ plis. La \autoref{fig:lasso.valid} montre le résultat pour
+deux métriques différentes, soit la _deviance_ d'une binomial et l' _AUC_.
 Les deux valeurs optimales pour $\lambda$ sont 
 `r format(lasso.valid.dev$lambda.min, digits=5, scientific = FALSE)` et 
 `r format(lasso.valid.auc$lambda.min, digits=5, scientific = FALSE)`
@@ -149,18 +149,18 @@ sont de
 \end{figure}
 
 Selon la valeur optimal de $\lambda$ qui optimise chacune des métriques, les 
-variables qui voient leurs coeficients ($\beta$) rétrécire à
-$0$ sont similaire. Ces variables sont listé dans le 
-\autoref{tbl:lasso.variable0}. Il est intérésant de voir que les variables
-**prem\_pure** et **prem\_last** ne semble pas importantes, ce qui confirme 
+variables qui voient leurs coeficients ($\beta$) rétrécir à
+$0$ sont similaires. Ces variables sont listées dans le 
+\autoref{tbl:lasso.variable0}. Il est intéressant de voir que les variables
+**prem\_pure** et **prem\_last** ne semblent pas importantes, ce qui confirme 
 l'hypothèse du premier rapport où la prime absolue n'est pas importante.
 C'est pourquoi initialement la variable 
 **prem\_index = prem\_final / prem\_last** avait été crée. 
-Nous verrons plus tard que cette dernière est importante dans le modele d'arbre. 
-Finalement, il est pertimant de mentionner que c'est prime pure qui est exclut
-du modèle et non la prime final charché au client. Conséquament, ceci montre
-que les caractéristiques du marché impact la probabilité de renouvellement, ce 
-qui est logique puisque il est normal que le taux de rétention d'un assureur
+Nous verrons plus tard que cette dernière est importante dans le modèle d'arbre. 
+Finalement, il est pertimant de mentionner que c'est la variable représentant la prime pure qui est exclut
+du modèle et non la variable contenant la prime finale chargée au client. Conséquemment, ceci montre
+que les caractéristiques du marché impacte la probabilité de renouvellement, ce 
+qui est logique puisqu'il est normal que le taux de rétention d'un assureur
 soit impacté par sa compétivité dans le marché.
 
 ```{r, lasso.varShrinked, results='asis'}
@@ -180,9 +180,9 @@ Rmd_table(lasso.names0, label="tbl:lasso.variable0",
           pour la colonne \\emph{AUC}.")
 ```
 
-Pour déterminer si une prédiction est un résignation où un
+Pour déterminer si une prédiction est à $$résignation$$ ou à
 renouvellement, il faut déterminer le seuil optimal qui maximise la sensitivité
-et la spécificité. Celui-ci à été sélectionné selon le critère suivant
+et la spécificité. Celui-ci a été sélectionné selon le critère suivant
 \begin{align}
     \min\{ (1-\text{sentitivité})^2 + (1-\text{spécificité})^2 \}.
 \end{align}
@@ -208,16 +208,16 @@ lasso.table.auc <- as.data.frame.matrix(lasso.confMatrix.auc)
 ```
 
 Ce critère représente le point le plus proche du coin haut gauche de la courbe
-ROC. Puisque les 2 modèles on des courbes ROC similaire, le seuil optimial est
+ROC. Puisque les 2 modèles ont des courbes ROC similaires, le seuil optimal est
 aussi similaire. Le \autoref{tbl:lasso.confMatrix} montre les tableaux de
-confusion résultant. Dans le cas du modéle utilisant la _deviance_, la
-sensitivity est de `r spec.dev[4]` et la spécificité est de `r spec.dev[3]`.
-Dans le modèle utilisant la _AUC_, la sensitivity est de `r spec.dev[4]` et la
+confusion résultants. Dans le cas du modéle utilisant la _deviance_, la
+sensitivité est de `r spec.dev[4]` et la spécificité est de `r spec.dev[3]`.
+Dans le modèle utilisant l' _AUC_, la sensitivité est de `r spec.dev[4]` et la
 spécificité est de `r spec.dev[4]`. On remarque que l'erreur la plus fréquente
-dans les deux cas est de prédire le un fausse résignation. Ceci pourrait causé
-des erreurs de rentabilistion au renouvellement puisque la compagnie ne
+dans les deux cas est de prédire faussement résignation. Ceci pourrait causé
+des erreurs de rentabilisation au renouvellement puisque la compagnie ne
 passerait pas de grandes augmentations de prime à ces clients par **fausse**
-peur de les perdes.
+peur que ceux-ci résigne leur contrat.
 
 \begin{table}[!hb]
 \centering
@@ -259,11 +259,11 @@ load(file="../src/03-knn/knn.final.rds")
 
 Le modèle des _k_ plus proches voisins calcule les prédictions en utilisant la
 distance euclédienne, ce qui veut dire que les variables catégorielles
-non-ordonées doivent être transformées en $(c-1)$ variables binaires. Aussi,
+non-ordonnées doivent être transformées en $(c-1)$ variables binaires. Aussi,
 les variables catégorielles ordonnées ont été transformées en des variables
 numériques disctrètes $(1, 2, 3,...)$. Le modèle des _k_ plus proches voisins
-comprend un seul hyperparamètre, soit le nombre de voisins (_k_) à utilité pour
-la prédiction. Ce choix a été optimizer en utilisant une validation croisé à 4
+comprend un seul hyperparamètre, soit le nombre de voisins (_k_) à utilisé pour
+la prédiction. Ce choix a été optimisé en utilisant une validation croisée à 4
 plis. La valeur de _k_ qui maximise l'aire sour la courbe ROC (_fonction
 d’efficacité du récepteur_) est de `r as.numeric(fit.knn$bestTune)`. Ces
 valeurs, pour chaque valeurs de _k_, sont présenté dans la
@@ -299,43 +299,43 @@ load(file="../src/04-tree/tree.final.rds")
 
 Le modèle d'arbre de classification offre la possibilité d'utilisé deux
 fonctions de perte différence. Si _K_ représente le nombre de classe, alors un
-premier choix comme fonction de perte peut être l'indice de _Gini_, defini
+premier choix comme fonction de perte peut être l' _indice de Gini_, defini
 comme
 \begin{align}
     \mathcal{L}_G = \sum_{k=1}^K \widehat{P}_{mk} (1 - \widehat{P}_{mk}).
 \end{align}
-Dans un deuxième cas, il est possible d'utilisé la _deviance_ négative d'une
-bernouilli (ou encore l'_entropie croisée_) defini comme
+Dans un deuxième cas, il est possible d'utiliser la _deviance_ négative d'une
+loi bernoulli (ou encore l'_entropie croisée_) defini comme
 \begin{align}
     \mathcal{L}_D = \sum_{k=1}^K \widehat{P}_{mk} \ln( \widehat{P}_{mk}).
 \end{align} 
-La procédure d'optimisation des hyperparamètre à été effectuer pour chacune des
-deux fonction de perte. En premier lieux, un arbre complet $T_0$ à été
-entrainer par validation croisée en 10 plis. Celui-ci est défini comme un arbre
-construit avec un paramètre de complexité (_cp_) à 0 ainsi que le nombre 
-minimal d'observation dans chaque feuille (_minbucket_) à 1. Le
-\autoref{fig:tree.plotArbreT0} présente l'erreur obtenu par validation croisée
-pour certaine valeurs de _cp_. Selon cette metrique, le meilleur modèle serait 
+La procédure d'optimisation des hyperparamètres a été effectuée pour chacune des
+deux fonctions de perte. En premier lieu, un arbre complet $T_0$ a été
+entrainé par validation croisée en 10 plis. Celui-ci est défini comme un arbre
+construit avec un paramètre de complexité (_cp_) à 0 ainsi qu'un nombre 
+minimal d'observation dans chaque feuille (_minbucket_) à 1. La
+\autoref{fig:tree.plotArbreT0} présente l'erreur obtenue par validation croisée
+pour certaines valeurs de _cp_. Selon cette métrique, le meilleur modèle serait 
 l'arbre racine, ce qui signifie que la prédiction serait la même pour toutes
-les données. La metrique _AUC_ sera considéré par la suite pour l'optimisation
+les données. La métrique _AUC_ sera considérée par la suite pour l'optimisation
 des hyperparamètres.
 ```{r, tree.plotArbreT0, results='asis', fig.height=4, fig.cap="Résultats de la validation croisée pour un arbre complet $T_0$ utilisant \\emph{Gini} comme fonction de perte."}
 plotcp(tree.T0, lty=2, col=2)
 ```
 
 \newpage
-Pour la suite, l'optimisation du _cp_ à été efectué sur plusieurs valeurs de
-_minbucket_. La \autoref{tbl:tree.auc} montre les résultat de de l'aire sous la courbe ROC
+Pour la suite, l'optimisation du _cp_ a été effectuée sur plusieurs valeurs de
+_minbucket_. La \autoref{tbl:tree.auc} montre les résultats de l'aire sous la courbe ROC
 (_AUC_) pour différente valeur de _minbucket_ en fonction du _cp_ optimal. À
-droite, la fonction de perte utilisée est l'indice de _Gini_, alors qu'à
-gauche, la fonction de perte utilité est l'_entropie croisée_. Ces valeurs on
-été obtenu par validation croisée à 4 plis.
+droite, la fonction de perte utilisée est l' _indice de Gini_, alors qu'à
+gauche, la fonction de perte utilitée est l' _entropie croisée_. Ces valeurs on
+été obtenues par validation croisée à 4 plis.
 
 
 \begin{table}[!ht]
-\caption{\emph{AUC} pour différente valeur de \emph{minbucket} en fonction du 
+\caption{\emph{AUC} pour différentes valeurs de \emph{minbucket} en fonction du 
 \emph{cp} optimal. À gauche, la fonction de perte utilisée est l'indice de 
-\emph{Gini}, à droite l'\emph{entropie croisée}.}
+\emph{Gini} et à droite l'\emph{entropie croisée}.}
 \label{tbl:tree.auc}
 \begin{minipage}{0.48\linewidth}
 \centering
@@ -369,14 +369,14 @@ choixCP <- tree.gridResult.gini$cp[which.max(tree.gridResult.gini$ROC)]
 choixMinbucket <- 
     tree.gridResult.gini$minbucket[which.max(tree.gridResult.gini$ROC)]
 ```
-Les résultats, peut importe la fonction de perte utilisé, sont similaire dans
-pour l'hyperparamètres _minbucket_. Par contre, le modèle utilisant l'indice de
-_Gini_ est optimal pour une valeur de _cp_ plus élevé, résultant en un arbre
-moins complexe. Il est donc meileur de prendre ce modele puisqu'il risque
-potentiellement de moins sur-apprendre les données d'apprentissage. Ainsi, le
-modèle choisis utilisira un _cp_ de `r format(choixCP, digits=5, scientific =
-FALSE)`, un _minbucket_ de `r choixMinbucket` et utilisera l'indice de
-_Gini_ comme fonction de perte.
+
+Les résultats, peut importe la fonction de perte utilisée, sont similaires dans
+pour l'hyperparamètre _minbucket_. Par contre, le modèle utilisant l' _indice de Gini_ 
+est optimal pour une valeur de _cp_ plus élevée, résultant en un arbre
+moins complexe. Il est donc préférable de prendre ce modèle puisqu'il risque
+potentiellement de moins faire de surapprentissage sur les données d'apprentissage. Ainsi, le
+modèle choisi utilisira un _cp_ de `r format(choixCP, digits=5, scientific =FALSE)`, 
+un _minbucket_ de `r choixMinbucket` et utilisera l' _indice de Gini_ comme fonction de perte.
 
 ```{r, results='asis', fig.height=4, fig.width=7}
 rpart.plot(tree.final, type=1, fallen.leaves = FALSE, tweak=1.1)
@@ -400,37 +400,38 @@ result_opt_forest <- as.data.frame(result_opt_forest)
 colnames(result_opt_forest) <- c("nodesize", "mtry", "AUC")
 ```
 
-Le modèle d'ensemble d’arbres de décision agrégées par bagging permet de d'obtenir
-des prévisions à partir d'un nombre d'arbre de décision, chacun ajuster par un 
-échantillon bootstrap des l'échantillon d'entrainement. Une prévision du bagging
-correspondera à la classe prédite majoritaire (renouvellement ou non renouvellement)
-par les arbres declassifications puisqu'il s'agit d'un problème de classification.
-Chacun des arbres utilise l'indice de Gini comme fonction de perte. Nous avons fait
+Le modèle d'ensemble d’arbres de décision agrégées par bagging permet d'obtenir
+des prévisions à partir d'un nombre d'arbre de décision, chacun ajusté par un 
+échantillon bootstrap de l'échantillon d'entrainement. Une prévision du bagging
+correspondera à la classe prédite majoritaire (renouvellement ou résignation)
+par les arbres de classifications puisqu'il s'agit d'un problème de classification.
+Chacun des arbres utilise l' _indice de Gini_ comme fonction de perte. Nous avons fait
 ce choix puisque qu'à la section précédente portant sur l'arbre de 
-classification, l'indice de Gini a été préféré à l'entropie croisée.
+classification, on a pu démontrer que l' _indice de Gini_ était préférable à l'entropie croisée
+pour notre jeu de donnée.
 
 
-Avant l'optimisation d'hyperparamètre il est nécessaire de déterminer un nombre
+Avant l'optimisation d'hyperparamètre, il est nécessaire de déterminer un nombre
 d'arbre suffisant pour améliorer les prévisions. Pour ce faire, nous ajustons
 un modèle bagging avec un nombre d'arbre plus élevé que nécessaire avec
 l'échantillon d'entrainement. Ce modèle bagging de base n'a pas de pas de
 contrainte appliquée sur chacun des arbres puisque ce sera optimiser par
-la suite. Pour déterminer le nombre d'arbre adéquat nous avons tracé un graphique
-du taux d'erreur OOB en fonction du nombre d'arbres.
+la suite. Pour déterminer le nombre d'arbre adéquat nous avons tracer un graphique
+du taux d'erreur _OOB_ en fonction du nombre d'arbres _T_.
 
 ```{r, plot_OOB_bagging, results='asis', fig.height=4, fig.cap="Taux d'erreur OOB en fonction du nombre d'arbre B"}
 plot(1:dim(mod_base_bag$err.rate)[1], mod_base_bag$err.rate[,1],
      type="l", xlab="B", ylab="Taux d'erreur OOB")
 ```
 
-Comme on peut le voir dans le graphique, le taux d'erreur OOB se stabilise à partir
+Comme on peut le voir dans le graphique, le taux d'erreur _OOB_ se stabilise à partir
 d'un nombre d'arbre de 100 et plus. Le nombre d'abre de notre bagging sera donc de 100.
 
 \newpage
 
 L'hyperparamètre qui sera optimisé par la suite pour augmenter les performances
 du bagging est le paramètre de la taille minimale d'un noeud (nodesize) pour chacun
-des arbres du modèle bagging. Des tailles de noeuds mininales partant de 2 allant
+des arbres du modèle bagging. Des tailles de noeuds minimales partant de 2 allant
 jusqu'à 40 seront testées. Pour l'optimisation, on s'intéressera à maximiser
 la métrique AUC. Pour chaque taille de noeud, un AUC moyen sera calculée à partir
 d'une validation croisée par 4 ensembles. Voici les résultats obtenus de la
@@ -499,15 +500,15 @@ Rmd_table(result_opt_bag[31:39, ], caption="", label="",
 \end{table}
 -->
 
-On constate que l'AUC est maximisé lorsque nodesize prend une valeure 34. Le modèle d'ensemble d’arbres de décision agrégées par bagging choisi aura donc un nombre d'abres de 100 et une taille minimale d'un noeud pour les arbres de 34.  
+On constate que l'AUC est maximisé lorsque _nodesize_ prend une valeur de 34. Le modèle d'ensemble d’arbres de décision agrégées par bagging choisit aura donc un nombre d'abres de 100 et une taille minimale d'un noeud pour les arbres de 34.  
 
 \newpage
 
 ## Forêt aléatoire
 
-La forêt aléatoire permet elle aussi d'obtenir des prévisions à partir de prévisions aggrégées d'arbre de classification. La fonction de perte utilisée à chaque arbre est encore l'indice de Gini pour la même raison mentionnée dans la section du Bagging. Cependant, un changement par rapport au bagging est la taille de l'échantillon boostrap pour ajuster les arbres. Puisque notre jeu de données est assez volumineux et que cette fois-ci, nous devrons optimiser deux hyperparamètres plutôt qu'un, nous avons choisi de prendre une taille d'échantillon bootsrap correspondant à 50\% de l'échantillon d'entraînement pour réduire les temps de calcul de l'optimisation.
+La forêt aléatoire permet elle aussi d'obtenir des prévisions à partir de prévisions aggrégées d'arbre de classification. La fonction de perte utilisée à chaque arbre est encore l' _indice de Gini_ pour la même raison mentionnée précedemment. Cependant, un changement par rapport au bagging est la taille de l'échantillon boostrap pour ajuster les arbres. Puisque notre jeu de données est assez volumineux et que cette fois-ci, nous devrons optimiser deux hyperparamètres plutôt qu'un, nous avons choisi de prendre une taille d'échantillon bootsrap correspondant à 50\% de l'échantillon d'entraînement pour réduire les temps de calcul de l'optimisation.
 
-Avant de procéder à l'optimisation il est encore nécessaire de déterminer un nombre d'arbre sufffisant pour la forêt. Pour ce faire, nous avons ajuster un modèle de forêt basique avec un nombre d'arbre plus élevé que nécessaire. Comme pour le bagging, pour déterminer le nombre d'arbre adéquatnous avons tracé un graphique du taux d'erreur OOB en fonction du nombre d'arbres.
+Avant de procéder à l'optimisation, il est encore nécessaire de déterminer un nombre d'arbre sufffisant pour la forêt. Pour ce faire, nous avons ajusté un modèle de forêt classique avec un nombre d'arbre plus élevé que nécessaire. Comme pour le bagging, pour déterminer le nombre d'arbre adéquat, nous avons tracé un graphique du taux d'erreur _OOB_ en fonction du nombre d'arbres _T_.
 
 ```{r, plot_OOB_forest, results='asis', fig.height=4, fig.cap="Taux d'erreur OOB en fonction du nombre d'arbre B"}
 plot(1:dim(mod_base_forest$err.rate)[1], mod_base_forest$err.rate[,1],
@@ -516,8 +517,8 @@ plot(1:dim(mod_base_forest$err.rate)[1], mod_base_forest$err.rate[,1],
 
 \newpage
 
-Comme on peut le voir dans le graphique, le taux d'erreur OOB se stabilise à partir
-d'un nombre d'arbre de 100 et plus comme le bagging. Le nombre d'arbres de notre forêt aléatoire sera donc de 100. Il y a deux hyperparamètres qui seront optimisé soient la taille minimale d'un noeud (nodesize) et le nombre de prédicteurs choisi de façon aléatoire (mtry) à chaque embranchement des arbres de la forêt aléatoire. Pour chaque nodesize allant de 5 jusqu'à 40 par multiple de 5, un mtry optimal est obtenu par validation croisée par 5 ensembles. Le métrique d'intérêt de l'optimisatiojn est l'AUC. Ce sont donc, des couples optimaux qui sont obtenu. Voici les résultats obtenus.
+Comme on peut le voir dans le graphique, le taux d'erreur _OOB_ se stabilise à partir
+d'un nombre d'arbres de 100 et plus comme le bagging. Le nombre d'arbres de notre forêt aléatoire sera donc de 100. Il y a deux hyperparamètres qui seront optimisés soient la taille minimale d'un noeud  (nodesize) et le nombre de prédicteurs choisi de façon aléatoire (mtry) à chaque noeud de la forêt aléatoire. Pour chaque _nodesize_ allant de 5 jusqu'à 40 par multiple de 5, un _mtry_ optimal est obtenu par validation croisée à 5 plis. Le métrique d'intérêt de l'optimisation est l' _AUC_. Ce sont donc, des couples optimaux qui sont obtenus. Voici les résultats obtenus.
 
 \begin{table}[!ht]
 \centering
@@ -534,14 +535,43 @@ Rmd_table(result_opt_forest, caption="", label="",
 
 
 
-On constate que le couples d'hyperparamètres qui a obtenu l'AUC le plus élevé correspond à un nodesize de 20 et un mtry de 10. En somme, la forest aléatoire choisi aura donc les caractéristiques suivantes: 
+On constate que le couple d'hyperparamètres qui a obtenu l' _AUC_ le plus élevé correspond à un _nodesize_ de 20 et un _mtry_ de 10. En somme, la forêt aléatoire choisie aura donc les caractéristiques suivantes: 
 
 \begin{itemize}
 \item La taille d'échantillon boostrap est de 50\% de l'échantillon d'entrainement
-\item La forest aléatoire composée de 100 arbres
+\item La forêt aléatoire est composée de 100 arbres 
 \item La taille minimale d'un noeud (nodesize) d'un arbre est de 20 observations
 \item Le nombre de prédicteurs choisis de façon aléatoire (mtry) à chaque embranchement est de 10
 \end{itemize}
+
+
+\newpage
+
+## Boosting de gradient stochastique
+
+Le modèle de boosting de gradient est un modèle de boosting généralisé pour toute fonction de perte d'intérêt. Dans notre cas, nous utiliserons le boosting de gradient dans un cas de classification. Ainsi, la fonction de perte d'intérêt est la _déviance de la loi Bernoulli_. À ces fins, les données ont dû être temporairement transformées en données booléennes de type 0 et 1 pour l'élaboration du modèle.
+
+Il est à noter que l'idée générale est d'améliorer la prévision le plus possible à l'itération _t_ en trouvant un arbre $\widehat{f}_{\text{arbre}}^t$ afin de minimiser la perte 
+\begin{align}
+   \sum_{i=1}^n \mathcal{L} \left\{ y_i, \widehat{f}_{t-1}(x_i) + \widehat{f}_{\text{arbre}}^t(x_i) \right\}.
+\end{align} 
+
+La perte ce retrouve minimisé car à chaque itération, un pas de plus est effectué dans la direction du gradient négatif. De plus, étant donné qu'on utilise la déviance négative d'une loi bernouilli comme fonction de perte,
+\begin{align}
+    \mathcal{L} = \sum_{k=1}^2 \widehat{P}_{ik} \ln( \widehat{P}_{ik}).
+\end{align} 
+
+Ce modèle choisit un sous-échantillon de taille inférieur à $n$ pour ajuster l'arbre au lieu d'utiliser un échantillon de taille simillaire à l'échantillon d'entrainement à chaque fois. Cette manière de procéder permet de réduire le temps d'entrainement et peut améliorer la précision des prévisions étant donné que ce ne sera pas toujours les mêmes données qui risquent de ce retrouver dans chacun des arbres.
+
+La procédure d'optimisation des hyperparamètres a été effectuée pour la fonction de perte visée. Les hyperparamètres sont **n.trees**, **interaction.depth**, **shrinkage** et **n.minobsinnode** représentant repectivement le nombre d'arbres dans le boosting, la profondeur maximale de l'arbre, le taux d'apprentissage $\lambda$ et le nombre d'observations minimal par noeud. On optimisera seulement **n.trees** et **interaction.depth** car les deux autres hyperparamètres peuvent être choisit facilement dans le but d'avoir un temps d'exécution raisonnable. Selon les tests effectués au préalable on prendra un $\lambda = 0.01$ et un $n.minobsinnode = 20$.
+
+L'optimisation des deux hyperparamètres restants est ensuite fait à partir de la méthode **LGOCV**, soit _left one group out cross validation_. **C'est donc une méthode de validation croisée qui permet de tester des combinaisons d'hyperparamètres choisies.(À VALIDER)** Le choix des hyperparamètres optimaux se fera à l'aide de la métrique _AUC_ qui représente l'aire sous la courbe ROC. Le choix des paramètres est effectué selon l'AUC obtenue la plus élevée. Ainsi, une grille de toutes les combinaisons possibles d'hyperparamètres à tester a été crée et la fonction **train** de R nous a donnée la meilleure combinaison parmis celles proposées.
+
+Ainsi, le modèle choisit utilisera un $n.trees(T) = 1600$, un $interaction.depth(d) =2$, un $shrinkage(\lambda) = 0.01$, un $n.minobsinnode = 20$ et utilisera la déviance négative d'une loi bernoulli comme fonction de perte.
+
+
+
+**Voir pour ajouter le graphique de l'Accuracy en fonction des combinaisons d'hyperparamètres testés plot(gbmfit1)**
 
 \newpage
 

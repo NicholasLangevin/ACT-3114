@@ -4,6 +4,7 @@
 library("gbm") #surement à supprimer car on utilise carret pour pouvoir communiquer le modèle
 library("caret")
 library("ROCR")
+library("iml")
 source("../script/_utilityFunction.R")
 
 ## Importation des données
@@ -22,9 +23,10 @@ gbmfit1 <- train(lapse ~ .,
                   method = "gbm",
                   trControl = controles,
                   tuneGrid = gbmGrille,
-                  verbose = FALSE) #pour gbm
+                  verbose = FALSE) #pour gbm 
 
-gbmfit1$bestTune
+names(gbmfit1$bestTune)
+gbmfit1$bestTune["n.trees"]
 plot(gbmfit1)
 gbmfit1$results
 
@@ -49,6 +51,11 @@ previsions <- predict(mod.gbm,
 
 ## AUC et courbe ROC
 roc(testData$lapse, previsions, plot = TRUE)
+auc <- as.numeric(roc(testData$lapse, previsions)$auc)
 
 ## Importance des variables
 summary(mod.gbm)
+
+## IML 
+mod.iml <- Predictor$new(gbmfit1)
+imp <- FeatureImp$new(mod.iml, loss = "ce", compare = "difference", n.repetitions = 5)
