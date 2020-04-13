@@ -1,5 +1,5 @@
 ---
-header-includes: \usepackage{multirow} \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
+header-includes: \usepackage{multirow} \usepackage{multicol} \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan}
 bibliography: ../biblio.bib
 bibliographystyle: apalike
@@ -71,6 +71,19 @@ load(file="../data/testData.RData")
 
 # Modèle de base
 
+```{r, loading_glm}
+roc_res_optimal <- readRDS("../src/01-glm/roc_res_optimal.rds")
+
+seuil_optimal_glm <- roc_res_optimal[1]
+specificite_glm <- roc_res_optimal[2]
+sensitivite_glm <- roc_res_optimal[3]
+precision_glm <- roc_res_optimal[9]
+a_glm <- roc_res_optimal[5]
+d_glm <- roc_res_optimal[6]
+b_glm <- roc_res_optimal[8]
+c_glm <- roc_res_optimal[7]
+```
+
 Pour le modèle de base, nous utiliserons un modèle linéaire généralisé avec une distribution binomiale. plus précisément, il s'agit d'une distribution binomiale avec $m = 1$ donc une distribution Bernouilli. La valeur de y est de 1 lorsque l'assuré résigne et de 0 lorsqu,il renouvèle. On s'intéresse à modéliser la probabilité que l'asssuré ne renouvelle pas son contrat. Pour ce faire, le lien logistic sera utilisée pour faire le lien entre la probabilité et le prédicteur linéaire. Ainsi nous avons
 
 \begin{align}
@@ -83,20 +96,54 @@ où nous voulons maximiser la vraisemblance d'une bernouilli. Ainsi les valeurs 
     \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}
 \end{align}
 
-Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de confiance de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici
+Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de confiance de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici:
 
-
+\begin{multicols}{2}
 \begin{itemize}
-\item policy\_caruse: utilisation de l'auto
-\item policy\_nbcontract: nombre de polices du contrat
-\item vehicl\_agepurchase: âge du véhicule lors de l'achat
-\item vehicl\_powerkw: puissance du véhicule
-\item vehicl\_garage: type de stationnement
-\item prem\_pure: prime des coûts espérés
-\item prem\_index: Taux d'augmentation de prime 
+\item policy\_caruse
+\item policy\_nbcontract
+\item prem\_pure
+\item prem\_index
 \end{itemize}
+\columnbreak
+\begin{itemize}
+\item vehicl\_agepurchase
+\item vehicl\_powerkw
+\item vehicl\_garage
+\end{itemize}
+\end{multicols}
 
-C'est donc de dire que ces variables ne seront pas considérés pour les prévisions avec le modèle de base.
+C'est donc de dire que ces variables ne seront pas considérés pour les prévisions avec le modèle de base. Le modèle retourne comme prévision une probabilité que le client résigne son contrat. Il est donc nécessaire de déterminer un seuil minimale pour lequel l'observation aura une prévision corrrespondant à une résignation et si la prévision est inférieure à ce seuil alors la prévision est un renouvellement. Il a été décidé d'utiliser le seuil optimal de la courbe ROC sur les données d'entrainement. C'est le seuil pour lequel le point sur la courbe ROC se retrouve le plus proche du coin supérieur gauche du graphique. Ce seuil est optimal pour un compromis entre les statitstiques de sensitivité, le taux de bonne classification des résignations, et de spécificité, le taux de bonne classification des renouvellements. Voici le tableau de confusion obtenu des données d'entrainement ainsi que des statistiques d'intérêt.
+
+\begin{table}[!htb]
+\centering
+\begin{minipage}{0.48\linewidth}
+\begin{tabular}{c|cc} 
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Prédictions} \\
+Observations & Renouvellemnt & Résignation \\
+\hline Renouvellement & `r a_glm` & `r b_glm` \\
+Résignation & `r c_glm` & `r d_glm` \\
+\hline
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\linewidth}
+\centering
+\begin{tabular}{c|c} 
+Statistiques & \% \\
+\hline
+Seuil optimal & `r round(seuil_optimal_glm * 100, 3)`  \\
+Sensitivité & `r round(sensitivite_glm * 100, 3)` \\
+Spécificité & `r round(specificite_glm * 100, 3)` \\
+\hline
+\end{tabular}
+\end{minipage}
+\end{table}
+
+Les statistiques de sensitivité et de spécificité avoisines toutes les deux les 60\% dans le cas où nous prenons le seuil optimale. Cela veut dire que le modèle de base classifie avec un taux similaire les résignations et les renouvellement. Par contre on constate quand procédent ainsi, il y a un grand nombre de clients pour lesquels le modèle de base prédit une résignation alors qu'en fait se sont des clients enclins à renouveler. Il sera intéressant de voir si les autres modèles amilioreront cet aspect. Une comparaison avec les autres modèles sera établi avec l'échantillon test plus loin dans le rapport.   
+
+
+\newpage
 
 # Ajustement des modèles
 

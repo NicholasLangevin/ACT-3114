@@ -30,14 +30,16 @@ drop1(mod_glm_reduit3, test = "Chisq") # non au seuil 1%
 ## Mod final
 mod_glm_final <- mod_glm_reduit3
 summary(mod_glm_final)
-
+saveRDS(mod_glm_final, file = "../src/01-glm/mod_glm_final.rds")
 
 ## Seuil optimal et tableau de confusion
-roc.mod <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numerci(fitted(mod_glm_final)))
+roc.mod <- roc(ifelse(trainData$lapse == "resignation", 1, 0), as.numeric(fitted(mod_glm_final)))
 
 res_optimal <- pROC::coords(roc.mod, "best", best.method = "closest.topleft",
                         ret = c("thr", "spec", "sens", "accuracy", "tn", "tp", "fn", "fp", "precision"),
                         transpose = TRUE)
+
+saveRDS(res_optimal, file = "../src/01-glm/roc_res_optimal.rds")
 
 # seuil_optimal_glm <- res_optimal[1]
 # specifite_glm <- res_optimal[2]
@@ -48,11 +50,17 @@ res_optimal <- pROC::coords(roc.mod, "best", best.method = "closest.topleft",
 # b_glm <- res_optimal[8]
 # c_glm <- res_optimal[7]
 
-## Mod final performance 
 
+## Mod final performance 
 pred.glm <- predict(mod_glm_final, newdata = testData, type = "response")
 roc_auc <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(pred.glm), auc=TRUE, plot=FALSE, quiet = TRUE, col="red")
 roc_GLM <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(pred.glm), col="red")
 auc_GLM <- as.numeric(roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(pred.glm))$auc)
 save(roc_GLM, file="../src/01-glm/roc.rds")
 save(auc_GLM, file="../src/01-glm/auc.rds")
+roc_auc_test <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(pred.glm), auc=TRUE, plot=FALSE, quiet = TRUE, col="red")
+saveRDS(roc_auc_test, file = "../src/01-glm/auc_performance_glm.rds")
+
+
+
+
