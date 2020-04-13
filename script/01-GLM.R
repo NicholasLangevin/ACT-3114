@@ -52,31 +52,7 @@ res_optimal <- pROC::coords(roc.mod, "best", best.method = "closest.topleft",
 
 pred.glm <- predict(mod_glm_final, newdata = testData, type = "response")
 roc_auc <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(pred.glm), auc=TRUE, plot=FALSE, quiet = TRUE, col="red")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+roc_GLM <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(pred.glm), col="red")
+auc_GLM <- as.numeric(roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(pred.glm))$auc)
+save(roc_GLM, file="../src/01-glm/roc.rds")
+save(auc_GLM, file="../src/01-glm/auc.rds")

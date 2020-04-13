@@ -63,3 +63,10 @@ as.numeric(roc(dataToNumeric(testData, "y"), knn.final$pred)$auc)
 ## Matrice de confusion
 pred_binaire <- ifelse(knn.final$pred > 0.8, 1, 0)
 table(dataToNumeric(testData, "y"), pred_binaire)
+
+
+roc_knn <- roc(dataToNumeric(testData, "y"), knn.final$pred)
+auc_knn <- as.numeric(roc(dataToNumeric(testData, "y"), knn.final$pred)$auc)
+save(roc_knn, file="../src/03-knn/roc.rds")
+save(auc_knn, file="../src/03-knn/auc.rds")
+

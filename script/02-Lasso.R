@@ -83,3 +83,10 @@ roc.auc <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.p
 
 result.coords.auc <- coords(roc.auc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy", "specificity", "sensitivity"), transpose = TRUE)
 format(result.coords.auc, scientific=FALSE, digits=1)
+
+
+roc_lasso <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.pred.auc))
+auc_lasso <- as.numeric(roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.pred.auc))$auc)
+save(roc_lasso, file="../src/02-lasso/roc.rds")
+save(auc_lasso, file="../src/02-lasso/auc.rds")
+
