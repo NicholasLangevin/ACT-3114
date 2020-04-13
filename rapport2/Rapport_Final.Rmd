@@ -594,10 +594,7 @@ load(file="../src/01-glm/roc.rds")
 load(file="../src/01-glm/auc.rds")
 load(file="../src/02-lasso/roc.rds")
 load(file="../src/02-lasso/auc.rds")
-load(file="../src/07-gbm/roc.rds")
-
 #load(file="../src/07-gbm/roc.rds")
-#load(file="../src/07-gbm/auc.rds")
 
 roc_knn <- roc(dataToNumeric(testData, "y"), knn.final$pred)
 roc_tree <- roc(dataToNumeric(testData, "y"),  predict(tree.final, newdata = testData)[,2])
@@ -617,7 +614,7 @@ Dans cette section, il sera question de comparer la performance prédictive des 
 Les modèles ayant l'AUC la plus élevée sont les modèles ayant la performance de prévision la plus élevé basé sur cette métrique. La \autoref{fig:plot_ROC} illustre les différentes courbes ROC obtenu pour les différents modèles et le \autoref{tbl:tableau-AUC} présente les valeurs d'AUC qui découle de ces courbes.
 
 ```{r tableau_AUC, results="asis"}
-Rmd_table(auc_result, caption = "hggh", label = "tbl:tableau-AUC", align = c("l","l","r"))
+Rmd_table(auc_result, caption = "Aire sous la courbe ROC pour chacun des différents modèles", label = "tbl:tableau-AUC", align = c("l","l","r"))
 ```
 
 ```{r plot_ROC, results='asis', fig.height=4, fig.cap="Courbe ROC pour chacun des différents modèles"}
@@ -631,7 +628,7 @@ plot(roc_RandomForest, col="orange", add=T)
 legend("bottomright", c("GLM", "Lasso"), col = c("red", "blue"))
 ```
 
-La courbe ROC est défini comme étant la sensitivité en fonction du faux négatifs. Dans le but d'avoir une bonne performance prédictive, on recherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe ce rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. De ce sens, on conclut que les deux modèles ayant la meilleure performance prédictive sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles.
+La courbe ROC est défini comme étant la sensitivité en fonction du faux négatifs. Dans le but d'avoir une bonne performance prédictive, on recherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe ce rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. De ce sens, on peut conclure que les modèles ont une bonne puissance de prévision car leurs valeurs d'AUC sont tous supérieur à  `r min(auc_result$AUC)`, ce qui est assez élevé. Les deux modèles les plus performants sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles.
 
 
 \newpage
