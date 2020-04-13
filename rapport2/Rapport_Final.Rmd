@@ -78,7 +78,7 @@ où nous voulons maximiser la vraisemblance d'une bernouilli. Ainsi les valeurs 
     \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}
 \end{align}
 
-Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici
+Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de confiance de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici
 
 
 \begin{itemize}
