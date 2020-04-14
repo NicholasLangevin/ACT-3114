@@ -1,0 +1,35 @@
+---
+title: "Modélisation de la probabilité de résination"
+author: "Charles Comeau, Nicholas Langevin et Andréanne Larouche"
+date: "22/04/2020"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+<!--  -->
+
+## Plan de la présentation
+
+- Description du problème dans un context actuariel
+- Exploration des données utilisées
+- Prétraitement des données et exploration non-supevisée
+- Description des modèles considérés
+- Performance et interprétation des meilleurs modèles
+- Conclusion
+
+## Slide with R Output
+
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
