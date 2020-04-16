@@ -1,16 +1,26 @@
 ---
-title: "Modélisation de la probabilité de résination"
+title: "Modélisation de la probabilité de résignation"
 author: "Charles Comeau, Nicholas Langevin et Andréanne Larouche"
 date: "22/04/2020"
-output: ioslides_presentation
+output: 
+        ioslides_presentation:
+            widescreen: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+load("../data/trainData.RData")
+load("../data/testData.RData")
+data <- rbind(trainData, testData)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+source("../script/_utilityFunction.R")
 ```
 
-## Introduction
-<!--  -->
+<!-- Introduction
+
+-->
 
 ## Plan de la présentation
 
@@ -21,11 +31,76 @@ knitr::opts_chunk$set(echo = FALSE)
 - Performance et interprétation des meilleurs modèles
 - Conclusion
 
-## Slide with R Output
+## Description du problème dans un context actuariel
+<!-- 
+Dans un context d'assurance, il est important de savoir si un assurer à 
+beaucoup de chance de renouveler sont contrat pour l'année suivant. Pourquoi?
 
-```{r cars, echo = TRUE}
-summary(cars)
+- Taux de rétention;
+  Savoir combien de personnes vont renouveler permet de faire un estimation
+  du taux de rétention. Le taux de rétention est important dans la compagnie 
+  pour deux raison. 1. Permet de calculé le taux de croissance. 
+  Renouvellement + nouvelles police > 100% indique que la compagnie est
+  croissante en terme d'unité. 2. Indicateur de la compétitive dans le marché.
+  Si le taux de rétention réelle est plus petit que celui prédit, une raison
+  potentielle est que les compétiteurs offrent des meilleurs prix, ou encore
+  que le service à la clientèle porte des lacunes.
+  
+- Élasticité:
+  Une autre raison de calculé la probabilité de renouvellement est pour calculé
+  l'élastique. Ceci représente la variation dans la probabilité de
+  renouvellement pour un variation de prix donnée. Ceci permet de déterminer de
+  combien l'augmentation de la prime sera pour chaque contrat. Plus la
+  prédiction de renouvellement pour une police donnée est grande, plus
+  l'assureur en profitera pour augmenter la prime.
+-->
+- Taux de rétention:
+  $$
+    \text{Taux de rétention} = \frac{\text{# Renouvellement}}{\text{# Police
+    total}}
+  $$
+<!--    - Taux de croissance
+    - Indicateur de compétitive
+-->
+- Élasticité:
+  $$
+    \text{Élasticité} = \frac{\Delta Pr[\text{Renouvellement}]}{\Delta
+    \text{Augmentation prix}}
+  $$
+  
+
+## Descriptions du jeu de données
+<!-- 
+Notre jeu de données représente le statut de renouvellement pour 23 060 
+polices basées sur un an d'observation. 
+
+-->
+```{r}
+nbRenou <- sum(data$lapse == levels(data$lapse)[1]) / nrow(data)
+nbResign <- sum(data$lapse == levels(data$lapse)[2]) / nrow(data)
 ```
+
+- `r nrow(data)` observations
+- 8 variables numériques
+- 8 variables catégoriels 
+- 2 variables ordonnées
+- 1 Variable crée:
+  $$
+    \text{prem_index} = \frac{\text{prem_final}}{\text{prem_last}}
+  $$
+- 1 Variable réponse:
+    - `r round(nbRenou, 2)*100` % Renouvellement 
+    - `r round(nbResign, 2)*100` % Résignation
+
+## Descriptions du jeu de données
+```{r}
+ggplot(data, aes(x=lapse, y=prem_pure)) + geom_boxplot()
+ggplot(data, aes(x=prem_last, y=prem_market , col=lapse)) + geom_point() +
+    geom_abline(intercept = 0, slope = 1)
+
+
+```
+
 
 ## Slide with Plot
 

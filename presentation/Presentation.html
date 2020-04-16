@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Modélisation de la probabilité de résination</title>
+  <title>Modélisation de la probabilité de résignation</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -19,7 +19,7 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'Modélisation de la probabilité de résination',
+                title: 'Modélisation de la probabilité de résignation',
                         useBuilds: true,
         usePrettify: true,
         enableSlideAreas: true,
@@ -92,7 +92,7 @@ slide:not(.current) .plotly.html-widget{
 
 <body style="opacity: 0">
 
-<slides>
+<slides class="layout-widescreen">
 
   <slide class="title-slide segue nobackground">
         <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
@@ -104,11 +104,11 @@ slide:not(.current) .plotly.html-widget{
           </hgroup>
   </slide>
 
-<slide class=""><hgroup><h2>Introduction</h2></hgroup><article  id="introduction">
+<!-- Introduction
 
-<!--  -->
+-->
 
-</article></slide><slide class=""><hgroup><h2>Plan de la présentation</h2></hgroup><article  id="plan-de-la-présentation">
+<slide class=""><hgroup><h2>Plan de la présentation</h2></hgroup><article  id="plan-de-la-présentation">
 
 <ul>
 <li>Description du problème dans un context actuariel</li>
@@ -119,17 +119,67 @@ slide:not(.current) .plotly.html-widget{
 <li>Conclusion</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Slide with R Output</h2></hgroup><article  id="slide-with-r-output">
+</article></slide><slide class=""><hgroup><h2>Description du problème dans un context actuariel</h2></hgroup><article  id="description-du-problème-dans-un-context-actuariel">
 
-<pre class = 'prettyprint lang-r'>summary(cars)</pre>
+<!-- 
+Dans un context d'assurance, il est important de savoir si un assurer à 
+beaucoup de chance de renouveler sont contrat pour l'année suivant. Pourquoi?
 
-<pre >##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</pre>
+- Taux de rétention;
+  Savoir combien de personnes vont renouveler permet de faire un estimation
+  du taux de rétention. Le taux de rétention est important dans la compagnie 
+  pour deux raison. 1. Permet de calculé le taux de croissance. 
+  Renouvellement + nouvelles police > 100% indique que la compagnie est
+  croissante en terme d'unité. 2. Indicateur de la compétitive dans le marché.
+  Si le taux de rétention réelle est plus petit que celui prédit, une raison
+  potentielle est que les compétiteurs offrent des meilleurs prix, ou encore
+  que le service à la clientèle porte des lacunes.
+  
+- Élasticité:
+  Une autre raison de calculé la probabilité de renouvellement est pour calculé
+  l'élastique. Ceci représente la variation dans la probabilité de
+  renouvellement pour un variation de prix donnée. Ceci permet de déterminer de
+  combien l'augmentation de la prime sera pour chaque contrat. Plus la
+  prédiction de renouvellement pour une police donnée est grande, plus
+  l'assureur en profitera pour augmenter la prime.
+-->
+
+<ul>
+<li>Taux de rétention: \[
+\text{Taux de rétention} = \frac{\text{# Renouvellement}}{\text{# Police
+total}}
+  \] <!--    - Taux de croissance
+    - Indicateur de compétitive
+--></li>
+<li>Élasticité: \[
+\text{Élasticité} = \frac{\Delta Pr[\text{Renouvellement}]}{\Delta
+\text{Augmentation prix}}
+  \]</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Descriptions du jeu de données</h2></hgroup><article  id="descriptions-du-jeu-de-données">
+
+<!-- 
+Notre jeu de données représente le statut de renouvellement pour 23 060 
+polices basées sur un an d'observation. 
+
+-->
+
+<ul>
+<li>23060 observations</li>
+<li>8 variables numériques</li>
+<li>8 variables catégoriels</li>
+<li>2 variables ordonnées</li>
+<li>1 Variable crée: \[
+\text{prem_index} = \frac{\text{prem_final}}{\text{prem_last}}
+  \]</li>
+<li>1 Variable réponse:
+
+<ul>
+<li>87 % Renouvellement</li>
+<li>13 % Résignation</li>
+</ul></li>
+</ul>
 
 </article></slide><slide class=""><hgroup><h2>Slide with Plot</h2></hgroup><article  id="slide-with-plot">
 

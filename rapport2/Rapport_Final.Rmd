@@ -1,5 +1,5 @@
 ---
-header-includes: \usepackage{multirow} \usepackage{multicol} \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
+header-includes: \usepackage{multirow} \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan}
 bibliography: ../biblio.bib
 bibliographystyle: apalike
@@ -64,25 +64,7 @@ load(file="../data/testData.RData")
 
 \newpage
 
-# Introduction
-
-
-\newpage
-
 # Modèle de base
-
-```{r, loading_glm}
-roc_res_optimal <- readRDS("../src/01-glm/roc_res_optimal.rds")
-
-seuil_optimal_glm <- roc_res_optimal[1]
-specificite_glm <- roc_res_optimal[2]
-sensitivite_glm <- roc_res_optimal[3]
-precision_glm <- roc_res_optimal[9]
-a_glm <- roc_res_optimal[5]
-d_glm <- roc_res_optimal[6]
-b_glm <- roc_res_optimal[8]
-c_glm <- roc_res_optimal[7]
-```
 
 Pour le modèle de base, nous utiliserons un modèle linéaire généralisé avec une distribution binomiale. plus précisément, il s'agit d'une distribution binomiale avec $m = 1$ donc une distribution Bernouilli. La valeur de y est de 1 lorsque l'assuré résigne et de 0 lorsqu,il renouvèle. On s'intéresse à modéliser la probabilité que l'asssuré ne renouvelle pas son contrat. Pour ce faire, le lien logistic sera utilisée pour faire le lien entre la probabilité et le prédicteur linéaire. Ainsi nous avons
 
@@ -96,54 +78,20 @@ où nous voulons maximiser la vraisemblance d'une bernouilli. Ainsi les valeurs 
     \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}
 \end{align}
 
-Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de confiance de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici:
+Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de confiance de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici
 
-\begin{multicols}{2}
+
 \begin{itemize}
-\item policy\_caruse
-\item policy\_nbcontract
-\item prem\_pure
-\item prem\_index
+\item policy\_caruse: utilisation de l'auto
+\item policy\_nbcontract: nombre de polices du contrat
+\item vehicl\_agepurchase: âge du véhicule lors de l'achat
+\item vehicl\_powerkw: puissance du véhicule
+\item vehicl\_garage: type de stationnement
+\item prem\_pure: prime des coûts espérés
+\item prem\_index: Taux d'augmentation de prime 
 \end{itemize}
-\columnbreak
-\begin{itemize}
-\item vehicl\_agepurchase
-\item vehicl\_powerkw
-\item vehicl\_garage
-\end{itemize}
-\end{multicols}
 
-C'est donc de dire que ces variables ne seront pas considérés pour les prévisions avec le modèle de base. Le modèle retourne comme prévision une probabilité que le client résigne son contrat. Il est donc nécessaire de déterminer un seuil minimale pour lequel l'observation aura une prévision corrrespondant à une résignation et si la prévision est inférieure à ce seuil alors la prévision est un renouvellement. Il a été décidé d'utiliser le seuil optimal de la courbe ROC sur les données d'entrainement. C'est le seuil pour lequel le point sur la courbe ROC se retrouve le plus proche du coin supérieur gauche du graphique. Ce seuil est optimal pour un compromis entre les statitstiques de sensitivité, le taux de bonne classification des résignations, et de spécificité, le taux de bonne classification des renouvellements. Voici le tableau de confusion obtenu des données d'entrainement ainsi que des statistiques d'intérêt.
-
-\begin{table}[!htb]
-\centering
-\begin{minipage}{0.48\linewidth}
-\begin{tabular}{c|cc} 
-\multicolumn{1}{c}{} & \multicolumn{2}{c}{Prédictions} \\
-Observations & Renouvellemnt & Résignation \\
-\hline Renouvellement & `r a_glm` & `r b_glm` \\
-Résignation & `r c_glm` & `r d_glm` \\
-\hline
-\end{tabular}
-\end{minipage}
-\hfill
-\begin{minipage}{0.48\linewidth}
-\centering
-\begin{tabular}{c|c} 
-Statistiques & \% \\
-\hline
-Seuil optimal & `r round(seuil_optimal_glm * 100, 3)`  \\
-Sensitivité & `r round(sensitivite_glm * 100, 3)` \\
-Spécificité & `r round(specificite_glm * 100, 3)` \\
-\hline
-\end{tabular}
-\end{minipage}
-\end{table}
-
-Les statistiques de sensitivité et de spécificité avoisines toutes les deux les 60\% dans le cas où nous prenons le seuil optimale. Cela veut dire que le modèle de base classifie avec un taux similaire les résignations et les renouvellement. Par contre on constate quand procédent ainsi, il y a un grand nombre de clients pour lesquels le modèle de base prédit une résignation alors qu'en fait se sont des clients enclins à renouveler. Il sera intéressant de voir si les autres modèles amilioreront cet aspect. Une comparaison avec les autres modèles sera établi avec l'échantillon test plus loin dans le rapport.   
-
-
-\newpage
+C'est donc de dire que ces variables ne seront pas considérés pour les prévisions avec le modèle de base.
 
 # Ajustement des modèles
 
@@ -165,8 +113,9 @@ résigne sont contrat, alors le modèle peut être écrit comme
 \end{align}
 où les $(\beta_0, \beta_j)$ sont obtenue en minimisant l'équation suivant
 \begin{align}
-    \min\limits_{(\beta_0, \beta_j)} \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p
-    \beta_j x_j)^2 + \lambda \sum_{j=1}^p |\beta_j|.
+    \min\limits_{(\beta_0, \beta_j)} -\left[ \sum_{i=1}^n 
+    y_i (\beta_0 + \sum_{j=1}^p \beta_j x_j) - \ln(1 + e^{(\beta_0 +
+    \sum_{j=1}^p \beta_j x_j)}\right] + \lambda \sum_{j=1}^p |\beta_j|.
 \end{align}
 La fonction de minimisation comprend le paramètre $\lambda$ qui doit être
 déterminé d'avance. La valeur optimale a été choisie par validation croisée à
@@ -442,12 +391,10 @@ rpart.plot(tree.final, type=1, fallen.leaves = FALSE, tweak=1.1)
 ```{r, loading_bagging}
 mod_base_bag <- readRDS("../src/05-Bagging/mod_bag_base.rds")
 result_opt_bag <- readRDS("../src/05-Bagging/result_opt_bag_save.rds")
-mod_bag_final <- readRDS("../src/05-Bagging/mod_bagging.rds")
 result_opt_bag <- as.data.frame(result_opt_bag)
 colnames(result_opt_bag) <- c("nodesize", "AUC")
 
 mod_base_forest <- readRDS("../src/06-RandomForest/mod_forest_base.rds")
-mod_forest_fin <- readRDS("../src/06-RandomForest/mod_forest.rds")
 rest <- readRDS("../src/06-RandomForest/mod_forest_base.rds")
 result_opt_forest <- readRDS("../src/06-RandomForest/result_opt_rf_save.rds")
 result_opt_forest <- as.data.frame(result_opt_forest)
@@ -603,10 +550,6 @@ On constate que le couple d'hyperparamètres qui a obtenu l' _AUC_ le plus élev
 
 ## Boosting de gradient stochastique
 
-```{r, gbm.modfit1}
-load(file="../src/07-gbm/plotoptimisation.rds")
-```
-
 Le modèle de boosting de gradient est un modèle de boosting généralisé pour toute fonction de perte d'intérêt. Dans notre cas, nous utiliserons le boosting de gradient dans un cas de classification. Ainsi, la fonction de perte d'intérêt est la _déviance de la loi Bernoulli_. À ces fins, les données ont dû être temporairement transformées en données booléennes de type 0 et 1 pour l'élaboration du modèle.
 
 Il est à noter que l'idée générale est d'améliorer la prévision le plus possible à l'itération _t_ en trouvant un arbre $\widehat{f}_{\text{arbre}}^t$ afin de minimiser la perte 
@@ -623,81 +566,13 @@ Ce modèle choisit un sous-échantillon de taille inférieur à $n$ pour ajuster
 
 La procédure d'optimisation des hyperparamètres a été effectuée pour la fonction de perte visée. Les hyperparamètres sont **n.trees**, **interaction.depth**, **shrinkage** et **n.minobsinnode** représentant repectivement le nombre d'arbres dans le boosting, la profondeur maximale de l'arbre, le taux d'apprentissage $\lambda$ et le nombre d'observations minimal par noeud. On optimisera seulement **n.trees** et **interaction.depth** car les deux autres hyperparamètres peuvent être choisit facilement dans le but d'avoir un temps d'exécution raisonnable. Selon les tests effectués au préalable on prendra un $\lambda = 0.01$ et un $n.minobsinnode = 20$.
 
-L'optimisation des deux hyperparamètres restants est ensuite fait à partir de la méthode **LGOCV**, soit _left one group out cross validation_. C'est donc une méthode de validation croisée qui permet de tester des combinaisons d'hyperparamètres choisies. Le choix des hyperparamètres optimaux se fera à l'aide de la métrique _AUC_ qui représente l'aire sous la courbe ROC. Le choix des paramètres est effectué selon l'AUC obtenue la plus élevée. Ainsi, une grille de toutes les combinaisons possibles d'hyperparamètres à tester a été crée et la fonction **train** de R nous a donnée la meilleure combinaison parmis celles proposées. On observe ainsi aisément à l'aide de la \autoref{fig:gbm.plotoptimisation} que le modèle choisit utilisera un $n.trees(T) = 1600$, un $interaction.depth(d) =2$ et comme indiqué précédemment, un $shrinkage(\lambda) = 0.01$, un $n.minobsinnode = 20$ et la déviance négative d'une loi bernoulli comme fonction de perte. C'est avec ces valeurs que le modèle atteint la plus haute performance pour un temps de calcul raisonnable. Le graphique nous indique bien le choix des valeurs car on choisit ce qui permet au modèle d'atteindre la plus haute valeur pour l' _Accuracy_, soit le niveau de précision des prévisions. Il est à noter que pour une meilleure performance le taux d'apprentissage aurait été plus faible et le nombre d'arbres plus élevé ce qui demande une espace de stockage et un temps de calcul beaucoup plus important. 
+L'optimisation des deux hyperparamètres restants est ensuite fait à partir de la méthode **LGOCV**, soit _left one group out cross validation_. **C'est donc une méthode de validation croisée qui permet de tester des combinaisons d'hyperparamètres choisies.(À VALIDER)** Le choix des hyperparamètres optimaux se fera à l'aide de la métrique _AUC_ qui représente l'aire sous la courbe ROC. Le choix des paramètres est effectué selon l'AUC obtenue la plus élevée. Ainsi, une grille de toutes les combinaisons possibles d'hyperparamètres à tester a été crée et la fonction **train** de R nous a donnée la meilleure combinaison parmis celles proposées.
 
-\newpage
-
-```{r, gbm.plotoptimisation, results='asis', fig.height=4, fig.cap="Résultats obtenu pour l'optimisation des paramètres à partir de la fonction train en R."}
-plot(gbmfit1)
-```
-
-
-\newpage
-
-# Comparaison des modèles
-
-```{r, Load_roc_auc, include = FALSE}
-load(file="../src/01-glm/roc.rds")
-load(file="../src/01-glm/auc.rds")
-load(file="../src/02-lasso/roc.rds")
-load(file="../src/02-lasso/auc.rds")
-#load(file="../src/07-gbm/roc.rds")
-
-roc_knn <- roc(dataToNumeric(testData, "y"), knn.final$pred)
-roc_tree <- roc(dataToNumeric(testData, "y"),  predict(tree.final, newdata = testData)[,2])
-roc_Bagging <- roc(testData$lapse, predict(mod_bag_final, newdata = testData, type="prob")[,2])
-roc_RandomForest <- roc(testData$lapse,predict(mod_forest_fin, newdata = testData, type="prob")[,2])
-
-auc_knn <- as.numeric(roc_knn$auc)
-auc_tree <- as.numeric(roc_tree$auc)
-auc_Bagging <- as.numeric(roc_Bagging$auc)
-auc_RandomForest <- as.numeric(roc_RandomForest$auc)
-#auc_gbm <- as.numeric(roc_gbm$auc)
-auc_result <- data.frame("Modèles"=c("Modèle de base GLM", "Modèle linéaire avec régularisation Lasso", "modèle des k plus proches voisins",  "Arbre de décision", "Ensemble d'arbres de décision agrégées par bagging", "forêt aléatoire", "Modèle de gradient boosting"), AUC=c(auc_GLM, auc_lasso, auc_knn, auc_tree, auc_Bagging, auc_RandomForest, auc_RandomForest))
-```
-
-Dans cette section, il sera question de comparer la performance prédictive des différents modèles. Pour ce faire, nous analyserons la performance de la prévison sur les données test à l'aide de la courbe ROC et de la valeur de l'AUC, soit l'aire sous la courbe ROC. 
-
-Les modèles ayant l'AUC la plus élevée sont les modèles ayant la performance de prévision la plus élevé basé sur cette métrique. La \autoref{fig:plot_ROC} illustre les différentes courbes ROC obtenu pour les différents modèles et le \autoref{tbl:tableau-AUC} présente les valeurs d'AUC qui découle de ces courbes.
-
-```{r tableau_AUC, results="asis"}
-Rmd_table(auc_result, caption = "Aire sous la courbe ROC pour chacun des différents modèles", label = "tbl:tableau-AUC", align = c("l","l","r"))
-```
-
-```{r plot_ROC, results='asis', fig.height=4, fig.cap="Courbe ROC pour chacun des différents modèles"}
-plot(roc_GLM, col = "red")
-plot(roc_lasso, col="blue", add=T)
-plot(roc_knn, col="yellow", add=T) 
-plot(roc_tree,col="green", add=T)
-plot(roc_Bagging, col="pink", add=T)
-plot(roc_RandomForest, col="orange", add=T)
-#plot(roc_gbm, col="purple", add=T)
-legend("bottomright", c("GLM", "Lasso"), col = c("red", "blue"))
-```
-
-La courbe ROC est défini comme étant la sensitivité en fonction du faux négatifs. Dans le but d'avoir une bonne performance prédictive, on recherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe ce rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. De ce sens, on peut conclure que les modèles ont une bonne puissance de prévision car leurs valeurs d'AUC sont tous supérieur à  `r min(auc_result$AUC)`, ce qui est assez élevé. Les deux modèles les plus performants sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles.
-
-
-\newpage
-
-# Interprétation des meilleurs modèles
-
-Pour l'interprétation des meilleurs modèles, trois outils seront utilisés soit l'importance des variables, les graphiques de dépendance partielle et les graphiques d'espérance conditionnelle individuelle. 
-
-L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles étant plus significatives dans l'élaboration du modèle. 
-
-Les graphiques de dépendance partielle (DPD) sont un outil plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet plus spécifique d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on peut interprété cette partie du modèle.
-
-Les graphiques d'espérance conditionnelle individuelle (ICE) sont un outil qui permet, quant-à-lui, d'interpréter l'effet individuel d'une variable explicative sur une prévision et non pas pour les prévisions en générales. On pourra également y détecter les interractions et leur importance sur la prévision.
+Ainsi, le modèle choisit utilisera un $n.trees(T) = 1600$, un $interaction.depth(d) =2$, un $shrinkage(\lambda) = 0.01$, un $n.minobsinnode = 20$ et utilisera la déviance négative d'une loi bernoulli comme fonction de perte.
 
 
 
-
-
-\newpage
-
-# Conclusion
-
+**Voir pour ajouter le graphique de l'Accuracy en fonction des combinaisons d'hyperparamètres testés plot(gbmfit1)**
 
 \newpage
 
