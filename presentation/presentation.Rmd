@@ -1,4 +1,5 @@
 ---
+header-includes: \usepackage{booktabs}
 title: "Modélisation de la probabilité de résignation"
 author: "Charles Comeau, Nicholas Langevin et Andréanne Larouche"
 date: "22/04/2020"
@@ -15,7 +16,33 @@ data <- rbind(trainData, testData)
 library(ggplot2)
 library(knitr)
 library(kableExtra)
+library(CASdatasets)
+library(xtable)
+library(kableExtra)
+library(glmnet)
 source("../script/_utilityFunction.R")
+data(eudirectlapse)
+data.init <- eudirectlapse
+
+## Necessaire pour traitement données
+data.init[data.init$polholder_diffdriver == "unknown", ]$polholder_diffdriver <- NA
+data.init[data.init$vehicl_garage == "unknown", ]$vehicl_garage <- NA
+data.init[data.init$policy_caruse == "unknown", ]$policy_caruse <- NA
+
+## Import pour Lasso
+load(file="../src/02-lasso/lasso.valid.dev.rds")
+load(file="../src/02-lasso/lasso.valid.auc.rds")
+```
+
+```{R, FonctionPrintTable, echo = FALSE, include = FALSE, warning = FALSE}
+print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1), digits=3, ...){
+  print(xtable(dat, digits = digits,
+             caption=caption,
+             label=label,
+             align=align,),
+            include.rownames = FALSE, sanitize.text.function=function(x){x},
+            caption.placement = "top", comment=FALSE, type = "html")
+}
 ```
 
 <!-- Introduction
@@ -102,9 +129,177 @@ ggplot(data, aes(x=prem_last, y=prem_market , col=lapse)) + geom_point() +
 ```
 
 
-## Slide with Plot
+## Prétraitement des données
 
-```{r pressure}
-plot(pressure)
-```
+### Traitement des valeurs manquantes
+
+<br/>
+
+- policy_caruse: 3483
+
+- vehicl_garage: 1575
+
+- polholder_diffdriver: 12
+
+- Nombre d'observations touchées: `r nrow(data) - nrow(na.omit(data.init))` (`r round((nrow(data) - nrow(na.omit(data.init))) / nrow(data) *100, 2)`%)
+
+- Les données ne sont pas MCAR
+
+- Imputation multiple
+
+
+
+## Prétraitement des données
+
+### Modification de vehicl_powerkw
+
+![](tab_powerkw.PNG)
+
+# Description des modèles
+
+## Modèle de base
+
+- GLM Bernoulli
+
+- Modélisation de la probabilité de résignation avec régression logistique
+
+<font size = "4">
+$$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
+</font>
+- Estimateurs $\beta_{i}$ 
+<font size = "4">
+$$    \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}$$
+</font>
+- TRV 1\% pour la sélection de variable
+
+
+## Modèle linéaire avec régularisation
+
+- GLM Bernoulli avec régularisation Lasso
+
+- Modélisation de la probabilité de résignation avec régression logistique
+
+- Estimateurs $\beta_{i}$ 
+
+- Optimisation de l'hyperparamètre $\lambda$ 
+
+
+## Modèle linéaire avec régularisation
+
+### Optimisation de l'hyperparamètre $\lambda$
+
+
+![](lambda_opti.jpg){width=1000px}
+
+## Modèle linéaire avec régularisation
+
+### Variables avec coeffcient nul de la régulation Lasso
+
+<br/>
+
+![](selection_lasso.jpg){width=800px}
+
+## Modèles k plus proches voisins
+
+<br/>
+
+- Utilisation de la distance euclédienne
+
+- Transformation des variables catégorielles non-ordonnées en variables binaires
+
+- Transformation des variables ordonnées en numérique discrète (1, 2, ...)
+
+- Prédiction de la probabilité de résignation par régression
+
+
+## Modèles k plus proches voisins
+
+### Optimisation de l'hyperparamètre k
+
+![](knn_opti.jpg){width=700px}
+
+
+## Arbre de classification
+
+<ul>
+<li> Processus de partitionnement récursif binaire
+<li> Deux fonctions de perte testée
+$$
+\mathcal{L}_G = \sum_{k=1}^K \widehat{P}_{mk} (1 - \widehat{P}_{mk}) \qquad \mathcal{L}_D = - \sum_{k=1}^K \widehat{P}_{mk} \ln( \widehat{P}_{mk})
+$$
+<br/>
+<li> Complexité de l'arbre sera optimisée en fonction de deux paramètres
+    <ul>
+    <li> paramètre de complexité (cp)
+    <li> nombre minimal d'observations dans une feuille (minbucket) </li>
+</li>
+</ul>
+
+## Arbre de classification 
+
+### Optimisation des hyperparamètres
+
+<br/>
+
+![](arbre_opti.jpg){width=750px}
+
+
+## Bagging
+
+- Prévision obtenue par l'aggrégation d'arbres de classification
+
+- Chaque arbre utilise l'indice de Gini
+
+- Nombre d'arbre nécessaire
+
+<center>
+![](bag_nbtree.jpg){width=400px}
+</center>
+
+
+## Forêt aléatoire 
+
+<ul>
+<li> Taille de l'échantillon boostrap de 50\%
+
+<li> Nombre d'arbre nécessaire
+
+<center>
+![](foret_nbtree.jpg){width=400px}
+</center>
+
+<li> Deux hyperparamètre à optimiser
+    <ul>
+    <li> taille minimal d'un noeud (nodesize)
+    <li> nombre de prédicteurs choisi aléatoirement (mtry) </li>
+</li>
+</ul>
+
+
+## Forêt aléatoire
+
+### Optimisation des hyperparamètres
+
+<br/>
+
+<center>
+![](foret_opti.jpg){width=350px}
+</center>
+
+
+### Boosting de gradient stochastique
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
