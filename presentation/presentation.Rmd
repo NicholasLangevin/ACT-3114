@@ -19,8 +19,12 @@ library(kableExtra)
 library(CASdatasets)
 library(xtable)
 library(glmnet)
+<<<<<<< HEAD
 library(scales)
 library(gridExtra)
+=======
+library(gbm)
+>>>>>>> 10f6790... Presentation parties 6 et 7
 source("../script/_utilityFunction.R")
 data(eudirectlapse)
 data.init <- eudirectlapse
@@ -33,6 +37,9 @@ data.init[data.init$policy_caruse == "unknown", ]$policy_caruse <- NA
 ## Import pour Lasso
 load(file="../src/02-lasso/lasso.valid.dev.rds")
 load(file="../src/02-lasso/lasso.valid.auc.rds")
+
+## Import pour gbm 
+load(file = "../src/07-gbm/gbm_opti_ROC.rds")
 ```
 
 ```{R, FonctionPrintTable, echo = FALSE, include = FALSE, warning = FALSE}
@@ -307,15 +314,38 @@ $$
 </center>
 
 
-### Boosting de gradient stochastique
+## Boosting de gradient stochastique
 
+<li> Amélioration à l'itération t
+<font size = "4">
+$$
+   \sum_{i=1}^n \mathcal{L} \left\{ y_i, \widehat{f}_{t-1}(x_i) + \widehat{f}_{\text{arbre}}^t(x_i) \right\}
+$$
+</font>
+<li> Avec fonction de perte 
+<font size = "4">
+$$
+    \mathcal{L} = \sum_{k=1}^2 \widehat{P}_{ik} \ln( \widehat{P}_{ik})
+$$
+</font>
 
+<li> Taux d'apprentissage <font size = "5"> $\lambda = 0.005$ </font>, sous-échantillonnage de 75\% 
 
+<li> Deux hyperparamètre à optimiser
+    <ul>
+    <li> nombre d'arbre (n.trees)
+    <li> profondeur maximal des arbres (d) </li>
+</li>
+</ul>
 
+## Boosting de gradient stochastique
 
+### Optimisation des hyperparamètres
 
-
-
+```{r plot_gbm_opti, fig.height=3.5}
+plot(gbmfit_Bern)
+gbmfit_Bern$bestTune[1:2]
+```
 
 
 
