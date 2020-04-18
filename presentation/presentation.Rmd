@@ -18,8 +18,9 @@ library(knitr)
 library(kableExtra)
 library(CASdatasets)
 library(xtable)
-library(kableExtra)
 library(glmnet)
+library(scales)
+library(gridExtra)
 source("../script/_utilityFunction.R")
 data(eudirectlapse)
 data.init <- eudirectlapse
@@ -100,7 +101,6 @@ beaucoup de chance de renouveler sont contrat pour l'année suivant. Pourquoi?
 <!-- 
 Notre jeu de données représente le statut de renouvellement pour 23 060 
 polices basées sur un an d'observation. 
-
 -->
 ```{r}
 nbRenou <- sum(data$lapse == levels(data$lapse)[1]) / nrow(data)
@@ -119,12 +119,33 @@ nbResign <- sum(data$lapse == levels(data$lapse)[2]) / nrow(data)
     - `r round(nbRenou, 2)*100` % Renouvellement 
     - `r round(nbResign, 2)*100` % Résignation
 
-## Descriptions du jeu de données
-```{r}
-ggplot(data, aes(x=lapse, y=prem_pure)) + geom_boxplot()
-ggplot(data, aes(x=prem_last, y=prem_market , col=lapse)) + geom_point() +
-    geom_abline(intercept = 0, slope = 1)
+## Analyse exploratoire (prime)
+<!--
+Graphique du % d'augmentation de la prime en fonction du status de rouvellement. On voit bien que l'augmentation de la prime est influencer par le classement bonus-malus de l'assurer. Le système bonus malus est utilisé en assurance pour déterminer le risque de l'assurer. par exemple, lorsque celui-ci fait un accident, il sera monter d'une cathégorie et donc d'un catégorie de prime. Bonus malus est comme
+un resumer de la frequence et severiter.
 
+On voit que seut qui augmente on effectivement un hausse de prime, les stable status-co et une diminution entraine aussi un diminution de la prime. 
+
+De plus, dans le cas d'une augmentation de bonus malus, le 3e quartil semble legerement plus elever.
+-->
+```{r}
+ggplot(data, aes(x=lapse, y=prem_index, col=polholder_BMCevol)) + geom_boxplot() +
+    # facet_grid(col=vars(polholder_BMCevol)) + 
+    ylab("Augmentation de la prime") + 
+    xlab("") + 
+    ggtitle("Augmentation de la prime en fonction du status de Renouvellement") +
+    scale_y_continuous(labels = percent) + 
+    scale_colour_discrete(name = "Système\nBonus Malus") +
+    theme_bw()
+
+# ggplot(data, aes(x=lapse, y=prem_final/prem_pure, col=polholder_BMCevol)) + geom_boxplot() +
+#     # facet_grid(col=vars(polholder_BMCevol)) + 
+#     ylab("Augmentation de la prime") + 
+#     xlab("") + 
+#     ggtitle("Augmentation de la prime en fonction du status de Renouvellement") +
+#     scale_y_continuous(labels = percent) + 
+#     scale_colour_discrete(name = "Système\nBonus Malus") +
+#     theme_bw()
 ```
 
 
@@ -301,4 +322,15 @@ $$
 
 
 
+## Analyse exploratoire
 
+```{r}
+ggplot(data, aes(x=lapse, y=policy_age, col=polholder_BMCevol)) + 
+    geom_boxplot()
+```
+
+## Analyse exploratoire
+```{r}
+ggplot(data, aes(x=policy_age, fill=lapse)) + 
+    geom_bar(position = "dodge")
+```
