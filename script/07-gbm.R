@@ -28,12 +28,55 @@ gbmfit1 <- train(lapse ~ .,
                   tuneGrid = gbmGrille,
                   verbose = FALSE) #pour gbm 
 
-#gbmfit2 <- train(lapse ~ ., 
-#                 data = dataToNumeric(trainData),
-#                 method = "gbm",
-#                 trControl = controles,
-#                 tuneGrid = gbmGrille,
-#                 verbose = FALSE) #pour gbm 
+## GBM Bernoulli utilisant ROC pour trainner
+controles_Bern <- trainControl(method="cv", number = 4,
+                              summaryFunction = twoClassSummary, classProbs=TRUE) 
+
+gbmGrille_Bern <- expand.grid(interaction.depth = c(3, 5, 7),   # les profondeurs supérieur perforamaient moins et aug. temps calcul
+                         n.trees = (1:30) * 100, 
+                         shrinkage = 0.005,                     # 0.5% sinon fallait 7000 arbres...
+                         n.minobsinnode = 20)
+
+set.seed(420)
+gbmfit_Bern <- train(lapse ~ ., 
+                 data = trainData,
+                 method = "gbm",
+                 distribution = "bernoulli",
+                 trControl = controles_Bern,
+                 tuneGrid = gbmGrille_Bern,
+                 metric = "ROC",
+                 verbose = FALSE) 
+
+save(gbmfit_Bern, file="../src/07-gbm/gbm_opti_ROC.rds")
+
+gbmfit_Bern$bestTune   # params optimaux
+plot(gbmfit_Bern)      # visualisation en graphique de l'optimisation
+
+## Pour que la variable réponse prenne les valeurs 0, 1.
+trainDataBool$lapse <- trainData$lapse == "renouvellement"
+testDataBool$lapse <- testData$lapse == "renouvellement"
+
+set.seed(2000)
+gbm_opti_Bern <- gbm(lapse ~ ., 
+               distribution = "bernoulli",
+               data = trainDataBool,                                            
+               n.trees = gbmfit_Bern$bestTune["n.trees"],
+               interaction.depth = gbmfit_Bern$bestTune["interaction.depth"],
+               shrinkage = gbmfit_Bern$bestTune["shrinkage"], 
+               bag.fraction = 0.75)
+
+save(gbm_opti_Bern, file="../src/07-gbm/gbm_Bern_final.rds")
+
+previsions_Bern <- predict(gbm_opti_Bern, 
+                      n.trees = gbmfit_Bern$bestTune["n.trees"], 
+                      newdata = testDataBool,
+                      type = "response")
+
+roc(testDataBool$lapse, previsions_Bern)
+
+
+
+
 #gbmfit3 <- train(lapse ~ ., 
 #                 data = dataToNumeric(trainData),
 #                 method = "gbm",
