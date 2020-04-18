@@ -1,3 +1,26 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@NicholasLangevin 
+NicholasLangevin
+/
+ACT-3114
+Private
+1
+0
+0
+ Code Issues 0 Pull requests 0 Actions Projects 0 Wiki Security Insights Settings
+ACT-3114/rapport2/Rapport_Final.Rmd
+@NicholasLangevin NicholasLangevin Debut de la presentation
+b813b90 2 days ago
+@NicholasLangevin@CharlesCo02@AndreanneLarouche
+579 lines (488 sloc)  26.7 KB
+  
 ---
 header-includes: \usepackage{multirow} \usepackage{amssymb} \usepackage{hyperref} \usepackage{booktabs} \hypersetup{ colorlinks=true,
   linkcolor=blue, filecolor=magenta, urlcolor=cyan}
@@ -171,7 +194,6 @@ lasso.level <- c("private or freelance work", "-", "-", "street", "Region 03",
                  "Region 08", "Region 10")
 dev.name <- c("x","x","x","x","x","x","x")
 auc.name <- c("x","x","x"," ","x","x"," ")
-
 lasso.names0 <- data.frame(Variable=lasso.names, Niveau=lasso.level,
                            Deviance=dev.name, AUC=auc.name)
 Rmd_table(lasso.names0, label="tbl:lasso.variable0", 
@@ -192,16 +214,12 @@ et la spécificité. Celui-ci a été sélectionné selon le critère suivant
 roc.dev <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.pred.dev), plot=F, col="red")
 result.coords.dev <- coords(roc.dev, "best", best.method="closest.topleft", ret=c("threshold", "accuracy", "specificity", "sensitivity"), transpose = TRUE)
 spec.dev <- format(result.coords.dev, scientific=FALSE, digits=1)
-
 roc.auc <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.pred.auc), plot=F, col="red")
 # plot(roc.auc, print.thres="best", print.thres.best.method="closest.topleft")
 result.coords.auc <- coords(roc.auc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy", "specificity", "sensitivity"), transpose = TRUE)
 spec.auc <- format(result.coords.auc, scientific=FALSE, digits=1)
-
-
 lasso.predBinaire.dev <- ifelse(lasso.pred.auc > result.coords.dev[1], 1, 0)
 lasso.predBinaire.auc <- ifelse(lasso.pred.auc > result.coords.auc[1], 1, 0)
-
 lasso.confMatrix.dev <- table(testData$lapse, lasso.predBinaire.dev)
 lasso.confMatrix.auc <- table(testData$lapse, lasso.predBinaire.auc)
 lasso.table.dev <- as.data.frame.matrix(lasso.confMatrix.dev)
@@ -393,7 +411,6 @@ mod_base_bag <- readRDS("../src/05-Bagging/mod_bag_base.rds")
 result_opt_bag <- readRDS("../src/05-Bagging/result_opt_bag_save.rds")
 result_opt_bag <- as.data.frame(result_opt_bag)
 colnames(result_opt_bag) <- c("nodesize", "AUC")
-
 mod_base_forest <- readRDS("../src/06-RandomForest/mod_forest_base.rds")
 rest <- readRDS("../src/06-RandomForest/mod_forest_base.rds")
 result_opt_forest <- readRDS("../src/06-RandomForest/result_opt_rf_save.rds")
@@ -577,3 +594,16 @@ Ainsi, le modèle choisit utilisera un $n.trees(T) = 1600$, un $interaction.dept
 \newpage
 
 # Bibliographie
+© 2020 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+
