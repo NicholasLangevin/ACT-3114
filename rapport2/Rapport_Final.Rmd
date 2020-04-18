@@ -65,7 +65,31 @@ load(file="../data/testData.RData")
 \newpage
 
 # Introduction
+Les contrats d'assurance IARD sont pour la plupart d'une durée d'un an;
+conséquament, le renouvellement des polices est une étape répétitive pour les
+assureurs. Il est important pour ceux-ci de bien prévoire combien d'assurés
+resterons avec eux pour la prochaine années. Ces prévisions peuvent avoir de
+l'importance sur les statégies de renouvellement, en autre, puisque plus un
+assuré à des chances de renouveller, plus l'assureur voudra lui charger plus
+cher pour augmenter sont profit. D'un autre coté, Cette prévision peut aussi
+être utilisé dans les statégies nouvelles affaires puisque si beaucoup
+d'assurés résigne leur police, la croissance en unité sera affecter et celle-ci
+pourra prévoir des rabais pour les nouveaux assurées dans le but de compenser.
 
+Notre travail se concentre sur la modélisation et la prédiction de la
+probabilité de renouvellement des assurés. Pour ce faire, nous avons utilisé un
+jeux de données, nommée _eudirectlapse_,  provenant du packetage _CASdataset_
+(@CASdatasets). Ce jeu de données représente les primes de $23 060$ polices
+avant et après le renouvellement ainsi que leurs status de renouvellement ou de
+résignation. La base de données comprend aussi d'autres variables qui
+caractérise chaques contrats comme l'age des conduteurs, le type de voiture
+conducteurs etc. Finalement, cette base de données provient d'un assureur
+inconnue et pour une années inconnues.
+
+Finalement, dans le but de comparé correctement les modèles utilisés, 20% de la
+base de données à été mis de coté pour servir comme données de test. Puisque
+les données sont débalancées, la proportions de résignation à été conservé
+autant dans les données d'entrainement que de test.
 
 \newpage
 
@@ -153,6 +177,8 @@ load(file="../src/02-lasso/lasso.valid.dev.rds")
 load(file="../src/02-lasso/lasso.valid.auc.rds")
 load(file="../src/02-lasso/lasso.pred.dev.rds")
 load(file="../src/02-lasso/lasso.pred.auc.rds")
+load(file="../src/02-lasso/lasso.predTrain.dev.rds")
+load(file="../src/02-lasso/lasso.predTrain.auc.rds")
 ```
 
 Comme dans le cas d'un modèle généralisé (_GLM_), la distribution binomial à
@@ -164,8 +190,10 @@ résigne sont contrat, alors le modèle peut être écrit comme
 \end{align}
 où les $(\beta_0, \beta_j)$ sont obtenue en minimisant l'équation suivant
 \begin{align}
-    \min\limits_{(\beta_0, \beta_j)} \sum_{i=1}^n (y_i - \beta_0 - \sum_{j=1}^p
-    \beta_j x_j)^2 + \lambda \sum_{j=1}^p |\beta_j|.
+    \min\limits_{(\beta_0, \beta_j)} -\left[\frac{1}{N}\sum_{i=1}^n 
+    y_i (\beta_0 + \sum_{i=1}^p \beta_i x_i) + 
+    \log( 1 + e^{(\beta_0 + \sum_{i=1}^p \beta_i x_i)}) \right]
+    + \lambda \sum_{j=1}^p |\beta_j|.
 \end{align}
 La fonction de minimisation comprend le paramètre $\lambda$ qui doit être
 déterminé d'avance. La valeur optimale a été choisie par validation croisée à
@@ -199,20 +227,20 @@ sont de
 \label{fig:lasso.valid}
 \end{figure}
 
-Selon la valeur optimal de $\lambda$ qui optimise chacune des métriques, les 
-variables qui voient leurs coeficients ($\beta$) rétrécir à
-$0$ sont similaires. Ces variables sont listées dans le 
-\autoref{tbl:lasso.variable0}. Il est intéressant de voir que les variables
-**prem\_pure** et **prem\_last** ne semblent pas importantes, ce qui confirme 
-l'hypothèse du premier rapport où la prime absolue n'est pas importante.
-C'est pourquoi initialement la variable 
-**prem\_index = prem\_final / prem\_last** avait été crée. 
-Nous verrons plus tard que cette dernière est importante dans le modèle d'arbre. 
-Finalement, il est pertimant de mentionner que c'est la variable représentant la prime pure qui est exclut
-du modèle et non la variable contenant la prime finale chargée au client. Conséquemment, ceci montre
-que les caractéristiques du marché impacte la probabilité de renouvellement, ce 
-qui est logique puisqu'il est normal que le taux de rétention d'un assureur
-soit impacté par sa compétivité dans le marché.
+Selon la valeur optimal de $\lambda$ qui optimise chacune des métriques, les
+variables qui voient leurs coeficients ($\beta$) rétrécir à $0$ sont
+similaires. Ces variables sont listées dans le \autoref{tbl:lasso.variable0}.
+Il est intéressant de voir que les variables **prem\_pure** et **prem\_last**
+ne semblent pas importantes, ce qui confirme l'hypothèse du premier rapport où
+la prime absolue n'est pas importante.  C'est pourquoi initialement la variable
+**prem\_index = prem\_final / prem\_last** avait été crée.  Nous verrons plus
+tard que cette dernière est importante dans le modèle d'arbre.  Finalement, il
+est pertimant de mentionner que c'est la variable représentant la prime pure
+qui est exclut du modèle et non la variable contenant la prime finale chargée
+au client, qui inclut probablement des rabais/surcharge en fonction du marché.
+Conséquemment, ceci montre que les caractéristiques du marché impacte la
+probabilité de renouvellement, ce qui est logique puisqu'il est normal que le
+taux de rétention d'un assureur soit impacté par sa compétivité dans le marché.
 
 ```{r, lasso.varShrinked, results='asis'}
 lasso.names <- c("policy caruse", "prem last", "prem pure", "vehicl garage",
@@ -230,7 +258,7 @@ Rmd_table(lasso.names0, label="tbl:lasso.variable0",
           pour la colonne \\emph{AUC}.")
 ```
 
-Pour déterminer si une prédiction est à $$résignation$$ ou à
+Pour déterminer si une prédiction est à résignation ou à
 renouvellement, il faut déterminer le seuil optimal qui maximise la sensitivité
 et la spécificité. Celui-ci a été sélectionné selon le critère suivant
 \begin{align}
@@ -245,10 +273,10 @@ roc.auc <- roc(ifelse(testData$lapse == "resignation", 1, 0), as.numeric(lasso.p
 # plot(roc.auc, print.thres="best", print.thres.best.method="closest.topleft")
 result.coords.auc <- coords(roc.auc, "best", best.method="closest.topleft", ret=c("threshold", "accuracy", "specificity", "sensitivity"), transpose = TRUE)
 spec.auc <- format(result.coords.auc, scientific=FALSE, digits=1)
-lasso.predBinaire.dev <- ifelse(lasso.pred.auc > result.coords.dev[1], 1, 0)
-lasso.predBinaire.auc <- ifelse(lasso.pred.auc > result.coords.auc[1], 1, 0)
-lasso.confMatrix.dev <- table(testData$lapse, lasso.predBinaire.dev)
-lasso.confMatrix.auc <- table(testData$lapse, lasso.predBinaire.auc)
+lasso.predBinaire.dev <- ifelse(lasso.predTrain.auc > result.coords.dev[1], 1, 0)
+lasso.predBinaire.auc <- ifelse(lasso.predTrain.auc > result.coords.auc[1], 1, 0)
+lasso.confMatrix.dev <- table(trainData$lapse, lasso.predBinaire.dev)
+lasso.confMatrix.auc <- table(trainData$lapse, lasso.predBinaire.auc)
 lasso.table.dev <- as.data.frame.matrix(lasso.confMatrix.dev)
 lasso.table.auc <- as.data.frame.matrix(lasso.confMatrix.auc)
 ```
@@ -256,7 +284,7 @@ lasso.table.auc <- as.data.frame.matrix(lasso.confMatrix.auc)
 Ce critère représente le point le plus proche du coin haut gauche de la courbe
 ROC. Puisque les 2 modèles ont des courbes ROC similaires, le seuil optimal est
 aussi similaire. Le \autoref{tbl:lasso.confMatrix} montre les tableaux de
-confusion résultants. Dans le cas du modéle utilisant la _deviance_, la
+confusion résultants. Dans le cas du modèle utilisant la _deviance_, la
 sensitivité est de `r spec.dev[4]` et la spécificité est de `r spec.dev[3]`.
 Dans le modèle utilisant l' _AUC_, la sensitivité est de `r spec.dev[4]` et la
 spécificité est de `r spec.dev[4]`. On remarque que l'erreur la plus fréquente
@@ -310,8 +338,7 @@ les variables catégorielles ordonnées ont été transformées en des variables
 numériques disctrètes $(1, 2, 3,...)$. Le modèle des _k_ plus proches voisins
 comprend un seul hyperparamètre, soit le nombre de voisins (_k_) à utilisé pour
 la prédiction. Ce choix a été optimisé en utilisant une validation croisée à 4
-plis. La valeur de _k_ qui maximise l'aire sour la courbe ROC (_fonction
-d’efficacité du récepteur_) est de `r as.numeric(fit.knn$bestTune)`. Ces
+plis. La valeur de _k_ qui maximise l'aire sour la courbe ROC est de `r as.numeric(fit.knn$bestTune)`. Ces
 valeurs, pour chaque valeurs de _k_, sont présenté dans la
 \autoref{tbl:knn.plot-bestTune}.
 
@@ -321,14 +348,17 @@ ggplot(fit.knn, highlight=TRUE) +
     geom_line(col = "steelblue3") +
     geom_point(col = "steelblue3") + 
     xlab("k") + 
-    ylab("AUC (Validation Croisée)")
+    ylab("AUC (Validation Croisée)") + 
+    theme_bw()
     # geom_vline(xintercept=240, linetype = 2, col = "red")
 ```
+Les prédictions pour les données test qui serviront à comparer les modèles
+seront classifier en fonction de la classe majoritaire des 
+`r as.numeric(fit.knn$bestTune)` obervations les plus proches. Puisque nous
+avons des données débalancées, ce type de modèle pourrait avoir des 
+prévision médiocre puisque il va être rare plus de 50% soit des résignations
+dans les plus proches voisins.
 
-```{r, knn.plot_ROC, results='asis', fig.height=4, fig.cap="\\label{tbl:knn.plot-ROC} TODO"}
-# ROC(dataToNumeric(testData, "y"), modele.knn$pred, col="blue")
-# roc(dataToNumeric(testData, "y"), modele.knn$pred, plot=TRUE)
-```
 \newpage
 
 ## Arbre de classification
@@ -417,14 +447,15 @@ choixMinbucket <-
 ```
 
 Les résultats, peut importe la fonction de perte utilisée, sont similaires dans
-pour l'hyperparamètre _minbucket_. Par contre, le modèle utilisant l' _indice de Gini_ 
+pour l'hyperparamètre _minbucket_. Par contre, le modèle utilisant l'_indice de Gini_ 
 est optimal pour une valeur de _cp_ plus élevée, résultant en un arbre
 moins complexe. Il est donc préférable de prendre ce modèle puisqu'il risque
 potentiellement de moins faire de surapprentissage sur les données d'apprentissage. Ainsi, le
 modèle choisi utilisira un _cp_ de `r format(choixCP, digits=5, scientific =FALSE)`, 
 un _minbucket_ de `r choixMinbucket` et utilisera l' _indice de Gini_ comme fonction de perte.
+La figure \autoref{fig:arbre} illustre l'arbre résultant.
 
-```{r, results='asis', fig.height=4, fig.width=7}
+```{r, results='asis', fig.height=4, fig.width=7, fig.cap="\\label{fig:arbre} Arbre optimal utilisant un cp de `r format(choixCP, digits=5, scientific =FALSE)`, un minbucket de `r choixMinbucket` et l'indice de Gini comme fonction de perte."}
 rpart.plot(tree.final, type=1, fallen.leaves = FALSE, tweak=1.1)
 ```
 
@@ -663,7 +694,8 @@ plot(roc_tree,col="green", add=T)
 plot(roc_Bagging, col="pink", add=T)
 plot(roc_RandomForest, col="orange", add=T)
 #plot(roc_gbm, col="purple", add=T)
-legend("bottomright", c("GLM", "Lasso"), col = c("red", "blue"))
+legend("bottomright", c("glm", "Lasso", "knn", "Arbre", "Bagging", "Forêt", "gbm"), lty=1, 
+       col = c("red", "blue", "yellow", "green", "pink", "orange", "purple"), cex = 0.7)
 ```
 
 La courbe ROC est défini comme étant la sensitivité en fonction du faux négatifs. Dans le but d'avoir une bonne performance prédictive, on recherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe ce rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. De ce sens, on peut conclure que les modèles ont une bonne puissance de prévision car leurs valeurs d'AUC sont tous supérieur à  `r min(auc_result$AUC)`, ce qui est assez élevé. Les deux modèles les plus performants sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles.

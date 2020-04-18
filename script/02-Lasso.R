@@ -6,6 +6,7 @@ library(pROC)
 load(file="../data/trainData.RData")
 load(file="../data/testData.RData")
 source("./_utilityFunction.R")
+source("../script/_utilityFunction.R")
 
 set.seed(87699)
 X <- as.matrix(dataToNumeric(trainData, "x", TRUE))
@@ -66,6 +67,17 @@ lasso.pred.auc <- predict(lasso.lambdaOpti.auc,
 
 save(lasso.pred.dev, file="../src/02-lasso/lasso.pred.dev.rds")
 save(lasso.pred.auc, file="../src/02-lasso/lasso.pred.auc.rds")
+
+lasso.predTrain.dev <- predict(lasso.lambdaOpti.dev, 
+                          newx= as.matrix(dataToNumeric(trainData, "x")),
+                          type="response")
+
+lasso.predTrain.auc <- predict(lasso.lambdaOpti.auc, 
+                          newx= as.matrix(dataToNumeric(trainData, "x")),
+                          type="response")
+
+save(lasso.predTrain.dev, file="../src/02-lasso/lasso.predTrain.dev.rds")
+save(lasso.predTrain.auc, file="../src/02-lasso/lasso.predTrain.auc.rds")
 
 # save(lasso.confMatrix.dev, file="../src/02-lasso/lasso.confMatrix.dev.rds")
 # save(lasso.confMatrix.auc, file="../src/02-lasso/lasso.confMatrix.auc.rds")
