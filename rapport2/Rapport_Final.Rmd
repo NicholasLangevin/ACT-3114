@@ -629,6 +629,7 @@ On constate que le couple d'hyperparamètres qui a obtenu l' _AUC_ le plus élev
 
 ```{r, gbm.modfit1}
 load(file="../src/07-gbm/plotoptimisation.rds")
+load(file = "../src/07-gbm/gbm_opti_ROC.rds")
 ```
 
 Le modèle de boosting de gradient est un modèle de boosting généralisé pour toute fonction de perte d'intérêt. Dans notre cas, nous utiliserons le boosting de gradient dans un cas de classification. Ainsi, la fonction de perte d'intérêt est la _déviance de la loi Bernoulli_. À ces fins, les données ont dû être temporairement transformées en données booléennes de type 0 et 1 pour l'élaboration du modèle.
@@ -645,9 +646,9 @@ La perte ce retrouve minimisé car à chaque itération, un pas de plus est effe
 
 Ce modèle choisit un sous-échantillon de taille inférieur à $n$ pour ajuster l'arbre au lieu d'utiliser un échantillon de taille simillaire à l'échantillon d'entrainement à chaque fois. Cette manière de procéder permet de réduire le temps d'entrainement et peut améliorer la précision des prévisions étant donné que ce ne sera pas toujours les mêmes données qui risquent de ce retrouver dans chacun des arbres.
 
-La procédure d'optimisation des hyperparamètres a été effectuée pour la fonction de perte visée. Les hyperparamètres sont **n.trees**, **interaction.depth**, **shrinkage** et **n.minobsinnode** représentant repectivement le nombre d'arbres dans le boosting, la profondeur maximale de l'arbre, le taux d'apprentissage $\lambda$ et le nombre d'observations minimal par noeud. On optimisera seulement **n.trees** et **interaction.depth** car les deux autres hyperparamètres peuvent être choisit facilement dans le but d'avoir un temps d'exécution raisonnable. Selon les tests effectués au préalable on prendra un $\lambda = 0.01$ et un $n.minobsinnode = 20$.
+La procédure d'optimisation des hyperparamètres a été effectuée pour la fonction de perte visée. Les hyperparamètres sont **n.trees**, **interaction.depth**, **shrinkage** et **n.minobsinnode** représentant repectivement le nombre d'arbres dans le boosting, la profondeur maximale de l'arbre, le taux d'apprentissage $\lambda$ et le nombre d'observations minimal par noeud. On optimisera seulement **n.trees** et **interaction.depth** car les deux autres hyperparamètres peuvent être choisit facilement dans le but d'avoir un temps d'exécution raisonnable. Selon les tests effectués au préalable on prendra un $\lambda = 0.005$ et un $n.minobsinnode = 20$.
 
-L'optimisation des deux hyperparamètres restants est ensuite fait à partir de la validation croisée sur 4 ensembles. C'est une méthode d'optimisation qui permet de trouver les hyperparamètres optimaux sur chacun des plis pour ensuite choisir les hyperparamètres optimaux sur l'ensemble des données d'entrainement. Le choix se fera à l'aide de la métrique _ROC_. Le choix des paramètres est donc effectué selon l'aire sour la courbe ROC ( _AUC_) obtenue la plus élevée. On observe ainsi aisément à l'aide de la \autoref{fig:gbm.plotoptimisation} que le modèle choisit utilisera un $n.trees(T) =$ `r gbmfit_Bern$bestTune["n.trees"]`, un $interaction.depth(d) =$`r gbmfit_Bern$bestTune["interaction.depth"]` et comme indiqué précédemment, un $shrinkage(\lambda) = 0.01$, un $n.minobsinnode = 20$ et la déviance négative d'une loi bernoulli comme fonction de perte. C'est avec ces valeurs que le modèle atteint la plus haute performance pour un temps de calcul raisonnable. Le graphique nous indique bien le choix des valeurs car on choisit ce qui permet au modèle d'atteindre la plus haute valeur pour l' _AUC_. Il est à noter que pour une meilleure performance le taux d'apprentissage aurait été plus faible et le nombre d'arbres plus élevé ce qui demande une espace de stockage et un temps de calcul beaucoup plus important. 
+L'optimisation des deux hyperparamètres restants est ensuite fait à partir de la validation croisée sur 4 ensembles. C'est une méthode d'optimisation qui permet de trouver les hyperparamètres optimaux sur chacun des plis pour ensuite choisir les hyperparamètres optimaux sur l'ensemble des données d'entrainement. Le choix se fera à l'aide de la métrique _ROC_. Le choix des paramètres est donc effectué selon l'aire sour la courbe ROC ( _AUC_) obtenue la plus élevée. On observe ainsi aisément à l'aide de la \autoref{fig:gbm.plotoptimisation} que le modèle choisit utilisera un $n.trees(T) =$ `r gbmfit_Bern$bestTune["n.trees"]`, un $interaction.depth(d) =$ `r gbmfit_Bern$bestTune["interaction.depth"]` et comme indiqué précédemment, un $shrinkage(\lambda) = 0.005$, un $n.minobsinnode = 20$ et la déviance négative d'une loi bernoulli comme fonction de perte. C'est avec ces valeurs que le modèle atteint la plus haute performance pour un temps de calcul raisonnable. Le graphique nous indique bien le choix des valeurs car on choisit ce qui permet au modèle d'atteindre la plus haute valeur pour l' _AUC_. Il est à noter que pour une meilleure performance le taux d'apprentissage aurait été plus faible et le nombre d'arbres plus élevé ce qui demande une espace de stockage et un temps de calcul beaucoup plus important. 
 
 \newpage
 
@@ -708,6 +709,27 @@ La courbe ROC est défini comme étant la sensitivité en fonction du faux néga
 Dans cette section, on interprète le modèle de base, soit le modèle linéaire généralisé, et le modèle de gradient stochastique car ce sont ceux ayant la meilleure performance sous la mesure _AUC_ de la qualité de l'ajustement. Les méthodes utilisées pour l'interprétation diffèreront entres-autres car le modèle de boosting de gradient stochastique est construit sur un nombre élevé d'arbres. Pour avoir l'effet spécifique de chacune des variables sur la prévision, il faudrait analyser chacun des arbres individuellement, ce qui n'est évidemment pas optimal. On aura recourt à des outils permettant de visualiser l'impact global de chacune des variables sur l'ensemble des arbres, ce qui est effectivement un peu moins précis que pour le modèle de base. Le GLM permet d'avoir un facteur associé à chacune des variables directement. Ces facteurs sont une mesure directe de l'impact des variables sur la prévision. Ainsi, on tente d'avoir une mesure semblable pour le modèle de boosting de gradient nous permettant de bien visualiser l'impact global des variables sur la prévision sans avoir à passer en revu chacun des arbres entrainés.
 
 ## Modèle de base
+
+```{r, glm_coeff_table, results='asis'}
+coeff_names <- c("Intercept", "polholder age", "polholder BM (inchangée, hausse)", "polholder diffdriver (apprenti, partenaire, jeunes)", "polholder diffdriver (commerciale, utilisateur seul)", "polholder gender (Male)", "polholder job (normal)", "policy age", "prem final", "prem freqyear (2)", "prem freqyear (4, 12)", "prem last", "prem market", "vehicl age", "vehicl region (3, 4, 6, 8 à 14)", "vehicl region (2, 5, 7)")
+coeff_positif <- c("", "", "", "x", "", "x", "x", "", "x", "", "x", "", "", "", "x", "")
+coeff_negatif <- c("x", "x", "x", "", "x", "", "", "x", "", "x", "", "x", "x", "x", "", "x")
+niv_inclu <- c("-", "-", "baisse", "24 ans et plus", "24 ans et plus", "Female", "medical", "-", "-", "1", "1", "-", "-", "-", "1", "1")
+lasso.names0 <- data.frame(Coefficients = coeff_names, Positif = coeff_positif,
+                           Negatif = coeff_negatif, "Niveau inclu dans Intercept" = niv_inclu)
+Rmd_table(lasso.names0, label="tbl:glm_coeff", 
+          caption="Signe des coefficients du GLM")
+```
+
+Interprétation de la probabilité de résignation à partir du lien (logistique) du glm:
+
+$\eta = ln\left(\frac{\pi_{res}}{1 - \pi_{res}}\right) \quad \Leftrightarrow \quad \pi_{res} = \frac{e^{\eta}}{1 + e^{\eta}}$ (fn expit)
+
+La fonction expit est croissante lorsque $\eta$ augmente (prob augmente), décroissante lorsque que $\eta$ est décroissant.
+
+$\eta = \sum\limits_{j=1}^p \beta_{j} x_{j}$
+
+Coefficients negatif -> fait baisser la prob, Coefficients positif -> augmente la prob
 
 
 ## Boosting de gradient stochastique
