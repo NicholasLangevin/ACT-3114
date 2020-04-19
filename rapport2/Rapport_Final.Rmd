@@ -705,16 +705,17 @@ La courbe ROC est défini comme étant la sensitivité en fonction du faux néga
 
 # Interprétation des meilleurs modèles
 
-Pour l'interprétation des meilleurs modèles, trois outils seront utilisés soit l'importance des variables, les graphiques de dépendance partielle et les graphiques d'espérance conditionnelle individuelle. 
+## Modèle de base
+
+## Boosting de gradient stochastique
+
+Pour l'interprétation de ce modèle, nous utiliserons l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
 
 L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles étant plus significatives dans l'élaboration du modèle. 
 
-Les graphiques de dépendance partielle (DPD) sont un outil plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet plus spécifique d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on peut interprété cette partie du modèle.
+Les graphiques de dépendance partielle ( _DPD_) sont un outil plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet plus spécifique d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on peut interprété cette partie du modèle. Cet outil est utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs. Le désavantage de cet outil est qu'il y a beaucoup de courbe surperposées. Ainsi, il est difficile de voir l'effet individuel de la prévision sur les observations. Si nécessaire on peut aussi faire les graphiques d'espérance conditionnelle pour pouvoir interpréter l'effet individuel d'une variable par prévisions et non pour les prévisions en générales. C'est en observant les graphique de dépendance partielle qu'on pourra savoir si les graphiques d'espérance conditionnelle individuelle pourrait être utile pour l'interprétation du modèle.
 
-Les graphiques d'espérance conditionnelle individuelle (ICE) sont un outil qui permet, quant-à-lui, d'interpréter l'effet individuel d'une variable explicative sur une prévision et non pas pour les prévisions en générales. On pourra également y détecter les interractions et leur importance sur la prévision.
-
-
-
+Nous aurons également recourt à la statistique H de Friedman pour pouvoir estimer la force d'une interraction en mesurant la quantité de la variance qui provient de cet interraction dans la prévision. Ce qui nous permettera plus spécifiquement d'observer les variables qui interragissent avec les variables les plus importantes pour expliquer la prévision, soit **prim_last** et **vehicl_region**. Sachant que la profondeur maximale de l'arbre pour ce modèle est de `r gbmfit_Bern$bestTune["interaction.depth"]`, il pourrait y avoir des interraction sur jusqu'à `r gbmfit_Bern$bestTune["interaction.depth"]` variables différentes. On pourra ensuite réutiliser les DPD sur les interractions qui nous intéressent.
 
 
 \newpage
