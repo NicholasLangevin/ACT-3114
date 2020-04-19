@@ -62,7 +62,7 @@ previsions_Bern <- predict(gbm_opti_Bern,
                       type = "response")
 
 ## AUC et courbe ROC
-roc <- roc(testDataBool$lapse, previsions_Bern)
+roc_gbm <- roc(testDataBool$lapse, previsions_Bern)
 auc <- as.numeric(roc(testDataBool$lapse, previsions_Bern)$auc)
 save(roc_gbm,file="../src/07-gbm/roc.rds")
 save(auc,file="../src/07-gbm/auc.rds")
@@ -82,6 +82,9 @@ plot(imp) #Graphique de l'importance des variables
 
 ## PDP : Graphiquede dépendance partielle
 ## Pour nous permettre de mieux comprendre l'effet global d'une variable explicative sur la prévision
+##
+## Peut être interprété comme la moyenne des ICEs (ce n'est pas parfait comme méthoe
+## car il y a beaucoup de courbe superposées)
 pdp.prim_last <- FeatureEffect$new(mod.iml, "prem_index", method="pdp", grid.size=50)
 pdp.vehicl_region <- FeatureEffect$new(mod.iml, "vehicl_region", method="pdp", grid.size=50)
 pdp.policy_age <- FeatureEffect$new(mod.iml, "policy_age", method="pdp", grid.size=50)
@@ -92,6 +95,36 @@ save(pdp.prim_last, file="../src/07-gbm/pdp_vehicl_region.rds")
 save(pdp.prim_last, file="../src/07-gbm/pdp_policy_age.rds")
 save(pdp.prim_last, file="../src/07-gbm/pdp_prem_freqperyear.rds")
 
+load(file="../src/07-gbm/pdp_prim_last.rds")
+load(file="../src/07-gbm/pdp_vehicl_region.rds")
+load(file="../src/07-gbm/pdp_policy_age.rds")
+load(file="../src/07-gbm/pdp_prem_freqperyear.rds")
+
+plot(pdp.prim_last)
+plot(pdp.vehicl_region)
+plot(pdp.policy_age)
+plot(pdp.prem_freqperyear)
+
 ## ICE : Graphique d'espérance conditionnelle individuelle
 ## Pour nous permettent de comprendre l'effet d'une variable explicative sur une prévision en particulier
 ## et de détecter des interactions
+
+
+##Statistique H de Friedman
+## On peut regarder quelles sont les variables qui interragissent avec prim_last et
+## vehicl_region, soit les 2 variables les plus importantes pour expliquer lapse
+## La statistique de Friedman permet d'estimer la force d'une interaction en mesurant la quantité
+## de la variance dans la prévision qui provient de l'interraction
+
+set.seed(12345)
+int.prim_last <- Interaction$new(mod.iml, "prim_last")
+int.vehicl_region <- Interaction$new(mod.iml, "vehicl_region")
+save(int.prim_last, file="../src/07-gbm/int_prim_last.rds")
+save(int.vehicl_region, file="../src/07-gbm/int_vehicl_region.rds")
+
+load(file="../src/07-gbm/int_prim_last.rds")
+load(file="../src/07-gbm/int_vehicl_region.rds")
+plot(int.prim_last)
+plot(int.vehicl_region)
+set.seed(1283)
+
