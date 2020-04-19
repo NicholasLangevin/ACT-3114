@@ -652,7 +652,7 @@ L'optimisation des deux hyperparamètres restants est ensuite fait à partir de 
 \newpage
 
 ```{r, gbm.plotoptimisation, results='asis', fig.height=4, fig.cap="Résultats obtenu pour l'optimisation des paramètres à partir de la fonction train en R."}
-plot(gbmfit1)
+plot(gbmfit_Bern)
 ```
 
 
@@ -705,7 +705,10 @@ La courbe ROC est défini comme étant la sensitivité en fonction du faux néga
 
 # Interprétation des meilleurs modèles
 
+Dans cette section, on interprète le modèle de base, soit le modèle linéaire généralisé, et le modèle de gradient stochastique car ce sont ceux ayant la meilleure performance sous la mesure _AUC_ de la qualité de l'ajustement. Les méthodes utilisées pour l'interprétation diffèreront entres-autres car le modèle de boosting de gradient stochastique est construit sur un nombre élevé d'arbres. Pour avoir l'effet spécifique de chacune des variables sur la prévision, il faudrait analyser chacun des arbres individuellement, ce qui n'est évidemment pas optimal. On aura recourt à des outils permettant de visualiser l'impact global de chacune des variables sur l'ensemble des arbres, ce qui est effectivement un peu moins précis que pour le modèle de base. Le GLM permet d'avoir un facteur associé à chacune des variables directement. Ces facteurs sont une mesure directe de l'impact des variables sur la prévision. Ainsi, on tente d'avoir une mesure semblable pour le modèle de boosting de gradient nous permettant de bien visualiser l'impact global des variables sur la prévision sans avoir à passer en revu chacun des arbres entrainés.
+
 ## Modèle de base
+
 
 ## Boosting de gradient stochastique
 

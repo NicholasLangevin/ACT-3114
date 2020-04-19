@@ -52,6 +52,7 @@ set.seed(2000)
 #               shrinkage = gbmfit_Bern$bestTune["shrinkage"], 
 #               bag.fraction = 0.75)
 
+
 #save(gbm_opti_Bern, file="../src/07-gbm/gbm_Bern_final.rds")
 load(file="../src/07-gbm/gbm_Bern_final.rds")
 
@@ -67,47 +68,27 @@ auc <- as.numeric(roc(testDataBool$lapse, previsions_Bern)$auc)
 save(roc_gbm,file="../src/07-gbm/roc.rds")
 save(auc,file="../src/07-gbm/auc.rds")
 
+
+##
+## Interprétation
+##
+
+## Pour l'interprétation du modèle, on ré-entraine un modèle en prenant les mêmes données de départ
+## mais en coupant la grosseur de l'échantillon d'entrainement car le temps de calcul est beaucoup trop long
+## On procède comme suit pour trouver l'indice des observations utilisées. 
+## Il est à noter qu'on prend bien en compte le débalancement de la variables réponse pour faire le 
+## nouvel échantillon. (25% des données initiales)
+
 ## Importance des variables
 summary(gbm_opti_Bern, las = 1)
 
-## IML 
-## Pour nous permettre de comprendre quelles sont les variables explicatives qui influencent le plus la prévision
-#mod.iml <- Predictor$new(gbmfit_Bern) #Créer un modèle utilisable avec iml
-#imp <- FeatureImp$new(mod.iml, loss = "ce", compare = "difference", n.repetitions = 5) #Calcul de l'importance des variables
-#save(imp, file="../src/07-gbm/imp.rds")
-#save(mod.iml, file="../src/07-gbm/mod.iml.rds")
-load(file="../src/07-gbm/imp.rds")
-load(file="../src/07-gbm/mod.iml.rds")
-plot(imp) #Graphique de l'importance des variables
 
 ## PDP : Graphiquede dépendance partielle
 ## Pour nous permettre de mieux comprendre l'effet global d'une variable explicative sur la prévision
 ##
 ## Peut être interprété comme la moyenne des ICEs (ce n'est pas parfait comme méthoe
 ## car il y a beaucoup de courbe superposées)
-pdp.prim_last <- FeatureEffect$new(mod.iml, "prem_index", method="pdp", grid.size=50)
-pdp.vehicl_region <- FeatureEffect$new(mod.iml, "vehicl_region", method="pdp", grid.size=50)
-pdp.policy_age <- FeatureEffect$new(mod.iml, "policy_age", method="pdp", grid.size=50)
-pdp.prem_freqperyear <- FeatureEffect$new(mod.iml, "prem_freqperyear", method="pdp", grid.size=50)
-
-save(pdp.prim_last, file="../src/07-gbm/pdp_prim_last.rds")
-save(pdp.prim_last, file="../src/07-gbm/pdp_vehicl_region.rds")
-save(pdp.prim_last, file="../src/07-gbm/pdp_policy_age.rds")
-save(pdp.prim_last, file="../src/07-gbm/pdp_prem_freqperyear.rds")
-
-load(file="../src/07-gbm/pdp_prim_last.rds")
-load(file="../src/07-gbm/pdp_vehicl_region.rds")
-load(file="../src/07-gbm/pdp_policy_age.rds")
-load(file="../src/07-gbm/pdp_prem_freqperyear.rds")
-
-plot(pdp.prim_last)
-plot(pdp.vehicl_region)
-plot(pdp.policy_age)
-plot(pdp.prem_freqperyear)
-
-## ICE : Graphique d'espérance conditionnelle individuelle
-## Pour nous permettent de comprendre l'effet d'une variable explicative sur une prévision en particulier
-## et de détecter des interactions
+plot(gbm_opti_Bern, 1, gbmfit_Bern$bestTune["n.trees"], type ="response")
 
 
 ##Statistique H de Friedman
@@ -115,16 +96,10 @@ plot(pdp.prem_freqperyear)
 ## vehicl_region, soit les 2 variables les plus importantes pour expliquer lapse
 ## La statistique de Friedman permet d'estimer la force d'une interaction en mesurant la quantité
 ## de la variance dans la prévision qui provient de l'interraction
-
 set.seed(12345)
+mod.iml <- Predictor$new(gbmfit_Bern) #Créer un modèle utilisable avec iml
 int.prim_last <- Interaction$new(mod.iml, "prim_last")
 int.vehicl_region <- Interaction$new(mod.iml, "vehicl_region")
-save(int.prim_last, file="../src/07-gbm/int_prim_last.rds")
-save(int.vehicl_region, file="../src/07-gbm/int_vehicl_region.rds")
-
-load(file="../src/07-gbm/int_prim_last.rds")
-load(file="../src/07-gbm/int_vehicl_region.rds")
 plot(int.prim_last)
 plot(int.vehicl_region)
-set.seed(1283)
 
