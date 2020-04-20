@@ -77,8 +77,8 @@ d'assurés résigne leur police, la croissance en unité sera affecter et celle-
 pourra prévoir des rabais pour les nouveaux assurées dans le but de compenser.
 
 Notre travail se concentre sur la modélisation et la prédiction de la
-probabilité de renouvellement des assurés. Pour ce faire, nous avons utilisé un
-jeux de données, nommée _eudirectlapse_,  provenant du packetage _CASdataset_
+probabilité de non-renouvellement des assurés. Pour ce faire, nous avons utilisé un
+jeu de données, nommée _eudirectlapse_,  provenant du packetage _CASdataset_
 (@CASdatasets). Ce jeu de données représente les primes de $23 060$ polices
 avant et après le renouvellement ainsi que leurs status de renouvellement ou de
 résignation. La base de données comprend aussi d'autres variables qui
@@ -182,7 +182,7 @@ load(file="../src/02-lasso/lasso.predTrain.auc.rds")
 ```
 
 Comme dans le cas d'un modèle généralisé (_GLM_), la distribution binomial à
-été choisi pour modéliser la probabilité de renouvellement. De plus, le lien
+été choisi pour modéliser la probabilité de résignation. De plus, le lien
 _logistic_ à été utilisé. Si $\pi_{res}$ représente la probabilité que l'assuré
 résigne sont contrat, alors le modèle peut être écrit comme
 \begin{align}
@@ -228,18 +228,18 @@ sont de
 \end{figure}
 
 Selon la valeur optimal de $\lambda$ qui optimise chacune des métriques, les
-variables qui voient leurs coeficients ($\beta$) rétrécir à $0$ sont
+variables qui voient leurs coefficients ($\beta$) rétrécir à $0$ sont
 similaires. Ces variables sont listées dans le \autoref{tbl:lasso.variable0}.
 Il est intéressant de voir que les variables **prem\_pure** et **prem\_last**
 ne semblent pas importantes, ce qui confirme l'hypothèse du premier rapport où
 la prime absolue n'est pas importante.  C'est pourquoi initialement la variable
 **prem\_index = prem\_final / prem\_last** avait été crée.  Nous verrons plus
 tard que cette dernière est importante dans le modèle d'arbre.  Finalement, il
-est pertimant de mentionner que c'est la variable représentant la prime pure
+est pertinent de mentionner que c'est la variable représentant la prime pure
 qui est exclut du modèle et non la variable contenant la prime finale chargée
 au client, qui inclut probablement des rabais/surcharge en fonction du marché.
 Conséquemment, ceci montre que les caractéristiques du marché impacte la
-probabilité de renouvellement, ce qui est logique puisqu'il est normal que le
+probabilité de non-renouvellement, ce qui est logique puisqu'il est normal que le
 taux de rétention d'un assureur soit impacté par sa compétivité dans le marché.
 
 ```{r, lasso.varShrinked, results='asis'}
@@ -630,6 +630,7 @@ On constate que le couple d'hyperparamètres qui a obtenu l' _AUC_ le plus élev
 ```{r, gbm.modfit1}
 load(file="../src/07-gbm/plotoptimisation.rds")
 load(file = "../src/07-gbm/gbm_opti_ROC.rds")
+load(file="../src/07-gbm/gbm_Bern_final.rds")
 ```
 
 Le modèle de boosting de gradient est un modèle de boosting généralisé pour toute fonction de perte d'intérêt. Dans notre cas, nous utiliserons le boosting de gradient dans un cas de classification. Ainsi, la fonction de perte d'intérêt est la _déviance de la loi Bernoulli_. À ces fins, les données ont dû être temporairement transformées en données booléennes de type 0 et 1 pour l'élaboration du modèle.
@@ -710,6 +711,10 @@ Dans cette section, on interprète le modèle de base, soit le modèle linéaire
 
 ## Modèle de base
 
+```{r load_glm_base}
+glm_base <- readRDS("../src/01-glm/mod_glm_final.rds")
+```
+
 ```{r, glm_coeff_table, results='asis'}
 coeff_names <- c("Intercept", "polholder age", "polholder BM (inchangée, hausse)", "polholder diffdriver (apprenti, partenaire, jeunes)", "polholder diffdriver (commerciale, utilisateur seul)", "polholder gender (Male)", "polholder job (normal)", "policy age", "prem final", "prem freqyear (2)", "prem freqyear (4, 12)", "prem last", "prem market", "vehicl age", "vehicl region (3, 4, 6, 8 à 14)", "vehicl region (2, 5, 7)")
 coeff_positif <- c("", "", "", "x", "", "x", "x", "", "x", "", "x", "", "", "", "x", "")
@@ -719,6 +724,13 @@ lasso.names0 <- data.frame(Coefficients = coeff_names, Positif = coeff_positif,
                            Negatif = coeff_negatif, "Niveau inclu dans Intercept" = niv_inclu)
 Rmd_table(lasso.names0, label="tbl:glm_coeff", 
           caption="Signe des coefficients du GLM")
+```
+
+```{r, glm_valeurs_des_betas, results='asis'}
+#coefficients.glm <- summary(glm_base)$coefficients[,1][which(abs(summary(glm_base)$coefficients[,1]) > 0.15)]
+#coefficients <- as.data.frame(coefficients.glm)
+#variables <- c("Intercept", "polholder.age", "polholder.BMCevolstable", "polholder.BMCevolup", #"polholder.diffdrivercommercial", "polholder.diffdriverlearner 17", "polholder_diffdriveronly partner", #"polholder.diffdriversame", "polholder.diffdriveryoung drivers", "polholder.genderMale", "polholder_jobnormal", #"policy_age", "prem_final", "prem_freqperyear.L", "prem_freqperyear.Q", "prem_freqperyear.C", "prem_last", #"prem_market", "vehicl_age", "vehicl_regionReg2", "", "", "", "", "", "" , "", "", "", "")
+#save(coefficients, file = "../src/01-glm/tableau_coefficient.tex")
 ```
 
 Interprétation de la probabilité de résignation à partir du lien (logistique) du glm:
@@ -734,6 +746,16 @@ Coefficients negatif -> fait baisser la prob, Coefficients positif -> augmente l
 
 ## Boosting de gradient stochastique
 
+```{r, load.statHFriedman}
+load(file = "../src/07-gbm/int_prem_index.rds")
+load(file = "../src/07-gbm/int_vehicl_region.rds")
+load(file="../src/07-gbm/gbm_Bern_final.rds")
+load(file="../src/07-gbm/gbm_opti_ROC.rds")
+load(file = "../src/07-gbm/pdp_prem_index.rds")
+load(file = "../src/07-gbm/pdp_vehicl_region.rds")
+load(file = "../src/07-gbm/pdp_policy_age.rds")
+```
+
 Pour l'interprétation de ce modèle, nous utiliserons l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
 
 L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles étant plus significatives dans l'élaboration du modèle. 
@@ -742,6 +764,43 @@ Les graphiques de dépendance partielle ( _DPD_) sont un outil plus spécifique.
 
 Nous aurons également recourt à la statistique H de Friedman pour pouvoir estimer la force d'une interraction en mesurant la quantité de la variance qui provient de cet interraction dans la prévision. Ce qui nous permettera plus spécifiquement d'observer les variables qui interragissent avec les variables les plus importantes pour expliquer la prévision, soit **prim_last** et **vehicl_region**. Sachant que la profondeur maximale de l'arbre pour ce modèle est de `r gbmfit_Bern$bestTune["interaction.depth"]`, il pourrait y avoir des interraction sur jusqu'à `r gbmfit_Bern$bestTune["interaction.depth"]` variables différentes. On pourra ensuite réutiliser les DPD sur les interractions qui nous intéressent.
 
+*Importance des variables*
+
+\input{tbl_iml_gbm.tex}
+
+![Graphique de l'importance des variables sur la prévision](../src/07-gbm/imp_gbm.png)
+
+*Graphiques de dépendance partielle*
+
+
+```{r pdp_prem_index, results='asis', fig.height=4, fig.cap="Graphique de dépendance partielle pour la variable prem.index"}
+plot(gbm_opti_Bern, 19, gbmfit_Bern$bestTune["n.trees"], type ="response")
+```
+
+```{r pdp_vehicl_region, results='asis', fig.height=4, fig.cap="Graphique de dépendance partielle pour la variable vehicl.region"}
+plot(gbm_opti_Bern, 18, gbmfit_Bern$bestTune["n.trees"], type ="response")
+```
+
+```{r pdp_policy_age, results='asis', fig.height=4, fig.cap="Graphique de dépendance partielle pour la variable policy.age"}
+plot(gbm_opti_Bern, 6, gbmfit_Bern$bestTune["n.trees"], type ="response")
+```
+
+
+*Statistique H de friedman* 
+
+```{r int_prem_index, results='asis', fig.height=4, fig.cap="Graphique de l'importance des interractions entre la variables prem.index et les autres variables sur la prévision"}
+plot(int.prem_index)
+```
+
+```{r int_vehicl_region, results='asis', fig.height=4, fig.cap="Graphique de l'importance des interractions entre la variables vehicl.region et les autres variables sur la prévision"}
+plot(int.vehicl_region)
+```
+
+
+Ajout des graphiques pdp nécessaire pour les interractions ayant la plus grande importance (1-2 graphiques max)
+```{r dpd_interraction, results='asis', fig.heigth=4, fig.cap="Graphique de dépendance partielle pour l'interraction entre la variable vehicl.region et la variable prem.index"}
+#plot(gbm_opti_Bern, 18:19, gbmfit_Bern$bestTune["n.trees"], type="response")
+```
 
 \newpage
 
