@@ -60,7 +60,7 @@ print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1),
 - Performance et interprétation des meilleurs modèles
 - Conclusion
 
-## Description du problème dans un context actuariel
+## Description du problème dans un contexte actuariel
 - Taux de rétention:
   $$
     \text{Taux de rétention} = \frac{\text{# Renouvellement}}{\text{# Police
@@ -91,8 +91,8 @@ nbResign <- sum(data$lapse == levels(data$lapse)[2]) / nrow(data)
     - `r round(nbRenou, 2)*100` % Renouvellement 
     - `r round(nbResign, 2)*100` % Résignation
 
-# Analyse exploratoire
-## Variables de primes
+# Analyse exploratoire des données
+## Variables concernant la prime
 ### Augmentation au renouvellement
 ```{r}
 ggplot(data, aes(x=policy_age, y=prem_index, col=polholder_BMCevol)) + 
@@ -106,8 +106,8 @@ ggplot(data, aes(x=policy_age, y=prem_index, col=polholder_BMCevol)) +
     # facet_grid(col=vars(polholder_BMCevol)) + 
 ```
 
-## Variables de primes
-### Equart entre la prime chargée et la prime pure
+## Variables concernant la prime
+### Écart entre la prime chargée et la prime pure
 ```{r}
 ggplot(data, aes(x=lapse, y=prem_final/prem_pure, col=polholder_BMCevol)) + geom_boxplot() +
     ylab("Equart entre la prime chargée et la prime pure") + 
@@ -117,7 +117,7 @@ ggplot(data, aes(x=lapse, y=prem_final/prem_pure, col=polholder_BMCevol)) + geom
     theme_bw()
 ```
 
-## Police commercial
+## Police commerciale
 ```{r, fig.width = 10.8}
 gg.veh_age <- 
     ggplot(data, aes(x=lapse, y=vehicl_age, col=policy_caruse)) + geom_boxplot() +
@@ -364,8 +364,68 @@ gbmfit_Bern$bestTune[1:2]
 ```
 
 
+# Performance des meilleurs modèles
+
+
+# Interprétation des meilleurs modèles 
+
+## Modèle de base 
+
+- Modélisation avec lien logistique 
+
+<font size = "4.5">
+$$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
+</font>
+
+- Impact des coefficients sur la prévision
+
+<center>
+
+![](InterpretationGLM.PNG){width=800px}
+
+</center>
+
+## Modèle de boosting de gradient stochastique
+### Importance des variables
+
+![](imp_gbm.png){width=650px}
+
+
+## Modèle de boosting de gradient stochastique 
+### Graphique de dépendance partielle sur prem_index
+
+![](pdp_prem_index.png){width=700px}
+
+
+## Modèle de boosting de gradient stochastique
+### Graphique de dépendance partielle sur vehicl_region
+
+![](pdp_vehicl_region.png){width=700px}
+
+## Modèle de boosting de gradient stochastique
+### Graphique de dépendance partielle sur policy_age
+
+![](pdp_policy_age.png){width=700px}
+
+
+## Modèle de boosting de gradient stochastique
+### Graphique de dépendance partielle sur prem_freqperyear
+
+![](pdp_prem_freqperyear.png){width=700px}
+
+## Modèle de boosting de gradient stochastique
+### Statistique H de Friedman
+
+![](int.png){width=700px}
+
+
+## Modèle de boosting de gradient stochastique
+### Interaction entre prem_index et vehicl_region (DPD bivarié)
+
+![](interraction.png){width=700px}
 
 
 
+# Conclusion
 
-
+## Conclusion

@@ -8,7 +8,7 @@ nocite: |
 output:
   pdf_document: default
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 \newpage
 \begin{flushright}
@@ -68,30 +68,29 @@ load(file="../data/testData.RData")
 
 # Introduction
 Les contrats d'assurance IARD sont pour la plupart d'une durée d'un an;
-conséquament, le renouvellement des polices est une étape répétitive pour les
-assureurs. Il est important pour ceux-ci de bien prévoire combien d'assurés
-resterons avec eux pour la prochaine années. Ces prévisions peuvent avoir de
-l'importance sur les statégies de renouvellement, en autre, puisque plus un
-assuré à des chances de renouveller, plus l'assureur voudra lui charger plus
-cher pour augmenter sont profit. D'un autre coté, Cette prévision peut aussi
-être utilisé dans les statégies nouvelles affaires puisque si beaucoup
-d'assurés résigne leur police, la croissance en unité sera affecter et celle-ci
-pourra prévoir des rabais pour les nouveaux assurées dans le but de compenser.
+conséquemment, le renouvellement des polices est une étape répétitive pour les
+assureurs. Il est important pour ceux-ci de bien prévoir combien d'assurés
+resteront avec eux pour la prochaine année. Ces prévisions peuvent avoir de
+l'importance sur les stratégies de renouvellement, entre autres, puisque plus un
+assuré à des chances de renouveler, plus l'assureur voudra lui charger plus
+cher pour augmenter sont profit. D'un autre côté, cette prévision peut aussi
+être utilisée dans les stratégies nouvelles affaires puisque si beaucoup
+d'assurés résignent leur police, la croissance en unité sera affectée et celle-ci
+pourra prévoir des rabais pour les nouvelles assurées dans le but de compenser.
 
 Notre travail se concentre sur la modélisation et la prédiction de la
 probabilité de non-renouvellement des assurés. Pour ce faire, nous avons utilisé un
-jeu de données, nommée _eudirectlapse_,  provenant du packetage _CASdataset_
+jeu de données, nommées _eudirectlapse_,  provenant du paquetage _CASdataset_
 (@CASdatasets). Ce jeu de données représente les primes de $23 060$ polices
-avant et après le renouvellement ainsi que leurs status de renouvellement ou de
+avant et après le renouvellement ainsi que leurs statuts de renouvellement ou de
 résignation. La base de données comprend aussi d'autres variables qui
-caractérise chaques contrats comme l'age des conduteurs, le type de voiture
-conducteurs etc. Finalement, cette base de données provient d'un assureur
-inconnue et pour une années inconnues.
+caractérisent chaque contrat comme l'âge des conducteurs, le type de conducteur, etc. Finalement, cette base de données provient d'un assureur
+inconnu et pour une année inconnue.
 
-Finalement, dans le but de comparé correctement les modèles utilisés, 20% de la
-base de données à été mis de coté pour servir comme données de test. Puisque
-les données sont débalancées, la proportions de résignation à été conservé
-autant dans les données d'entrainement que de test.
+Finalement, dans le but de comparer correctement les modèles utilisés, 20% de la
+base de données a été mis de côté pour servir comme données de test. Puisque
+les données sont déséquilibrées, la proportion de résignation a été conservée
+autant dans les données d'entrainement que de tests.
 
 \newpage
 
@@ -109,19 +108,19 @@ b_glm <- roc_res_optimal[8]
 c_glm <- roc_res_optimal[7]
 ```
 
-Pour le modèle de base, nous utiliserons un modèle linéaire généralisé avec une distribution binomiale. plus précisément, il s'agit d'une distribution binomiale avec $m = 1$ donc une distribution Bernouilli. La valeur de y est de 1 lorsque l'assuré résigne et de 0 lorsqu,il renouvèle. On s'intéresse à modéliser la probabilité que l'asssuré ne renouvelle pas son contrat. Pour ce faire, le lien logistic sera utilisée pour faire le lien entre la probabilité et le prédicteur linéaire. Ainsi nous avons
+Pour le modèle de base, nous utiliserons un modèle linéaire généralisé avec une distribution binomiale. Plus précisément, il s'agit d'une distribution binomiale avec $m = 1$ donc une distribution Bernouilli. La valeur de y est de 1 lorsque l'assuré résigne et de 0 lorsqu’il renouvèle. On s'intéresse à modéliser la probabilité que l'assuré ne renouvelle pas son contrat. Pour ce faire, le lien logistique sera utilisé pour faire le lien entre la probabilité et le prédicteur linéaire. Ainsi nous avons :
 
 \begin{align}
     \ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i,
 \end{align}
 
-où nous voulons maximiser la vraisemblance d'une bernouilli. Ainsi les valeurs des paramètres sont obtenue en maximisant l'équation suivante.
+où nous voulons maximiser la vraisemblance d'une bernouilli. Ainsi les valeurs des paramètres sont obtenues en maximisant l'équation suivante.
 
 \begin{align}
     \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}
 \end{align}
 
-Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectuer des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de confiance de 99\% à été choisi pour ces tests. Au final, il y a 7 variables parmis les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici:
+Pour ce modèle de base, il n'a pas d'optimisation à faire pour les hyperparamètres. Par contre, il est pertinent d'effectuer une sélection des variables explicatives pour rendre le modèle moins complexe. Nous avons effectué des tests du rapport de vraisemblance pour la sélection des variables. Un niveau de confiance de 99\% a été choisi pour ces tests. Au final, il y a 7 variables parmi les 19 qui ne sont **pas sélectionnées** pour le modèle de base les voici:
 
 \begin{multicols}{2}
 \begin{itemize}
@@ -138,7 +137,7 @@ Pour ce modèle de base, il n'a pas d'optimisation d'hyperparamètres. Par contr
 \end{itemize}
 \end{multicols}
 
-C'est donc de dire que ces variables ne seront pas considérés pour les prévisions avec le modèle de base. Le modèle retourne comme prévision une probabilité que le client résigne son contrat. Il est donc nécessaire de déterminer un seuil minimale pour lequel l'observation aura une prévision corrrespondant à une résignation et si la prévision est inférieure à ce seuil alors la prévision est un renouvellement. Il a été décidé d'utiliser le seuil optimal de la courbe ROC sur les données d'entrainement. C'est le seuil pour lequel le point sur la courbe ROC se retrouve le plus proche du coin supérieur gauche du graphique. Ce seuil est optimal pour un compromis entre les statitstiques de sensitivité, le taux de bonne classification des résignations, et de spécificité, le taux de bonne classification des renouvellements. Voici le tableau de confusion obtenu des données d'entrainement ainsi que des statistiques d'intérêt.
+C'est donc de dire que ces variables ne seront pas considérées pour les prévisions avec le modèle de base. Le modèle retourne comme prévision une probabilité que le client ne renouvelle pas son contrat. Il est donc nécessaire de déterminer un seuil minimal pour lequel l'observation aura une prévision correspondant à une résignation et si la prévision est inférieure à ce seuil alors la prévision est un renouvellement. Il a été décidé d'utiliser le seuil optimal de la courbe ROC sur les données d'entrainement. C'est le seuil pour lequel le point sur la courbe ROC se retrouve le plus proche du coin supérieur gauche du graphique. Ce seuil est optimal pour un compromis entre les statistiques de sensitivité, le taux de bonne classification des résignations, et de spécificité, le taux de bonne classification des renouvellements. Voici le tableau de confusion obtenu des données d'entrainement ainsi que des statistiques d'intérêt.
 
 \begin{table}[!htb]
 \centering
@@ -165,7 +164,7 @@ Spécificité & `r round(specificite_glm * 100, 3)` \\
 \end{minipage}
 \end{table}
 
-Les statistiques de sensitivité et de spécificité avoisines toutes les deux les 60\% dans le cas où nous prenons le seuil optimale. Cela veut dire que le modèle de base classifie avec un taux similaire les résignations et les renouvellement. Par contre on constate quand procédent ainsi, il y a un grand nombre de clients pour lesquels le modèle de base prédit une résignation alors qu'en fait se sont des clients enclins à renouveler. Il sera intéressant de voir si les autres modèles amilioreront cet aspect. Une comparaison avec les autres modèles sera établi avec l'échantillon test plus loin dans le rapport.   
+Les statistiques de sensitivité et de spécificité avoisinent toutes les deux les 60\% dans le cas où nous prenons le seuil optimal. Cela veut dire que le modèle de base classifie avec un taux similaire les résignations et les renouvellements. Par contre on constate qu'en procédant ainsi, il y a un grand nombre de clients pour lesquels le modèle de base prédit une résignation alors qu'en fait ce sont des clients enclins à renouveler. Il sera intéressant de voir si les autres modèles amélioreront cet aspect. Une comparaison avec les autres modèles sera établie avec l'échantillon test plus loin dans le rapport.   
 
 
 \newpage
@@ -183,9 +182,9 @@ load(file="../src/02-lasso/lasso.predTrain.dev.rds")
 load(file="../src/02-lasso/lasso.predTrain.auc.rds")
 ```
 
-Comme dans le cas d'un modèle généralisé (_GLM_), la distribution binomial à
-été choisi pour modéliser la probabilité de résignation. De plus, le lien
-_logistic_ à été utilisé. Si $\pi_{res}$ représente la probabilité que l'assuré
+Comme dans le cas d'un modèle généralisé (_GLM_), la distribution binomiale a
+été choisie pour modéliser la probabilité de résignation. De plus, le lien
+_logistique_ a été utilisé. Si $\pi_{res}$ représente la probabilité que l'assuré
 résigne sont contrat, alors le modèle peut être écrit comme
 \begin{align}
     \ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i,
@@ -200,7 +199,7 @@ où les $(\beta_0, \beta_j)$ sont obtenue en minimisant l'équation suivant
 La fonction de minimisation comprend le paramètre $\lambda$ qui doit être
 déterminé d'avance. La valeur optimale a été choisie par validation croisée à
 $10$ plis. La \autoref{fig:lasso.valid} montre le résultat pour
-deux métriques différentes, soit la _deviance_ d'une binomial et l' _AUC_.
+deux métriques différentes, soit la _deviance_ de la loi binomiale et l' _AUC_.
 Les deux valeurs optimales pour $\lambda$ sont 
 `r format(lasso.valid.dev$lambda.min, digits=5, scientific = FALSE)` et 
 `r format(lasso.valid.auc$lambda.min, digits=5, scientific = FALSE)`
@@ -229,7 +228,7 @@ sont de
 \label{fig:lasso.valid}
 \end{figure}
 
-Selon la valeur optimal de $\lambda$ qui optimise chacune des métriques, les
+Selon la valeur optimale de $\lambda$ qui optimise chacune des métriques, les
 variables qui voient leurs coefficients ($\beta$) rétrécir à $0$ sont
 similaires. Ces variables sont listées dans le \autoref{tbl:lasso.variable0}.
 Il est intéressant de voir que les variables *prem_pure* et *prem_last*
@@ -238,11 +237,11 @@ la prime absolue n'est pas importante.  C'est pourquoi initialement la variable
 *prem_index = prem.final / prem_last* avait été crée.  Nous verrons plus
 tard que cette dernière est importante dans le modèle d'arbre.  Finalement, il
 est pertinent de mentionner que c'est la variable représentant la prime pure
-qui est exclut du modèle et non la variable contenant la prime finale chargée
+qui est exclue du modèle et non la variable contenant la prime finale chargée
 au client, qui inclut probablement des rabais/surcharge en fonction du marché.
-Conséquemment, ceci montre que les caractéristiques du marché impacte la
+Conséquemment, ceci montre que les caractéristiques du marché impactent la
 probabilité de non-renouvellement, ce qui est logique puisqu'il est normal que le
-taux de rétention d'un assureur soit impacté par sa compétivité dans le marché.
+taux de rétention d'un assureur soit impacté par sa compétitivité dans le marché.
 
 ```{r, lasso.varShrinked, results='asis'}
 lasso.names <- c("policy caruse", "prem last", "prem pure", "vehicl garage",
@@ -334,14 +333,14 @@ load(file="../src/03-knn/knn.final.rds")
 ```
 
 Le modèle des _k_ plus proches voisins calcule les prédictions en utilisant la
-distance euclédienne, ce qui veut dire que les variables catégorielles
-non-ordonnées doivent être transformées en $(c-1)$ variables binaires. Aussi,
+distance euclidienne, ce qui veut dire que les variables catégorielles
+non ordonnées doivent être transformées en $(c-1)$ variables binaires. Aussi,
 les variables catégorielles ordonnées ont été transformées en des variables
 numériques disctrètes $(1, 2, 3,...)$. Le modèle des _k_ plus proches voisins
-comprend un seul hyperparamètre, soit le nombre de voisins (_k_) à utilisé pour
+comprend un seul hyperparamètre, soit le nombre de voisins (_k_) à utiliser pour
 la prédiction. Ce choix a été optimisé en utilisant une validation croisée à 4
-plis. La valeur de _k_ qui maximise l'aire sour la courbe ROC est de `r as.numeric(fit.knn$bestTune)`. Ces
-valeurs, pour chaque valeurs de _k_, sont présenté dans la
+plis. La valeur de _k_ qui maximise l'aire sous la courbe ROC est de `r as.numeric(fit.knn$bestTune)`. Ces
+valeurs, pour chaque valeur de _k_, sont présentées dans la
 \autoref{tbl:knn.plot-bestTune}.
 
 
@@ -355,10 +354,10 @@ ggplot(fit.knn, highlight=TRUE) +
     # geom_vline(xintercept=240, linetype = 2, col = "red")
 ```
 Les prédictions pour les données test qui serviront à comparer les modèles
-seront classifier en fonction de la classe majoritaire des 
-`r as.numeric(fit.knn$bestTune)` obervations les plus proches. Puisque nous
-avons des données débalancées, ce type de modèle pourrait avoir des 
-prévision médiocre puisque il va être rare plus de 50% soit des résignations
+seront classifiées en fonction de la classe majoritaire des 
+`r as.numeric(fit.knn$bestTune)` observations les plus proches. Puisque nous
+avons des données déséquilibrées, ce type de modèle pourrait avoir des 
+prévisions médiocres puisqu’il va être rare plus de 50% soit des résignations
 dans les plus proches voisins.
 
 \newpage
@@ -375,9 +374,9 @@ load(file="../src/04-tree/tree.final.rds")
 # presenter les hyperparamètre
 ```
 
-Le modèle d'arbre de classification offre la possibilité d'utilisé deux
-fonctions de perte différence. Si _K_ représente le nombre de classe, alors un
-premier choix comme fonction de perte peut être l' _indice de Gini_, defini
+Le modèle d'arbre de classification offre la possibilité d'utiliser deux
+fonctions de perte différence. Si _K_ représente le nombre de classes, alors un
+premier choix comme fonction de perte peut être l' _indice de Gini_, défini
 comme
 \begin{align}
     \mathcal{L}_G = \sum_{k=1}^K \widehat{P}_{mk} (1 - \widehat{P}_{mk}).
@@ -391,7 +390,7 @@ La procédure d'optimisation des hyperparamètres a été effectuée pour chacun
 deux fonctions de perte. En premier lieu, un arbre complet $T_0$ a été
 entrainé par validation croisée en 10 plis. Celui-ci est défini comme un arbre
 construit avec un paramètre de complexité (_cp_) à 0 ainsi qu'un nombre 
-minimal d'observation dans chaque feuille (_minbucket_) à 1. La
+minimal d'observations dans chaque feuille (_minbucket_) à 1. La
 \autoref{fig:tree.plotArbreT0} présente l'erreur obtenue par validation croisée
 pour certaines valeurs de _cp_. Selon cette métrique, le meilleur modèle serait 
 l'arbre racine, ce qui signifie que la prédiction serait la même pour toutes
@@ -406,7 +405,7 @@ Pour la suite, l'optimisation du _cp_ a été effectuée sur plusieurs valeurs d
 _minbucket_. La \autoref{tbl:tree.auc} montre les résultats de l'aire sous la courbe ROC
 (_AUC_) pour différente valeur de _minbucket_ en fonction du _cp_ optimal. À
 droite, la fonction de perte utilisée est l' _indice de Gini_, alors qu'à
-gauche, la fonction de perte utilitée est l' _entropie croisée_. Ces valeurs on
+gauche, la fonction de perte utilisée est l' _entropie croisée_. Ces valeurs ont
 été obtenues par validation croisée à 4 plis.
 
 
@@ -480,23 +479,23 @@ result_opt_forest <- as.data.frame(result_opt_forest)
 colnames(result_opt_forest) <- c("nodesize", "mtry", "AUC")
 ```
 
-Le modèle d'ensemble d’arbres de décision agrégées par bagging permet d'obtenir
-des prévisions à partir d'un nombre d'arbre de décision, chacun ajusté par un 
+Le modèle d'ensemble d’arbres de décision agrégée par bagging permet d'obtenir
+des prévisions à partir d'un nombre d'arbres de décision, chacun ajusté par un 
 échantillon bootstrap de l'échantillon d'entrainement. Une prévision du bagging
-correspondera à la classe prédite majoritaire (renouvellement ou résignation)
+correspondra à la classe prédite majoritaire (renouvellement ou résignation)
 par les arbres de classifications puisqu'il s'agit d'un problème de classification.
 Chacun des arbres utilise l' _indice de Gini_ comme fonction de perte. Nous avons fait
-ce choix puisque qu'à la section précédente portant sur l'arbre de 
+ce choix puisqu'à la section précédente portant sur l'arbre de 
 classification, on a pu démontrer que l' _indice de Gini_ était préférable à l'entropie croisée
 pour notre jeu de donnée.
 
 
 Avant l'optimisation d'hyperparamètre, il est nécessaire de déterminer un nombre
-d'arbre suffisant pour améliorer les prévisions. Pour ce faire, nous ajustons
-un modèle bagging avec un nombre d'arbre plus élevé que nécessaire avec
+d'arbres suffisant pour améliorer les prévisions. Pour ce faire, nous ajustons
+un modèle bagging avec un nombre d'arbres plus élevé que nécessaire avec
 l'échantillon d'entrainement. Ce modèle bagging de base n'a pas de pas de
-contrainte appliquée sur chacun des arbres puisque ce sera optimiser par
-la suite. Pour déterminer le nombre d'arbre adéquat nous avons tracer un graphique
+contrainte appliquée sur chacun des arbres puisque ce sera optimisé par
+la suite. Pour déterminer le nombre d'arbres adéquat, nous avons tracé un graphique
 du taux d'erreur _OOB_ en fonction du nombre d'arbres _T_.
 
 ```{r, plot_OOB_bagging, results='asis', fig.height=4, fig.cap="Taux d'erreur OOB en fonction du nombre d'arbre B"}
@@ -505,7 +504,7 @@ plot(1:dim(mod_base_bag$err.rate)[1], mod_base_bag$err.rate[,1],
 ```
 
 Comme on peut le voir dans le graphique, le taux d'erreur _OOB_ se stabilise à partir
-d'un nombre d'arbre de 100 et plus. Le nombre d'abre de notre bagging sera donc de 100.
+d'un nombre d'arbres de 100 et plus. Le nombre d'arbres de notre bagging sera donc de 100.
 
 \newpage
 
@@ -513,7 +512,7 @@ L'hyperparamètre qui sera optimisé par la suite pour augmenter les performance
 du bagging est le paramètre de la taille minimale d'un noeud (nodesize) pour chacun
 des arbres du modèle bagging. Des tailles de noeuds minimales partant de 2 allant
 jusqu'à 40 seront testées. Pour l'optimisation, on s'intéressera à maximiser
-la métrique AUC. Pour chaque taille de noeud, un AUC moyen sera calculée à partir
+la métrique AUC. Pour chaque taille de noeud, un AUC moyen sera calculé à partir
 d'une validation croisée par 4 ensembles. Voici les résultats obtenus de la
 validation croisée.
 
@@ -580,15 +579,15 @@ Rmd_table(result_opt_bag[31:39, ], caption="", label="",
 \end{table}
 -->
 
-On constate que l'AUC est maximisé lorsque _nodesize_ prend une valeur de 34. Le modèle d'ensemble d’arbres de décision agrégées par bagging choisit aura donc un nombre d'abres de 100 et une taille minimale d'un noeud pour les arbres de 34.  
+On constate que l'AUC est maximisé lorsque _nodesize_ prend une valeur de 34. Le modèle d'ensemble d’arbres de décision agrégée par bagging choisi aura donc un nombre d'arbres de 100 et une taille minimale d'un noeud pour les arbres de 34.  
 
 \newpage
 
 ## Forêt aléatoire
 
-La forêt aléatoire permet elle aussi d'obtenir des prévisions à partir de prévisions aggrégées d'arbre de classification. La fonction de perte utilisée à chaque arbre est encore l' _indice de Gini_ pour la même raison mentionnée précedemment. Cependant, un changement par rapport au bagging est la taille de l'échantillon boostrap pour ajuster les arbres. Puisque notre jeu de données est assez volumineux et que cette fois-ci, nous devrons optimiser deux hyperparamètres plutôt qu'un, nous avons choisi de prendre une taille d'échantillon bootsrap correspondant à 50\% de l'échantillon d'entraînement pour réduire les temps de calcul de l'optimisation.
+La forêt aléatoire permet elle aussi d'obtenir des prévisions à partir de prévisions agrégées d'arbre de classification. La fonction de perte utilisée à chaque arbre est encore l' _indice de Gini_ pour la même raison mentionnée précédemment. Cependant, un changement par rapport au bagging est la taille de l'échantillon boostrap pour ajuster les arbres. Puisque notre jeu de données est assez volumineux et que cette fois-ci, nous devrons optimiser deux hyperparamètres plutôt qu'un, nous avons choisi de prendre une taille d'échantillon bootsrap correspondant à 50\% de l'échantillon d'entraînement pour réduire les temps de calcul de l'optimisation.
 
-Avant de procéder à l'optimisation, il est encore nécessaire de déterminer un nombre d'arbre sufffisant pour la forêt. Pour ce faire, nous avons ajusté un modèle de forêt classique avec un nombre d'arbre plus élevé que nécessaire. Comme pour le bagging, pour déterminer le nombre d'arbre adéquat, nous avons tracé un graphique du taux d'erreur _OOB_ en fonction du nombre d'arbres _T_.
+Avant de procéder à l'optimisation, il est encore nécessaire de déterminer un nombre d'arbres suffisant pour la forêt. Pour ce faire, nous avons ajusté un modèle de forêt classique avec un nombre d'arbres plus élevé que nécessaire. Comme pour le bagging, pour déterminer le nombre d'arbres adéquat, nous avons tracé un graphique du taux d'erreur _OOB_ en fonction du nombre d'arbres _T_.
 
 ```{r, plot_OOB_forest, results='asis', fig.height=4, fig.cap="Taux d'erreur OOB en fonction du nombre d'arbre B"}
 plot(1:dim(mod_base_forest$err.rate)[1], mod_base_forest$err.rate[,1],
@@ -598,7 +597,7 @@ plot(1:dim(mod_base_forest$err.rate)[1], mod_base_forest$err.rate[,1],
 \newpage
 
 Comme on peut le voir dans le graphique, le taux d'erreur _OOB_ se stabilise à partir
-d'un nombre d'arbres de 100 et plus comme le bagging. Le nombre d'arbres de notre forêt aléatoire sera donc de 100. Il y a deux hyperparamètres qui seront optimisés soient la taille minimale d'un noeud  (nodesize) et le nombre de prédicteurs choisi de façon aléatoire (mtry) à chaque noeud de la forêt aléatoire. Pour chaque _nodesize_ allant de 5 jusqu'à 40 par multiple de 5, un _mtry_ optimal est obtenu par validation croisée à 5 plis. Le métrique d'intérêt de l'optimisation est l' _AUC_. Ce sont donc, des couples optimaux qui sont obtenus. Voici les résultats obtenus.
+d'un nombre d'arbres de 100 et plus comme le bagging. Le nombre d'arbres de notre forêt aléatoire sera donc de 100. Il y a deux hyperparamètres qui seront optimisés soient la taille minimale d'un noeud  (nodesize) et le nombre de prédicteurs choisi de façon aléatoire (mtry) à chaque noeud de la forêt aléatoire. Pour chaque _nodesize_ allant de 5 jusqu'à 40 par multiple de 5, un _mtry_ optimal est obtenu par validation croisée à 5 plis. La métrique d'intérêt de l'optimisation est l' _AUC_. Ce sont donc, des couples optimaux qui sont obtenus. Voici les résultats obtenus.
 
 \begin{table}[!ht]
 \centering
@@ -642,16 +641,16 @@ Il est à noter que l'idée générale est d'améliorer la prévision le plus po
    \sum_{i=1}^n \mathcal{L} \left\{ y_i, \widehat{f}_{t-1}(x_i) + \widehat{f}_{\text{arbre}}^t(x_i) \right\}.
 \end{align} 
 
-La perte ce retrouve minimisé car à chaque itération, un pas de plus est effectué dans la direction du gradient négatif. De plus, étant donné qu'on utilise la déviance négative d'une loi bernouilli comme fonction de perte,
+La perte se retrouve minimisée, car à chaque itération, un pas de plus est effectué dans la direction du gradient négatif. De plus, étant donné qu'on utilise la déviance négative d'une loi bernouilli comme fonction de perte,
 \begin{align}
     \mathcal{L} = \sum_{k=1}^2 \widehat{P}_{ik} \ln( \widehat{P}_{ik}).
 \end{align} 
 
-Ce modèle choisit un sous-échantillon de taille inférieur à $n$ pour ajuster l'arbre au lieu d'utiliser un échantillon de taille simillaire à l'échantillon d'entrainement à chaque fois. Cette manière de procéder permet de réduire le temps d'entrainement et peut améliorer la précision des prévisions étant donné que ce ne sera pas toujours les mêmes données qui risquent de ce retrouver dans chacun des arbres.
+Ce modèle choisit un sous-échantillon de taille inférieur à $n$ pour ajuster l'arbre au lieu d'utiliser un échantillon de taille similaire à l'échantillon d'entrainement à chaque fois. Cette manière de procéder permet de réduire le temps d'entrainement et peut améliorer la précision des prévisions étant donné que ce ne sera pas toujours les mêmes données qui risquent de se retrouver dans chacun des arbres.
 
-La procédure d'optimisation des hyperparamètres a été effectuée pour la fonction de perte visée. Les hyperparamètres sont **n.trees**, **interaction.depth**, **shrinkage** et **n.minobsinnode** représentant repectivement le nombre d'arbres dans le boosting, la profondeur maximale de l'arbre, le taux d'apprentissage $\lambda$ et le nombre d'observations minimal par noeud. On optimisera seulement **n.trees** et **interaction.depth** car les deux autres hyperparamètres peuvent être choisit facilement dans le but d'avoir un temps d'exécution raisonnable. Selon les tests effectués au préalable on prendra un $\lambda = 0.005$ et un $n.minobsinnode = 20$.
+La procédure d'optimisation des hyperparamètres a été effectuée pour la fonction de perte visée. Les hyperparamètres sont **n.trees**, **interaction.depth**, **shrinkage** et **n.minobsinnode** représentant respectivement le nombre d'arbres dans le boosting, la profondeur maximale de l'arbre, le taux d'apprentissage $\lambda$ et le nombre d'observations minimal par noeud. On optimisera seulement **n.trees** et **interaction.depth**, car les deux autres hyperparamètres peuvent être choisis facilement dans le but d'avoir un temps d'exécution raisonnable. Selon les tests effectués au préalable on prendra un $\lambda = 0.005$ et un $n.minobsinnode = 20$.
 
-L'optimisation des deux hyperparamètres restants est ensuite fait à partir de la validation croisée sur 4 ensembles. C'est une méthode d'optimisation qui permet de trouver les hyperparamètres optimaux sur chacun des plis pour ensuite choisir les hyperparamètres optimaux sur l'ensemble des données d'entrainement. Le choix se fera à l'aide de la métrique _ROC_. Le choix des paramètres est donc effectué selon l'aire sour la courbe ROC ( _AUC_) obtenue la plus élevée. On observe ainsi aisément à l'aide de la \autoref{fig:gbm.plotoptimisation} que le modèle choisit utilisera un $n.trees(T) =$ `r gbmfit_Bern$bestTune["n.trees"]`, un $interaction.depth(d) =$ `r gbmfit_Bern$bestTune["interaction.depth"]` et comme indiqué précédemment, un $shrinkage(\lambda) = 0.005$, un $n.minobsinnode = 20$ et la déviance négative d'une loi bernoulli comme fonction de perte. C'est avec ces valeurs que le modèle atteint la plus haute performance pour un temps de calcul raisonnable. Le graphique nous indique bien le choix des valeurs car on choisit ce qui permet au modèle d'atteindre la plus haute valeur pour l' _AUC_. Il est à noter que pour une meilleure performance le taux d'apprentissage aurait été plus faible et le nombre d'arbres plus élevé ce qui demande une espace de stockage et un temps de calcul beaucoup plus important. 
+L'optimisation des deux hyperparamètres restants est ensuite faite à partir de la validation croisée sur 4 ensembles. C'est une méthode d'optimisation qui permet de trouver les hyperparamètres optimaux sur chacun des plis pour ensuite choisir les hyperparamètres optimaux sur l'ensemble des données d'entrainement. Le choix se fera à l'aide de la métrique _ROC_. Le choix des paramètres est donc effectué selon l'aire sour la courbe ROC ( _AUC_) obtenue la plus élevée. On observe ainsi aisément à l'aide de la \autoref{fig:gbm.plotoptimisation} que le modèle choisit utilisera un $n.trees(T) =$ `r gbmfit_Bern$bestTune["n.trees"]`, un $interaction.depth(d) =$ `r gbmfit_Bern$bestTune["interaction.depth"]` et comme indiqué précédemment, un $shrinkage(\lambda) = 0.005$, un $n.minobsinnode = 20$ et la déviance négative d'une loi bernoulli comme fonction de perte. C'est avec ces valeurs que le modèle atteint la plus haute performance pour un temps de calcul raisonnable. Le graphique nous indique bien le choix des valeurs, car on choisit ce qui permet au modèle d'atteindre la plus haute valeur pour l' _AUC_. Il est à noter que pour une meilleure performance le taux d'apprentissage aurait été plus faible et le nombre d'arbres plus élevé ce qui demande une espace de stockage et un temps de calcul beaucoup plus important. 
 
 \newpage
 
@@ -682,9 +681,9 @@ auc_gbm <- as.numeric(roc_gbm$auc)
 auc_result <- data.frame("Modèles"=c("Modèle de base GLM", "Modèle linéaire avec régularisation Lasso", "modèle des k plus proches voisins",  "Arbre de décision", "Ensemble d'arbres de décision agrégées par bagging", "forêt aléatoire", "Modèle de gradient boosting"), AUC=c(auc_GLM, auc_lasso, auc_knn, auc_tree, auc_Bagging, auc_RandomForest, auc_gbm))
 ```
 
-Dans cette section, il sera question de comparer la performance prédictive des différents modèles. Pour ce faire, nous analyserons la performance de la prévison sur les données test à l'aide de la courbe ROC et de la valeur de l'AUC, soit l'aire sous la courbe ROC. 
+Dans cette section, il sera question de comparer la performance prédictive des différents modèles. Pour ce faire, nous analyserons la performance de la prévision sur les données tests à l'aide de la courbe ROC et de la valeur de l'AUC, soit l'aire sous la courbe ROC. 
 
-Les modèles ayant l'AUC la plus élevée sont les modèles ayant la performance de prévision la plus élevé basé sur cette métrique. La \autoref{fig:plot_ROC} illustre les différentes courbes ROC obtenu pour les différents modèles et le \autoref{tbl:tableau-AUC} présente les valeurs d'AUC qui découle de ces courbes.
+Les modèles ayant l'AUC la plus élevée sont les modèles ayant la performance de prévision la plus élevée basée sur cette métrique. La \autoref{fig:plot_ROC} illustre les différentes courbes ROC obtenu pour les différents modèles et le \autoref{tbl:tableau-AUC} présente les valeurs d'AUC qui découle de ces courbes.
 
 ```{r tableau_AUC, results="asis"}
 Rmd_table(auc_result, caption = "Aire sous la courbe ROC pour chacun des différents modèles", label = "tbl:tableau-AUC", align = c("l","l","r"))
@@ -702,18 +701,18 @@ legend("bottomright", c("glm", "Lasso", "knn", "Arbre", "Bagging", "Forêt", "gb
        col = c("red", "blue", "yellow", "green", "pink", "orange", "purple"), cex = 0.7)
 ```
 
-La courbe ROC est défini comme étant la sensitivité en fonction du faux négatifs. Dans le but d'avoir une bonne performance prédictive, on recherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe ce rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. De ce sens, on peut conclure que les modèles ont une bonne puissance de prévision car leurs valeurs d'AUC sont tous supérieur à  `r min(auc_result$AUC)`, ce qui est assez élevé. Les deux modèles les plus performants sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles.
+La courbe ROC est définie comme étant la sensitivité en fonction du faux négatif. Dans le but d'avoir une bonne performance prédictive, on cherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe se rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. De ce sens, on peut conclure que les modèles ont une bonne puissance de prévision, car leurs valeurs d'AUC sont tous supérieures à  `r min(auc_result$AUC)`, ce qui est assez élevé. Les deux modèles les plus performants sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles.
 
 
 \newpage
 
 # Interprétation des meilleurs modèles
 
-Dans cette section, on interprète le modèle de base, soit le modèle linéaire généralisé, et le modèle de gradient stochastique car ce sont ceux ayant la meilleure performance sous la mesure _AUC_ de la qualité de l'ajustement. Les méthodes utilisées pour l'interprétation diffèreront entres-autres car le modèle de boosting de gradient stochastique est construit sur un nombre élevé d'arbres. Pour avoir l'effet spécifique de chacune des variables sur la prévision, il faudrait analyser chacun des arbres individuellement, ce qui n'est évidemment pas optimal. On aura recourt à des outils permettant de visualiser l'impact global de chacune des variables sur l'ensemble des arbres, ce qui est un peu moins précis que pour le modèle de base. Le GLM permet d'avoir un facteur associé à chacune des variables directement. Ces facteurs sont une mesure directe de l'impact des variables sur la prévision. Ainsi, on tente d'avoir une mesure semblable pour le modèle de boosting de gradient nous permettant de visualiser l'impact des variables sur la prévision sans avoir à passer en revu chacun des arbres entrainés.
+Dans cette section, on interprète le modèle de base, soit le modèle linéaire généralisé, et le modèle de gradient stochastique, car ce sont ceux ayant la meilleure performance sous la mesure _AUC_ de la qualité de l'ajustement. Les méthodes utilisées pour l'interprétation diffèreront entre autres, car le modèle de boosting de gradient stochastique est construit sur un nombre élevé d'arbres. Pour avoir l'effet spécifique de chacune des variables sur la prévision, il faudrait analyser chacun des arbres individuellement, ce qui n'est évidemment pas optimal. On aura recourt à des outils permettant de visualiser l'impact global de chacune des variables sur l'ensemble des arbres, ce qui est un peu moins précis que pour le modèle de base. Le GLM permet d'avoir un facteur associé à chacune des variables directement. Ces facteurs sont une mesure directe de l'impact des variables sur la prévision. Ainsi, on tente d'avoir une mesure semblable pour le modèle de boosting de gradient nous permettant de visualiser l'impact des variables sur la prévision sans avoir à passer en revue chacun des arbres entrainés.
 
 ## Modèle de base
 
-Comme mentionné précédemment, l'interprétation de ce modèle ce fera sur les valeurs que prend les coefficients, soit les valeurs des $\beta_i$ qui multiplie chacune des variables dans l'équation. Étant donné qu'on modelise la probabilité de non-renouvellement des assurés de cette compagnie d'assurance, le lien logistique a été utilisé dans l'élaboration du modèle. En isolant, on peut obtenir l'équation suivante : 
+Comme mentionné précédemment, l'interprétation de ce modèle se fera sur les valeurs que prend les coefficients, soit les valeurs des $\beta_i$ qui multiplie chacune des variables dans l'équation. Étant donné qu'on modélise la probabilité de non-renouvellement des assurés de cette compagnie d'assurance, le lien logistique a été utilisé dans l'élaboration du modèle. En isolant, on peut obtenir l'équation suivante : 
 
 $\eta = ln\left(\frac{\pi_{res}}{1 - \pi_{res}}\right) \quad \Leftrightarrow \quad \pi_{res} = \frac{e^{\eta}}{1 + e^{\eta}}$ (fn expit)
 
@@ -721,25 +720,25 @@ L'interprétation qui en ressort est que lorsque la fonction est croissante lors
 
 $\eta = \sum\limits_{j=1}^p \beta_{j} x_{j}$
 
-Un coefficient négatif indique que la probabilité de résignation de la police d'assurance diminue et inversement, lorsque le coefficient est positif, la probabilité de résignation augmente. Sachant que le modèle comprend un grand nombre de variables explicatives, un tableau résumé (voir \autoref{tbl:glm_coeff}) a été conçu et ajouté à ce rapport dans le but de synthétiser l'interprétation qu'on peut en faire. Le coefficient d'origine aura un impact négatif sur la prévision. C'est-à-dire que la prévision part avec une probabilité de résignation qui diminue. De plus, selon l'équation du modèle plus la valeur d'une variable est élevée plus l'impact sur la prévision sera marquable sur la prévision. 
+Un coefficient négatif indique que la probabilité de résignation de la police d'assurance diminue et inversement, lorsque le coefficient est positif, la probabilité de résignation augmente. Sachant que le modèle comprend un grand nombre de variables explicatives, un tableau résumé (voir \autoref{tbl:glm_coeff}) a été conçu et ajouté à ce rapport dans le but de synthétiser l'interprétation qu'on peut en faire. Le coefficient d'origine aura un impact négatif sur la prévision. C'est-à-dire que la prévision part avec une probabilité de résignation qui diminue. De plus, selon l'équation du modèle plus la valeur d'une variable est élevée plus l'impact sur la prévision sera remarquable sur la prévision. 
 
 On interprète ensuite le tableau comme suit :
 
-- Les variables *polholder_age*, *policy_age*, *prem_last*, *prem_market* et *vehicl_age* feront baisser la probabilité de résignation. Ainsi, plus l'âge de l'assuré, l'âge du véhicule et l'âge de la police augmente et plus la probabilité de non-renouvellement diminue. De plus, plus la prime du marché augmente plus les assurés seront tenté de garder leur police d'assurance car ils n'auront pas intérêt à s'assurer ailleurs à un prix qui vient tout juste d'augmenter ;
+- Les variables *polholder_age*, *policy_age*, *prem_last*, *prem_market* et *vehicl_age* feront baisser la probabilité de résignation. Ainsi, plus l'âge de l'assuré, l'âge du véhicule et l'âge de la police augmente et plus la probabilité de non-renouvellement diminue. De plus, plus la prime du marché augmente plus les assurés seront tenté de garder leur police d'assurance, car ils n'auront pas intérêt à s'assurer ailleurs à un prix qui vient tout juste d'augmenter ;
 
 - *prem_final* : l'augmentation de la prime proposée pour le renouvellement de la police fait augmenter la probabilité de résignation, ce qui fait beaucoup de sens ;
 
-- *polholder_diffdriver* : Une police ayant un conducteur de 24 ans et plus n'aura aucun impact sur la probabilité. La probabilité de résignation sera par contre plus élevée si le conducteur est un apprenti, un partenaire ou un jeune, tandis que la probabilité sera plus faible lorsque le conducteur est un utilisateur commerciale ou un utilisateur seul ;
+- *polholder_diffdriver* : Une police ayant un conducteur de 24 ans et plus n'aura aucun impact sur la probabilité. La probabilité de résignation sera par contre plus élevée si le conducteur est un apprenti, un partenaire ou un jeune, tandis que la probabilité sera plus faible lorsque le conducteur est un utilisateur commercial ou un utilisateur seul ;
 
-- *Polholder_age* : Le sexe de l'assuré n'aura aucun impact sur la probabilité lorsque l'assuré est un femme tandis que lorsque l'assuré est un homme, la probabilité de résignation aura tendance à augmenter ;
+- *Polholder_age* : Le sexe de l'assuré n'aura aucun impact sur la probabilité lorsque l'assurée est une femme tandis que lorsque l'assuré est un homme, la probabilité de résignation aura tendance à augmenter ;
 
-- *polholder_BMCevol* : La probabilité de résignation reste neutre lorsque la prime a baissée depuis le dernier renouvellement. L'impact sur la prévision sera cependant négatif lorsque la prime a augmentée ou est restée stable depuis le dernier renouvellement ;
+- *polholder_BMCevol* : La probabilité de résignation reste neutre lorsque la prime a baissé depuis le dernier renouvellement. L'impact sur la prévision sera cependant négatif lorsque la prime a augmenté ou est restée stable depuis le dernier renouvellement ;
 
-- *polholder_job* : L'emploi de l'assuré n'aura aucun impact sur la prévision si l'assuré travaille dans le domaine médical. Dans tout autre domaine, le prévision aura tendance augmenter et donc l'assuré sera plus prompt à résigner sa police d'assurance.
+- *polholder_job* : L'emploi de l'assuré n'aura aucun impact sur la prévision si l'assuré travaille dans le domaine médical. Dans tout autre domaine, la prévision aura tendance augmenter et donc l'assuré sera plus prompt à résigner sa police d'assurance.
 
-- *vehicl_region* : Ne sachant pas le nom des régions des assurés, il est impossible de ressortir une cause possible, mais la région de l'assuré n'aurau aucun effet sur la prévision lorsqu'elle est de 1. L'effet sera négatif pour les régions 2, 5 et 7 et positif pour toutes les autres régions ;
+- *vehicl_region* : Ne sachant pas le nom des régions des assurés, il est impossible de ressortir une cause possible, mais la région de l'assuré n'aura aucun effet sur la prévision lorsqu'elle est de 1. L'effet sera négatif pour les régions 2, 5 et 7 et positif pour toutes les autres régions ;
 
-- *prem_freqperyear* : pour ce qui est de cette variables, une fréquence de paiement choisie à une fois par année n'aura aucun impact sur la probabilité de résigner. Les assurés faisant des paiements semestrielles auront une probabilité moins élevée de résigner leur police et comparativement à ceux faisant leur paiement semestriellement ou mensuellement qui auront une probabilité plus élevée.
+- *prem_freqperyear* : pour ce qui est de cette variable, une fréquence de paiement choisie à une fois par année n'aura aucun impact sur la probabilité de résigner. Les assurés faisant des paiements semestriels auront une probabilité moins élevée de résigner leur police et comparativement à ceux faisant leur paiement semestriellement ou mensuellement qui auront une probabilité plus élevée.
 
 ```{r load_glm_base}
 glm_base <- readRDS("../src/01-glm/mod_glm_final.rds")
@@ -756,7 +755,7 @@ Rmd_table(lasso.names0, label="tbl:glm_coeff",
           caption="Signe des coefficients du GLM", align = c("l", "l","c", "c", "r"))
 ```
 
-Étant donné le grand nombre de variables ayant un impact sur la prévision, on a cru bon d'intégrer à l'interprétation un tableau sommatif des variables ayant le plus grand impact sur la prévision (voir \autoref{tbl:betas}). De ce tableau, on peut voir que ces variables sont *polholder_BMCevol*, *polholder_diffdriver* et *vehicl_region*. Plus particulièrement, on parle des polices ayant connu une hausse dans le montant de la prime depuis le dernier renouvellement, les conducteurs utilisant leur véhicule pour une raison commerciale et les polices ayant de jeunes conducteur inscrits, les assurés effectuant leur paiement semestriellement et les assurés vivant dans les régions 2, 12, 13 et 14. Les polices ayant des caractéristiques faisant partie de celles nommées précédemment et figurant dans la \autoref{tbl:betas} sont donc ceux ayant une probabilité de résignation plus succeptible de varier et qui sera plus instable selon ce modèle.
+Étant donné le grand nombre de variables ayant un impact sur la prévision, on a cru bon d'intégrer à l'interprétation un tableau sommatif des variables ayant le plus grand impact sur la prévision (voir \autoref{tbl:betas}). De ce tableau, on peut voir que ces variables sont *polholder_BMCevol*, *polholder_diffdriver* et *vehicl_region*. Plus particulièrement, on parle des polices ayant connu une hausse dans le montant de la prime depuis le dernier renouvellement, les conducteurs utilisant leur véhicule pour une raison commerciale et les polices ayant de jeunes conducteurs inscrits, les assurés effectuant leur paiement semestriellement et les assurés vivant dans les régions 2, 12, 13 et 14. Les polices ayant des caractéristiques faisant partie de celles nommées précédemment et figurant dans la \autoref{tbl:betas} sont donc ceux ayant une probabilité de résignation plus susceptible de varier et qui sera plus instable selon ce modèle.
 
 ```{r, glm_valeurs_des_betas, results='asis'}
 coefficients.glm <- summary(glm_base)$coefficients[,1][which(abs(summary(glm_base)$coefficients[,1]) > 0.35)]
@@ -782,9 +781,9 @@ load(file = "../src/07-gbm/pdp_vehicl_region.rds")
 load(file = "../src/07-gbm/pdp_policy_age.rds")
 ```
 
-L'interprétation de ce modèle, étant plus demandante que pour le modèle de base étant donné le nombre élevé d'arbre entrainé, certains outil devront être utilisés. Ces outils sont l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
+L'interprétation de ce modèle étant plus demandante que pour le modèle de base étant donné le nombre élevé d'arbres entraînés, certains outils devront être utilisés. Ces outils sont l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
 
-L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles ayant le plus grand impact sur la prévision. De la \autoref{fig:imp-gbm}, on voit que les variables les plus significatives sur ce modèles sont définitivement *prem_index* et *vehicl_region*, tout comme *prem_freqperyear*, *polholder_age* et *vehicl_age* et d'autres mais qui ont une mesure d'importance moins considérable que les deux premières. Les valeurs sur laquelles ont ce fient pour tirer cette conclusion vient de l'importance relative des variables prises individuellement sur la prévision. Plus cette valeur est élevée, plus la valeur de la variable a un impact non-négligeable sur la prévision. Dans le but de mieux comprendre l'effet individuel des variables ayant le plus grand impact, on utilisera l'outil des graphiques de dépendances partielles en se concentrant sur les variables *prem_index* et *vehicl_region*. 
+L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèle ayant le plus grand impact sur la prévision. De la \autoref{fig:imp-gbm}, on voit que les variables les plus significatives sur ce modèle sont définitivement *prem_index* et *vehicl_region*, tout comme *prem_freqperyear*, *polholder_age* et *vehicl_age* et d'autres, mais qui ont une mesure d'importance moins considérable que les deux premières. Les valeurs sur lesquelles on se fie pour tirer cette conclusion viennent de l'importance relative des variables prises individuellement sur la prévision. Plus cette valeur est élevée, plus la valeur de la variable a un impact non négligeable sur la prévision. Dans le but de mieux comprendre l'effet individuel des variables ayant le plus grand impact, on utilisera l'outil des graphiques de dépendances partielles en se concentrant sur les variables *prem_index* et *vehicl_region*. 
 
 <!--\input{tbl_iml_gbm.tex}-->
 <!--[Graphique de l'importance des variables sur la prévision](../src/07-gbm/imp_gbm.png)-->
@@ -795,11 +794,11 @@ L'importance des variables nous permet de comprendre l'influence des variables e
 \label{fig:imp-gbm}
 \end{figure}
 
-Ces graphiques permettent une interprétation plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet isolée d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on pourra en faire l'interprétation. Il est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle pour chacune des observations. 
+Ces graphiques permettent une interprétation plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet isolé d'une variable explicative sur la prévision, c'est à l'aide de cet outil qu'on pourra en faire l'interprétation. Il est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle pour chacune des observations. 
 
-Le graphique de gauche de la \autoref{tbl:pdppartie1} nous permet de voir que pour une valeur de *prem_index* ce situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage d'augmentation de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner.
+Le graphique de gauche de la \autoref{tbl:pdppartie1} nous permet de voir que pour une valeur de *prem_index* se situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage d'augmentation de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner.
 
-Le graphique de droite de la \autoref{tbl:pdppartie1} nous permet, quant-à-elle, de voir que les régions 11 à 14 sont celle affectant le plus la probabilité de ne pas renouveller la police d'assurance. L'impact le plus marqué est observé auprès des assurés ayant comme région de résidence la région 12 et l'impact le moins marqué est observé auprès des résidents de la région 2. Étant donné que les noms des régions n'ont pas été divulgués par la compagnie d'ou provient le jeu de données, il est impossible pour nous de faire un lien entre la région et l'impact que celle-ci peut avoir sur la décision de l'assuré qui y habite.
+Le graphique de droite de la \autoref{tbl:pdppartie1} nous permet, quant à elle, de voir que les régions 11 à 14 sont celles affectant le plus la probabilité de ne pas renouveler la police d'assurance. L'impact le plus marqué est observé auprès des assurés ayant comme région de résidence la région 12 et l'impact le moins marqué est observé auprès des résidents de la région 2. Étant donné que les noms des régions n'ont pas été divulgués par la compagnie d'où provient le jeu de données, il est impossible pour nous de faire un lien entre la région et l'impact que celle-ci peut avoir sur la décision de l'assuré qui y habite.
 
 \begin{figure}
 \centering
@@ -836,17 +835,17 @@ plot(gbm_opti_Bern, 10, gbmfit_Bern$bestTune["n.trees"], type ="response")
 \label{tbl:pdppartie2}
 \end{figure}
 
-De plus, en jettant un coup d'oeil aux autres variables ayant un importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police et de la fréquance de paiement de la prime sur la probabilité de résignation d'où l'ajout de la \autoref{tbl:pdppartie2} à ce rapport. Dans celles-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui était attendu. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable a une valeur qui s'approche grandement de la valeur nulle. Dans le cas de la variable *prem_freqperyear*, on observe que plus la fréquence de paiement est élevé, plus la probabilité de résignation diminue.
+De plus, en jetant un coup d'oeil aux autres variables ayant une importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police et de la fréquance de paiement de la prime sur la probabilité de résignation d'où l'ajout de la \autoref{tbl:pdppartie2} à ce rapport. Dans celles-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui était attendu. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable à une valeur qui s'approche grandement de la valeur nulle. Dans le cas de la variable *prem_freqperyear*, on observe que plus la fréquence de paiement est élevé, plus la probabilité de résignation diminue.
 
 \newpage
 
-Pour ce qui est de la statistique H de Friedman, elle  est utilisée pour pouvoir estimer la force des interractions entre une variable précisement et tous les autres variables en mesurant la quantité de la variance qui provient de cet interraction dans la prévision. On peut ainsi observer les variables qui interragissent avec les variables les plus importantes pour expliquer la prévision, soit les variables *prem_index* et *vehicl_region*. Sachant que la profondeur maximale de l'arbre pour ce modèle est de `r gbmfit_Bern$bestTune["interaction.depth"]`, il pourrait y avoir des interraction sur jusqu'à `r gbmfit_Bern$bestTune["interaction.depth"]` variables différentes. Par cet statistique, on obtient les graphiques suivants.
+Pour ce qui est de la statistique H de Friedman, elle  est utilisée pour pouvoir estimer la force des interactions entre une variable précisément et tous les autres variables en mesurant la quantité de la variance qui provient de cette interaction dans la prévision. On peut ainsi observer les variables qui interagissent avec les variables les plus importantes pour expliquer la prévision, soit les variables *prem_index* et *vehicl_region*. Sachant que la profondeur maximale de l'arbre pour ce modèle est de `r gbmfit_Bern$bestTune["interaction.depth"]`, il pourrait y avoir des interactions sur jusqu'à `r gbmfit_Bern$bestTune["interaction.depth"]` variables différentes. Par cette statistique, on obtient les graphiques suivants.
 
 ```{r int_prem_index, results='asis', fig.height=3, fig.cap="\\label{int}Graphique de l'importance des interractions entre la variables prem.index et les autres variables sur la prévision"}
 plot(int.prem_index)
 ```
 
-La \autoref{int} est un exemple de graphique obtenu en utilisant cette statistique. On peut ensuite utiliser les graphiques de dépendance partielle pour voir l'impact des interractions ayant la plus grande force sur la prévision. Après analyse, seul l'interraction *vehicl_region:prem_index* donne une interprétation intéressante. À partir de graphique de dépendance partielle de la \autoref{pdp}, on peut observer que certaines régions possède un creux où la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%. Un dernier constat intéressant concerne d'ailleurs la région 6 et 7, où la probabilité de résignation est plus faible si la prime augmente que si elle diminue, ce qui est contre-intuitif.
+La \autoref{int} est un exemple de graphique obtenu en utilisant cette statistique. On peut ensuite utiliser les graphiques de dépendance partielle pour voir l'impact des interactions ayant la plus grande force sur la prévision. Après analyse, seule l'interaction *vehicl_region:prem_index* donne une interprétation intéressante. À partir de graphique de dépendance partielle de la \autoref{pdp}, on peut observer que certaines régions possèdent un creux où la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%. 
 
 ```{r dpd_interraction, results='asis', fig.heigth=3, fig.cap="\\label{pdp}Graphique de dépendance partielle pour l'interraction entre la variable vehicl.region et la variable prem.index"}
 plot(gbm_opti_Bern, 18:19, gbmfit_Bern$bestTune["n.trees"], type="response")
