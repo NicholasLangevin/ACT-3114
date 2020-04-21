@@ -145,7 +145,7 @@ C'est donc de dire que ces variables ne seront pas considérés pour les prévis
 \begin{minipage}{0.48\linewidth}
 \begin{tabular}{c|cc} 
 \multicolumn{1}{c}{} & \multicolumn{2}{c}{Prédictions} \\
-Observations & Renouvellemnt & Résignation \\
+Observations & Renouvellement & Résignation \\
 \hline Renouvellement & `r a_glm` & `r b_glm` \\
 Résignation & `r c_glm` & `r d_glm` \\
 \hline
@@ -782,13 +782,9 @@ load(file = "../src/07-gbm/pdp_vehicl_region.rds")
 load(file = "../src/07-gbm/pdp_policy_age.rds")
 ```
 
-Pour l'interprétation de ce modèle, étant plus demandant que pour le modèle de base étant donné le nombre élevé d'arbre entrainé, nous utiliserons l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
+L'interprétation de ce modèle, étant plus demandante que pour le modèle de base étant donné le nombre élevé d'arbre entrainé, certains outil devront être utilisés. Ces outils sont l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
 
-<<<<<<< HEAD
-L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles ayant le plus grand impact sur la prévision. De la \autoref{tbl_iml_gbm.tex} et de la \autoref{imp_gbm.png}, on voit que les variables les plus significatives sur ce modèles sont définitivement *prem_index* et *vehicl_region*, tout comme *prem_freqperyear*, *polholder_age* et *vehicl_age* et d'autres mais qui ont une mesure d'importance moins considérable que les deux premières. Les valeurs sur laquelles ont ce fient pour tirer cette conclusion vient du pourcentage de variance relative des variables prises individuellement sur la prévision. Plus le pourcentage de variance relative est élevée, plus la valeur de la variable pourra avoir un impact sur la prévision. Dans le but de mieux comprendre l'effet individuel des variables ayant le plus grand impact, on utilisera l'outil des graphiques de dépendances partielles en se concentrant principalement sur les variables *prem_index* et *vehicl_region*. 
-=======
-L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles ayant le plus grand impact sur la prévision. De la \autoref{fig:imp-gbm}, on voit que les variables les plus significatives sur ce modèles sont définitivement *prem_index* et *vehicl_region*, tout comme *prem_freqperyear*, *polholder_age* et *vehicl_age* et d'autres mais qui ont une mesure d'importance moins considérable que les deux premières. Les valeurs sur laquelles ont ce fient pour tirer cette conclusion vient du pourcentage de variance relative des variables prises individuellement sur la prévision. Plus le pourcentage de variance relative est élevée, plus la valeur de la variable pourra avoir un impact sur la prévision. Dans le but de mieux comprendre l'effet individuel des variables ayant le plus grand impact, on utilisera l'outil des graphiques de dépendances partielles en se concentrant sur les variables *prem_index* et *vehicl_region*. 
->>>>>>> a38bc5183f80fce1a04ffca49a2694c27d19494d
+L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles ayant le plus grand impact sur la prévision. De la \autoref{fig:imp-gbm}, on voit que les variables les plus significatives sur ce modèles sont définitivement *prem_index* et *vehicl_region*, tout comme *prem_freqperyear*, *polholder_age* et *vehicl_age* et d'autres mais qui ont une mesure d'importance moins considérable que les deux premières. Les valeurs sur laquelles ont ce fient pour tirer cette conclusion vient de l'importance relative des variables prises individuellement sur la prévision. Plus cette valeur est élevée, plus la valeur de la variable a un impact non-négligeable sur la prévision. Dans le but de mieux comprendre l'effet individuel des variables ayant le plus grand impact, on utilisera l'outil des graphiques de dépendances partielles en se concentrant sur les variables *prem_index* et *vehicl_region*. 
 
 <!--\input{tbl_iml_gbm.tex}-->
 <!--[Graphique de l'importance des variables sur la prévision](../src/07-gbm/imp_gbm.png)-->
@@ -801,20 +797,14 @@ L'importance des variables nous permet de comprendre l'influence des variables e
 
 Ces graphiques permettent une interprétation plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet isolée d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on pourra en faire l'interprétation. Il est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle pour chacune des observations. 
 
-La \autoref{pdp_prem_index} nous permet de voir que pour une valeur de *prem_index* ce situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage de renouvellement de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner.
+Le graphique de gauche de la \autoref{tbl:pdppartie1} nous permet de voir que pour une valeur de *prem_index* ce situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage d'augmentation de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner.
 
-<<<<<<< HEAD
-La \autoref{pdp_vehicl_region} nous permet, quant-à-elle, de voir que les régions 11 à 14 sont celle affectant le plus la probabilité de ne pas renouveller la police d'assurance. L'impact le plus marqué est observé auprès des assurés ayant comme région de résidence la région 12 et l'impact le moins marqué est observé auprès des résidents de la région 2. Étant donné que les noms des régions n'ont pas été divulgués par la compagnie d'ou provient le jeu de données, il est impossible pour nous de faire un lien entre la région et l'impact que celle-ci peut avoir sur la décision de l'assuré qui y habite.
+Le graphique de droite de la \autoref{tbl:pdppartie1} nous permet, quant-à-elle, de voir que les régions 11 à 14 sont celle affectant le plus la probabilité de ne pas renouveller la police d'assurance. L'impact le plus marqué est observé auprès des assurés ayant comme région de résidence la région 12 et l'impact le moins marqué est observé auprès des résidents de la région 2. Étant donné que les noms des régions n'ont pas été divulgués par la compagnie d'ou provient le jeu de données, il est impossible pour nous de faire un lien entre la région et l'impact que celle-ci peut avoir sur la décision de l'assuré qui y habite.
 
-De plus, en jettant un coup d'oeil aux autres variables ayant un importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police sur la probabilité de résignation d'ou l'ajout de la \autoref{pdp_policy_age} à ce rapport. Dans celle-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui était attendu. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable a une valeur qui s'approche grandement de la valeur nulle.
-
-```{r pdp_prem_index, results='asis', fig.height=4, fig.cap="Graphique de dépendance partielle pour la variable prem.index"}
-=======
 \begin{figure}
 \centering
 \begin{minipage}{0.48\linewidth}
 ```{r pdp_prem_index, results='asis'}
->>>>>>> a38bc5183f80fce1a04ffca49a2694c27d19494d
 plot(gbm_opti_Bern, 19, gbmfit_Bern$bestTune["n.trees"], type ="response")
 ```
 \end{minipage}
@@ -825,41 +815,45 @@ plot(gbm_opti_Bern, 18, gbmfit_Bern$bestTune["n.trees"], type ="response")
 ```
 \end{minipage}
 \caption{Graphique de dépendance partielle pour les variables prem.index et vehicl.region.}
-\label{}
+\label{tbl:pdppartie1}
 \end{figure}
 
 
-```{r pdp_policy_age, results='asis', fig.height=3, fig.cap="Graphique de dépendance partielle pour la variable policy.age"}
+\begin{figure}
+\centering
+\begin{minipage}{0.48\linewidth}
+```{r pdp_prem_policy_age, results='asis'}
 plot(gbm_opti_Bern, 6, gbmfit_Bern$bestTune["n.trees"], type ="response")
 ```
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\linewidth}
+```{r pdp_prem_freqperyear, results='asis'}
+plot(gbm_opti_Bern, 10, gbmfit_Bern$bestTune["n.trees"], type ="response")
+```
+\end{minipage}
+\caption{Graphique de dépendance partielle pour les variables policy.age et prem.freqperyear.}
+\label{tbl:pdppartie2}
+\end{figure}
+
+De plus, en jettant un coup d'oeil aux autres variables ayant un importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police et de la fréquance de paiement de la prime sur la probabilité de résignation d'où l'ajout de la \autoref{tbl:pdppartie2} à ce rapport. Dans celles-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui était attendu. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable a une valeur qui s'approche grandement de la valeur nulle. Dans le cas de la variable *prem_freqperyear*, on observe que plus la fréquence de paiement est élevé, plus la probabilité de résignation diminue.
+
+\newpage
 
 Pour ce qui est de la statistique H de Friedman, elle  est utilisée pour pouvoir estimer la force des interractions entre une variable précisement et tous les autres variables en mesurant la quantité de la variance qui provient de cet interraction dans la prévision. On peut ainsi observer les variables qui interragissent avec les variables les plus importantes pour expliquer la prévision, soit les variables *prem_index* et *vehicl_region*. Sachant que la profondeur maximale de l'arbre pour ce modèle est de `r gbmfit_Bern$bestTune["interaction.depth"]`, il pourrait y avoir des interraction sur jusqu'à `r gbmfit_Bern$bestTune["interaction.depth"]` variables différentes. Par cet statistique, on obtient les graphiques suivants.
 
-On peut voir dans la \autoref{int_prem_index} que seule les interractions avec la variable *prem_index* est illustrée. En effet, le grahique obtenu avec la variable *vehicl_region* a aussi été obtenu pour analyser les interractions ayant la force la plus élevée avec cette variable seulement, aucune d'elles ne permettaient une interprétation intéressante. L'interprétation des interractions importantes se fera donc sur les interractions sur *prem_index* ayant la plus grandes forces d'interraction, soit *vehicl_region:prem_index*, *prem_freqperyear:prem_index*.  À l'aide de l'outil des graphiques de dépendances partielles on obtient les figures suivantes. 
-
-```{r int_prem_index, results='asis', fig.height=4, fig.cap="\\label{}Graphique de l'importance des interractions entre la variables prem.index et les autres variables sur la prévision"}
+```{r int_prem_index, results='asis', fig.height=3, fig.cap="\\label{int}Graphique de l'importance des interractions entre la variables prem.index et les autres variables sur la prévision"}
 plot(int.prem_index)
 ```
 
-<<<<<<< HEAD
-De la \autoref{pdp_interraction}, on peut observer que certaines régions possède un creux ou la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%. Un dernier constat intéressant concerne d'ailleurs la région 6 et 7, ou la probabilité de résignation est plus faible si la prime augmente que si elle diminue ce qui est contre-intuitif.
+La \autoref{int} est un exemple de graphique obtenu en utilisant cette statistique. On peut ensuite utiliser les graphiques de dépendance partielle pour voir l'impact des interractions ayant la plus grande force sur la prévision. Après analyse, seul l'interraction *vehicl_region:prem_index* donne une interprétation intéressante. À partir de graphique de dépendance partielle de la \autoref{pdp}, on peut observer que certaines régions possède un creux où la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%. Un dernier constat intéressant concerne d'ailleurs la région 6 et 7, où la probabilité de résignation est plus faible si la prime augmente que si elle diminue, ce qui est contre-intuitif.
 
-Finalement, à partir de la \autoref{pdp_interraction2}, on peut observer que plus les assurés effectuent le paiement de leur prime en plusieurs paiement, plus a probabilité de résignation est stable selon le pourcentage d'augmentation de leur prime.
-
-=======
->>>>>>> a38bc5183f80fce1a04ffca49a2694c27d19494d
-```{r dpd_interraction, results='asis', fig.heigth=4, fig.cap="Graphique de dépendance partielle pour l'interraction entre la variable vehicl.region et la variable prem.index"}
+```{r dpd_interraction, results='asis', fig.heigth=3, fig.cap="\\label{pdp}Graphique de dépendance partielle pour l'interraction entre la variable vehicl.region et la variable prem.index"}
 plot(gbm_opti_Bern, 18:19, gbmfit_Bern$bestTune["n.trees"], type="response")
 ```
 
-```{r dpd_interraction2, results='asis', fig.heigth=4, fig.cap="Graphique de dépendance partielle pour l'interraction entre la variable prem.freqperyear et la variable prem.index"}
-plot(gbm_opti_Bern, c(10,19), gbmfit_Bern$bestTune["n.trees"], type="response")
-```
 
-<<<<<<< HEAD
-De cette interprétation, on comprend que les variables ayant le plus grand impact sur la prévision dans ce modèles sont les variables *prem_index*, *vehicl_region* et l'interraction entre ces 2 variables.
-=======
->>>>>>> a38bc5183f80fce1a04ffca49a2694c27d19494d
+
 \newpage
 
 # Conclusion

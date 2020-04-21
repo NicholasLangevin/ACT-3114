@@ -104,7 +104,6 @@ pdp_policy_age <- plot(gbm_opti_Bern, 6, gbmfit_Bern$bestTune["n.trees"], type =
 #save(pdp_vehicl_region, file = "../src/07-gbm/pdp_vehicl_region.rds")
 #save(pdp_policy_age, file = "../src/07-gbm/pdp_policy_age.rds")
 
-
 #plot(gbm_opti_Bern, 10, gbmfit_Bern$bestTune["n.trees"], type ="response") #prem_freqperyear
 #plot(gbm_opti_Bern, 1, gbmfit_Bern$bestTune["n.trees"], type ="response") #polholder_age
 #plot(gbm_opti_Bern, 14, gbmfit_Bern$bestTune["n.trees"], type ="response") #vehicl_age
