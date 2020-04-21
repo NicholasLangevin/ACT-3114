@@ -423,7 +423,24 @@ $$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
 
 
 # Performance des meilleurs modèles
+## Tableaux de confusion
 
+Modèle de base : 
+<br/>
+
+<center>
+![](performance_glm.png){width=600px}
+
+</center>
+<br/>
+ 
+Modèle de boosting de gradient stochastique :
+ <br/>
+ 
+<center>
+![](performance_gbm.png){width=600px}
+
+</center>
 
 # Conclusion
 
