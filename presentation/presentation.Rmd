@@ -364,9 +364,6 @@ gbmfit_Bern$bestTune[1:2]
 ```
 
 
-# Performance des meilleurs modèles
-
-
 # Interprétation des meilleurs modèles 
 
 ## Modèle de base 
@@ -424,6 +421,8 @@ $$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
 
 ![](interraction.png){width=700px}
 
+
+# Performance des meilleurs modèles
 
 
 # Conclusion
