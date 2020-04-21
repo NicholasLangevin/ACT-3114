@@ -731,7 +731,7 @@ On interprète ensuite le tableau comme suit :
 
 - *polholder_diffdriver* : Une police ayant un conducteur de 24 ans et plus n'aura aucun impact sur la probabilité. La probabilité de résignation sera par contre plus élevée si le conducteur est un apprenti, un partenaire ou un jeune, tandis que la probabilité sera plus faible lorsque le conducteur est un utilisateur commerciale ou un utilisateur seul ;
 
-- *Polholder_age* : Lorsque le sexe de l'assuré n'aura aucun impact sur la probabilité lorsque l'assuré est un femme tandis que lorsque l'assuré est un homme, la probabilité de résignation aura tendance à augmenter ;
+- *Polholder_age* : Le sexe de l'assuré n'aura aucun impact sur la probabilité lorsque l'assuré est un femme tandis que lorsque l'assuré est un homme, la probabilité de résignation aura tendance à augmenter ;
 
 - *polholder_BMCevol* : La probabilité de résignation reste neutre lorsque la prime a baissée depuis le dernier renouvellement. L'impact sur la prévision sera cependant négatif lorsque la prime a augmentée ou est restée stable depuis le dernier renouvellement ;
 
@@ -739,15 +739,14 @@ On interprète ensuite le tableau comme suit :
 
 - *vehicl_region* : Ne sachant pas le nom des régions des assurés, il est impossible de ressortir une cause possible, mais la région de l'assuré n'aurau aucun effet sur la prévision lorsqu'elle est de 1. L'effet sera négatif pour les régions 2, 5 et 7 et positif pour toutes les autres régions ;
 
-- *prem_freqperyear* : pour ce qui est de cette variables, une fréquence de paiement choisie à une fois par année n'aura aucun impact sur la probabilité de résigner. Les assurés faisant des paiements semestrielles auront une probabilité moins élevée de résigner leur police et comparativement à ceux faisant leur paiement 3 ou 4 fois par année qui auront une probabilité plus élevée.
-
+- *prem_freqperyear* : pour ce qui est de cette variables, une fréquence de paiement choisie à une fois par année n'aura aucun impact sur la probabilité de résigner. Les assurés faisant des paiements semestrielles auront une probabilité moins élevée de résigner leur police et comparativement à ceux faisant leur paiement semestriellement ou mensuellement qui auront une probabilité plus élevée.
 
 ```{r load_glm_base}
 glm_base <- readRDS("../src/01-glm/mod_glm_final.rds")
 ```
 
 ```{r, glm_coeff_table, results='asis'}
-coeff_names <- c("Intercept", "polholder age", "polholder BMCevol (inchangée, hausse)", "polholder diffdriver (apprenti, partenaire, jeunes)", "polholder diffdriver (commerciale, utilisateur seul)", "polholder gender (Male)", "polholder job (normal)", "policy age", "prem final", "prem freqyear (2)", "prem freqyear (4, 12)", "prem last", "prem market", "vehicl age", "vehicl region (3, 4, 6, 8 à 14)", "vehicl region (2, 5, 7)")
+coeff_names <- c("Intercept", "polholder age", "polholder BMCevol (inchangée, hausse)", "polholder diffdriver (apprenti, partenaire, jeune)", "polholder diffdriver (commerciale, utilisateur seul)", "polholder gender (Male)", "polholder job (normal)", "policy age", "prem final", "prem freqyear (2)", "prem freqyear (4, 12)", "prem last", "prem market", "vehicl age", "vehicl region (3, 4, 6, 8 à 14)", "vehicl region (2, 5, 7)")
 coeff_positif <- c("", "", "", "x", "", "x", "x", "", "x", "", "x", "", "", "", "x", "")
 coeff_negatif <- c("x", "x", "x", "", "x", "", "", "x", "", "x", "", "x", "x", "x", "", "x")
 niv_inclu <- c("-", "-", "baisse", "24 ans et plus", "24 ans et plus", "Female", "medical", "-", "-", "1", "1", "-", "-", "-", "1", "1")
@@ -757,14 +756,18 @@ Rmd_table(lasso.names0, label="tbl:glm_coeff",
           caption="Signe des coefficients du GLM")
 ```
 
+Étant donné le grand nombre de variables ayant un impact sur la prévision, on a cru bon d'intégrer à l'interprétation un tableau sommatif des variables ayant le plus grand impact sur la prévision (voir \autoref{tbl:betas}). De ce tableau, on peut voir que ces variables sont *polholder_BMCevol*, *polholder_diffdriver* et *vehicl_region*. Plus particulièrement, on parle des polices ayant connu une hausse dans le montant de la prime depuis le dernier renouvellement, les conducteurs utilisant leur véhicule pour une raison commerciale et les polices ayant de jeunes conducteur inscrits, les assurés effectuant leur paiement semestriellement et les assurés vivant dans les régions 2, 12, 13 et 14. Les polices ayant des caractéristiques faisant partie de celles nommées précédemment et figurant dans la \autoref{tbl:betas} sont donc ceux ayant une probabilité de résignation plus succeptible de varier et qui sera plus instable selon ce modèle.
 
 ```{r, glm_valeurs_des_betas, results='asis'}
-#coefficients.glm <- summary(glm_base)$coefficients[,1][which(abs(summary(glm_base)$coefficients[,1]) > 0.15)]
-#coefficients <- as.data.frame(coefficients.glm)
-#variables <- c("Intercept", "polholder.age", "polholder.BMCevolstable", "polholder.BMCevolup", #"polholder.diffdrivercommercial", "polholder.diffdriverlearner 17", "polholder_diffdriveronly partner", #"polholder.diffdriversame", "polholder.diffdriveryoung drivers", "polholder.genderMale", "polholder_jobnormal", #"policy_age", "prem_final", "prem_freqperyear.L", "prem_freqperyear.Q", "prem_freqperyear.C", "prem_last", #"prem_market", "vehicl_age", "vehicl_regionReg2", "", "", "", "", "", "" , "", "", "", "")
-#save(coefficients, file = "../src/01-glm/tableau_coefficient.tex")
+coefficients.glm <- summary(glm_base)$coefficients[,1][which(abs(summary(glm_base)$coefficients[,1]) > 0.35)]
+coefficients <- round(as.data.frame(coefficients.glm)$coefficients.glm, 4)
+variables <- c("Intercept", "polholder BMCevol (stable)", "polholder BMCevol (hausse)", "polholder diffdriver (commerciale)", "polholder diffdriver (apprenti)", "polholder diffdriver(jeune)", "prem freqperyear(2)", "vehicl region (2)", "vehicl region (12)", "vehicl region (13)", "vehicl region (14)")
+betas <- cbind(variables, coefficients)
+Rmd_table(betas, label="tbl:betas", 
+          caption="Valeurs des coefficients ayant le plus grand impact sur la prévision.")
 ```
 
+\newpage
 
 ## Boosting de gradient stochastique
 
@@ -778,17 +781,18 @@ load(file = "../src/07-gbm/pdp_vehicl_region.rds")
 load(file = "../src/07-gbm/pdp_policy_age.rds")
 ```
 
-*Importance des variables*
-Pour l'interprétation de ce modèle, nous utiliserons l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
+Pour l'interprétation de ce modèle, étant plus demandant que pour le modèle de base étant donné le nombre élevé d'arbre entrainé, nous utiliserons l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
 
-L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles étant plus significatives dans l'élaboration du modèle. De la (mettre les 2 REFERENCES ICI), on voit que les variables les plus significatives sur ce modèles sont *prem_index* et *vehicl_region* 
+L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles ayant le plus grand impact sur la prévision. De la \autoref{tbl_iml_gbm.tex} et de la \autoref{imp_gbm.png}, on voit que les variables les plus significatives sur ce modèles sont définitivement *prem_index* et *vehicl_region*, tout comme *prem_freqperyear*, *polholder_age* et *vehicl_age* et d'autres mais qui ont une mesure d'importance moins considérable que les deux premières. Les valeurs sur laquelles ont ce fient pour tirer cette conclusion vient du pourcentage de variance relative des variables prises individuellement sur la prévision. Plus le pourcentage de variance relative est élevée, plus la valeur de la variable pourra avoir un impact sur la prévision. Dans le but de mieux comprendre l'effet individuel des variables ayant le plus grand impact, on utilisera l'outil des graphiques de dépendances partielles en se concentrant sur les variables *prem_index* et *vehicl_region*. 
 
 \input{tbl_iml_gbm.tex}
 
 ![Graphique de l'importance des variables sur la prévision](../src/07-gbm/imp_gbm.png)
 
-*Graphiques de dépendance partielle*
-Les graphiques de dépendance partielle ( _DPD_) est un outil plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet plus spécifique d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on peut interpréter cette partie du modèle. Cet outil est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle. 
+Ces graphiques permettent une interprétation plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet isolée d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on pourra en faire l'interprétation. Il est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle pour chacune des observations. 
+
+Le \autoref{pdp_prem_index} nous permet de voir que pour une valeur de *prem_index* ce situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage de renouvellement de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la valeur de cette variable sur la probabilité de résigner.
+
 
 ```{r pdp_prem_index, results='asis', fig.height=4, fig.cap="Graphique de dépendance partielle pour la variable prem.index"}
 plot(gbm_opti_Bern, 19, gbmfit_Bern$bestTune["n.trees"], type ="response")
@@ -807,7 +811,7 @@ Pour ce qui est de la statistique H de Friedman, elle  est utilisé pour pouvoir
 
 On peut voir dans les (2 FIGURES SUIVANTES : Mettre une ref) que les interractions ayant la force d'interraction la plus élevée sur la prévision sont vehicl_region:prem_index, prem_freqperyear:prem_index et prem_final:vehicl_region. En effet, on observant la force d'interraction sur les autres interractions sur les variables les plus importantes pour ce modèle, on remarque que les interractions mentionnées précédemment sont celles ayant la force la plus élevée mais aussi les seules menant à une analyse interressante sur l'impact sur la prévision par les (METTRE REFERENCE ICI DES 3 GRAPHIQUES PDP SUIVANTS) représentant les _PDP_ de ces interractions. On remarque que ..... À COMPLETÉ PAR L'ANALYSE DES 3 GRAPHIQUES SUIVANTS.
 
-```{r int_prem_index, results='asis', fig.height=4, fig.cap="Graphique de l'importance des interractions entre la variables prem.index et les autres variables sur la prévision"}
+```{r int_prem_index, results='asis', fig.height=4, fig.cap="\\label{}Graphique de l'importance des interractions entre la variables prem.index et les autres variables sur la prévision"}
 plot(int.prem_index)
 ```
 
