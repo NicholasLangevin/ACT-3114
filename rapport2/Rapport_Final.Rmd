@@ -18,9 +18,7 @@ editor_options:
 \begin{center}
     \vspace{2\baselineskip}
     Charles Comeau \\
-    (111 185 421) \\
-    \vspace{1\baselineskip}
-    Nicholas Langevin \\
+    (111 185 421) \\ \vspace{1\baselineskip} Nicholas Langevin \\
     (111 184 631) \\
     \vspace{1\baselineskip}
     Andréanne Larouche \\
@@ -701,7 +699,7 @@ legend("bottomright", c("glm", "Lasso", "knn", "Arbre", "Bagging", "Forêt", "gb
        col = c("red", "blue", "yellow", "green", "pink", "orange", "purple"), cex = 0.7)
 ```
 
-La courbe ROC est définie comme étant la sensitivité en fonction du faux négatif. Dans le but d'avoir une bonne performance prédictive, on cherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe se rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. De ce sens, on peut conclure que les modèles ont une bonne puissance de prévision, car leurs valeurs d'AUC sont tous supérieures à  `r min(auc_result$AUC)`, ce qui est assez élevé. Les deux modèles les plus performants sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles.
+La courbe ROC est définie comme étant la sensitivité en fonction du faux négatif. Dans le but d'avoir une bonne performance prédictive, on cherche à maximiser la sensitivité et la spécificité, ce qui se traduit en une courbe se rapprochant le plus possible du coin supérieur gauche. En ayant utilisé cette métrique pour classifier la performance, on peut baser notre choix sur les modèles ayant l'AUC le plus élevée. Les deux modèles les plus performants sont le modèle de base GLM et le modèle de boosting de gradient stochastique. La suite de l'analyse sera donc spécifique à ces deux modèles. Malgré le fait que ces modèles soient les plus performant sur nos données, il est décevant de voir que nous sommes en mesure d'atteindre seulement 63\% d'AUC.
 
 
 \newpage
@@ -714,29 +712,30 @@ Dans cette section, on interprète le modèle de base, soit le modèle linéaire
 
 Comme mentionné précédemment, l'interprétation de ce modèle se fera sur les valeurs que prend les coefficients, soit les valeurs des $\beta_i$ qui multiplie chacune des variables dans l'équation. Étant donné qu'on modélise la probabilité de non-renouvellement des assurés de cette compagnie d'assurance, le lien logistique a été utilisé dans l'élaboration du modèle. En isolant, on peut obtenir l'équation suivante : 
 
-$\eta = ln\left(\frac{\pi_{res}}{1 - \pi_{res}}\right) \quad \Leftrightarrow \quad \pi_{res} = \frac{e^{\eta}}{1 + e^{\eta}}$ (fn expit)
+$$\eta = ln\left(\frac{\pi_{res}}{1 - \pi_{res}}\right) \quad \Leftrightarrow \quad \pi_{res} = \frac{e^{\eta}}{1 + e^{\eta}} \text{(fn expit)}.$$
 
-L'interprétation qui en ressort est que lorsque la fonction est croissante lorsque $\eta$ augmente et décroissante lorsque que $\eta$ est décroissant. Il est à noter que $\eta$ représente la probabilité de résignation de l'assuré pour lequel on veut obtenir une prévision. Sachant que l'équation du modèle est la suivante :
+Il est à noter que $\pi_{res}$ représente la probabilité de résignation de l'assuré pour lequel on veut obtenir une prévision.
+L'interprétation qui en ressort est que lorsque la probabilité de résignation est croissante lorsque le prédicteur linéaire $\eta$ augmente et décroissante lorsque que $\eta$ est décroissant. Le prédicteur linéaire est défini comme
 
-$\eta = \sum\limits_{j=1}^p \beta_{j} x_{j}$
+$$\eta = \sum\limits_{j=1}^p \beta_{j} x_{j}.$$
 
-Un coefficient négatif indique que la probabilité de résignation de la police d'assurance diminue et inversement, lorsque le coefficient est positif, la probabilité de résignation augmente. Sachant que le modèle comprend un grand nombre de variables explicatives, un tableau résumé (voir \autoref{tbl:glm_coeff}) a été conçu et ajouté à ce rapport dans le but de synthétiser l'interprétation qu'on peut en faire. Le coefficient d'origine aura un impact négatif sur la prévision. C'est-à-dire que la prévision part avec une probabilité de résignation qui diminue. De plus, selon l'équation du modèle plus la valeur d'une variable est élevée plus l'impact sur la prévision sera remarquable sur la prévision. 
+Un coefficient négatif indique que la probabilité de résignation de la police d'assurance diminue et inversement, lorsque le coefficient est positif, la probabilité de résignation augmente. Sachant que le modèle comprend un grand nombre de variables explicatives, un tableau résumé (voir \autoref{tbl:glm_coeff}) a été conçu et ajouté à ce rapport dans le but de synthétiser l'interprétation qu'on peut en faire. Le coefficient d'origine aura un impact négatif sur la prévision. **C'est-à-dire que la prévision part avec une probabilité de résignation qui diminue**. De plus, selon l'équation du modèle plus la valeur d'une variable numérique est élevée, plus l'impact sur la prévision sera remarquable sur la prévision. 
 
 On interprète ensuite le tableau comme suit :
 
 - Les variables *polholder_age*, *policy_age*, *prem_last*, *prem_market* et *vehicl_age* feront baisser la probabilité de résignation. Ainsi, plus l'âge de l'assuré, l'âge du véhicule et l'âge de la police augmente et plus la probabilité de non-renouvellement diminue. De plus, plus la prime du marché augmente plus les assurés seront tenté de garder leur police d'assurance, car ils n'auront pas intérêt à s'assurer ailleurs à un prix qui vient tout juste d'augmenter ;
 
-- *prem_final* : l'augmentation de la prime proposée pour le renouvellement de la police fait augmenter la probabilité de résignation, ce qui fait beaucoup de sens ;
+- *prem_final* : l'augmentation de la prime proposée pour le renouvellement de la police fait augmenter la probabilité de résignation, ce qui fait beaucoup de sens;
 
-- *polholder_diffdriver* : Une police ayant un conducteur de 24 ans et plus n'aura aucun impact sur la probabilité. La probabilité de résignation sera par contre plus élevée si le conducteur est un apprenti, un partenaire ou un jeune, tandis que la probabilité sera plus faible lorsque le conducteur est un utilisateur commercial ou un utilisateur seul ;
+- *polholder_diffdriver* : Une police ayant un conducteur de 24 ans et plus n'aura aucun impact sur la probabilité. La probabilité de résignation sera par contre plus élevée si le conducteur est un apprenti, un partenaire ou un jeune, tandis que la probabilité sera plus faible lorsque le conducteur est un utilisateur commercial ou un utilisateur seul;
 
-- *Polholder_age* : Le sexe de l'assuré n'aura aucun impact sur la probabilité lorsque l'assurée est une femme tandis que lorsque l'assuré est un homme, la probabilité de résignation aura tendance à augmenter ;
+- *Polholder_age* : Le sexe de l'assuré n'aura aucun impact sur la probabilité lorsque l'assurée est une femme tandis que lorsque l'assuré est un homme, la probabilité de résignation aura tendance à augmenter;
 
-- *polholder_BMCevol* : La probabilité de résignation reste neutre lorsque la prime a baissé depuis le dernier renouvellement. L'impact sur la prévision sera cependant négatif lorsque la prime a augmenté ou est restée stable depuis le dernier renouvellement ;
+- *polholder_BMCevol* : La probabilité de résignation reste neutre lorsque la prime a baissé depuis le dernier renouvellement. L'impact sur la prévision sera cependant négatif lorsque la prime a augmenté ou est restée stable depuis le dernier renouvellement;
 
-- *polholder_job* : L'emploi de l'assuré n'aura aucun impact sur la prévision si l'assuré travaille dans le domaine médical. Dans tout autre domaine, la prévision aura tendance augmenter et donc l'assuré sera plus prompt à résigner sa police d'assurance.
+- *polholder_job* : L'emploi de l'assuré n'aura aucun impact sur la prévision si l'assuré travaille dans le domaine médical. Dans tout autre domaine, la prévision aura tendance augmenter et donc l'assuré sera plus prompt à résigner sa police d'assurance;
 
-- *vehicl_region* : Ne sachant pas le nom des régions des assurés, il est impossible de ressortir une cause possible, mais la région de l'assuré n'aura aucun effet sur la prévision lorsqu'elle est de 1. L'effet sera négatif pour les régions 2, 5 et 7 et positif pour toutes les autres régions ;
+- *vehicl_region* : Ne sachant pas le nom des régions des assurés, il est impossible de ressortir une cause possible, mais la région de l'assuré n'aura aucun effet sur la prévision lorsqu'elle est de 1. L'effet sera négatif pour les régions 2, 5 et 7 et positif pour toutes les autres régions;
 
 - *prem_freqperyear* : pour ce qui est de cette variable, une fréquence de paiement choisie à une fois par année n'aura aucun impact sur la probabilité de résigner. Les assurés faisant des paiements semestriels auront une probabilité moins élevée de résigner leur police et comparativement à ceux faisant leur paiement semestriellement ou mensuellement qui auront une probabilité plus élevée.
 
@@ -755,7 +754,7 @@ Rmd_table(lasso.names0, label="tbl:glm_coeff",
           caption="Signe des coefficients du GLM", align = c("l", "l","c", "c", "r"))
 ```
 
-Étant donné le grand nombre de variables ayant un impact sur la prévision, on a cru bon d'intégrer à l'interprétation un tableau sommatif des variables ayant le plus grand impact sur la prévision (voir \autoref{tbl:betas}). De ce tableau, on peut voir que ces variables sont *polholder_BMCevol*, *polholder_diffdriver* et *vehicl_region*. Plus particulièrement, on parle des polices ayant connu une hausse dans le montant de la prime depuis le dernier renouvellement, les conducteurs utilisant leur véhicule pour une raison commerciale et les polices ayant de jeunes conducteurs inscrits, les assurés effectuant leur paiement semestriellement et les assurés vivant dans les régions 2, 12, 13 et 14. Les polices ayant des caractéristiques faisant partie de celles nommées précédemment et figurant dans la \autoref{tbl:betas} sont donc ceux ayant une probabilité de résignation plus susceptible de varier et qui sera plus instable selon ce modèle.
+Étant donné le grand nombre de variables ayant un impact sur la prévision, on a cru bon d'intégrer à l'interprétation un tableau sommatif des variables ayant le plus grand impact sur la prévision (voir \autoref{tbl:betas}). De ce tableau, on peut voir que ces variables sont *polholder_BMCevol*, *polholder_diffdriver* et *vehicl_region*. Plus particulièrement, on parle des polices ayant connu une hausse dans le montant de la prime depuis le dernier renouvellement, les conducteurs utilisant leur véhicule pour une raison commerciale et les polices ayant de jeunes conducteurs inscrits, les assurés effectuant leur paiement semestriellement et les assurés vivant dans les régions 2, 12, 13 et 14. Les polices ayant des caractéristiques faisant partie de celles nommées précédemment et figurant dans la \autoref{tbl:betas} sont donc ceux ayant une probabilité de résignation plus susceptible de varier.
 
 ```{r, glm_valeurs_des_betas, results='asis'}
 coefficients.glm <- summary(glm_base)$coefficients[,1][which(abs(summary(glm_base)$coefficients[,1]) > 0.35)]
@@ -796,7 +795,8 @@ L'importance des variables nous permet de comprendre l'influence des variables e
 
 Ces graphiques permettent une interprétation plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet isolé d'une variable explicative sur la prévision, c'est à l'aide de cet outil qu'on pourra en faire l'interprétation. Il est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle pour chacune des observations. 
 
-Le graphique de gauche de la \autoref{tbl:pdppartie1} nous permet de voir que pour une valeur de *prem_index* se situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage d'augmentation de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner.
+Le graphique de gauche de la \autoref{tbl:pdppartie1} nous permet de voir que pour une valeur de *prem_index* se situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage d'augmentation de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner. Il est surprenant de voir que lorsque qu'il y a une petit diminution de prime, la probabilité augmente de beaucoup. Cette effect est difficilement expliquable
+sans l'aide de d'autres variables explicatives.
 
 Le graphique de droite de la \autoref{tbl:pdppartie1} nous permet, quant à elle, de voir que les régions 11 à 14 sont celles affectant le plus la probabilité de ne pas renouveler la police d'assurance. L'impact le plus marqué est observé auprès des assurés ayant comme région de résidence la région 12 et l'impact le moins marqué est observé auprès des résidents de la région 2. Étant donné que les noms des régions n'ont pas été divulgués par la compagnie d'où provient le jeu de données, il est impossible pour nous de faire un lien entre la région et l'impact que celle-ci peut avoir sur la décision de l'assuré qui y habite.
 
@@ -835,7 +835,7 @@ plot(gbm_opti_Bern, 10, gbmfit_Bern$bestTune["n.trees"], type ="response")
 \label{tbl:pdppartie2}
 \end{figure}
 
-De plus, en jetant un coup d'oeil aux autres variables ayant une importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police et de la fréquance de paiement de la prime sur la probabilité de résignation d'où l'ajout de la \autoref{tbl:pdppartie2} à ce rapport. Dans celles-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui était attendu. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable à une valeur qui s'approche grandement de la valeur nulle. Dans le cas de la variable *prem_freqperyear*, on observe que plus la fréquence de paiement est élevé, plus la probabilité de résignation diminue.
+De plus, en jetant un coup d'oeil aux autres variables ayant une importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police et de la fréquance de paiement de la prime sur la probabilité de résignation d'où l'ajout de la \autoref{tbl:pdppartie2} à ce rapport. Dans celles-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui montre une certaine forme de fidélité des clients. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable à une valeur qui s'approche grandement de la valeur nulle. Dans le cas de la variable *prem_freqperyear*, on observe que plus la fréquence de paiement est élevé, plus la probabilité de résignation diminue.
 
 \newpage
 
@@ -845,11 +845,80 @@ Pour ce qui est de la statistique H de Friedman, elle  est utilisée pour pouvoi
 plot(int.prem_index)
 ```
 
-La \autoref{int} est un exemple de graphique obtenu en utilisant cette statistique. On peut ensuite utiliser les graphiques de dépendance partielle pour voir l'impact des interactions ayant la plus grande force sur la prévision. Après analyse, seule l'interaction *vehicl_region:prem_index* donne une interprétation intéressante. À partir de graphique de dépendance partielle de la \autoref{pdp}, on peut observer que certaines régions possèdent un creux où la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%. 
+La \autoref{int} est un exemple de graphique obtenu en utilisant cette statistique. On peut ensuite utiliser les graphiques de dépendance partielle pour voir l'impact des interactions ayant la plus grande force sur la prévision. Après analyse, seule l'interaction *vehicl_region:prem_index* donne une interprétation intéressante. À partir de graphique de dépendance partielle de la \autoref{pdp}, on peut observer que certaines régions possèdent un creux où la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%.
 
 ```{r dpd_interraction, results='asis', fig.heigth=3, fig.cap="\\label{pdp}Graphique de dépendance partielle pour l'interraction entre la variable vehicl.region et la variable prem.index"}
 plot(gbm_opti_Bern, 18:19, gbmfit_Bern$bestTune["n.trees"], type="response")
 ```
+
+```{r}
+# gbm_opti_Bern
+# glm_base
+gbm_pred_train <- predict(gbm_opti_Bern, n.trees = 2100, newdata = trainData, type = "response")
+gbm_roc_train <- roc(ifelse(trainData$lapse == "resignation", 1, 0), gbm_pred_train)
+gbm_threshold_train <- pROC::coords(gbm_roc_train , "best", best.method = "closest.topleft", ret = "thr", transpose = TRUE)
+
+
+glm_pred_train <- predict(glm_base, newdata = trainData, type = "response")
+glm_roc_train <- roc(ifelse(trainData$lapse == "resignation", 1, 0), glm_pred_train)
+glm_threshold_train <- pROC::coords(glm_roc_train , "best", best.method = "closest.topleft", ret = "thr", transpose = TRUE)
+
+
+gbm_pred_test <- predict(gbm_opti_Bern, n.trees = 2100, newdata = testData, type = "response")
+gbm_pred_test_binaire <- ifelse(gbm_pred_test > gbm_threshold_train, "resignation", "renouvellement")
+gbm_table <- as.data.frame.matrix(table(testData$lapse, gbm_pred_test_binaire))
+
+
+glm_pred_test <- predict(glm_base, newdata = testData, type = "response")
+glm_pred_test_binaire <- ifelse(glm_pred_test > glm_threshold_train, "resignation", "renouvellement")
+glm_table <- as.data.frame.matrix(table(testData$lapse, glm_pred_test_binaire))
+```
+### Prédiction sur les données tests
+
+Puisque nous avons choisit l'AUC comme métrique de sélection, il est difficile 
+de dire comment le modèles prédit exactement les données. C'est pourquoi la 
+autoref{tbl:conf-matrice-modele-final} montre les résultats des prédictions 
+sur les données tests en utilisant le seuil optimal qui mène au point le plus
+proche du coin haut gauche de la courbe ROC. On remarque que le modèle gbm
+prédit mieux les vrai renouvellement et moins de faux renouvellement que le 
+glm. En opposition, le glm prédit légérement mieux les vrais résignations
+et prédit moins de fausse résignation. En vu des ses tableaux de confusion,
+le modèles qui devrait être utilisé par la compagnie d'assurance pour 
+prédire les résignations serait le modèle GBM. En plus d'avoir une meilleur
+matrice de confusion, il est moins grave de prédire des fausse résignation
+puisque si la compagnie utilise ses prédictions pour optimisé leurs statégie de
+renouvellement, par exemple en augmentant les clients avec un faible
+probabilité, les clients aurais résigné de toutes façon et ses mauvaise prédiction
+n'auront aucun impact sur la rentabilité.
+
+\begin{table}[!hb]
+centering
+\caption{Tableau de confusion en utilisant le seuil optimal pour les deux 
+meilleurs modèles sélectionnés.}
+\label{tbl:conf-matrice-modele-final}
+\begin{minipage}{0.48\linewidth}
+\begin{tabular}{l|cc}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Prédiction} \\
+GLM & Renouvellement & Résignation \\
+\hline
+Renouvellement & `r glm_table[1, 1]` & `r glm_table[1, 2]` \\
+Résignation    & `r glm_table[2, 1]` & `r glm_table[2, 2]` \\
+\hline
+\end{tabular}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\linewidth}
+\begin{tabular}{l|cc}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Prédiction} \\
+GBM & Renouvellement & Résignation \\
+\hline
+Renouvellement & `r gbm_table[1, 1]` & `r gbm_table[1, 2]` \\
+Résignation    & `r gbm_table[2, 1]` & `r gbm_table[2, 2]` \\
+\hline
+\end{tabular}
+\end{minipage}
+\end{table}
+
 
 
 
