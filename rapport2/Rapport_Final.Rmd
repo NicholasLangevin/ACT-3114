@@ -7,6 +7,8 @@ nocite: |
   @*
 output:
   pdf_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 \newpage
 \begin{flushright}
@@ -707,24 +709,54 @@ La courbe ROC est défini comme étant la sensitivité en fonction du faux néga
 
 # Interprétation des meilleurs modèles
 
-Dans cette section, on interprète le modèle de base, soit le modèle linéaire généralisé, et le modèle de gradient stochastique car ce sont ceux ayant la meilleure performance sous la mesure _AUC_ de la qualité de l'ajustement. Les méthodes utilisées pour l'interprétation diffèreront entres-autres car le modèle de boosting de gradient stochastique est construit sur un nombre élevé d'arbres. Pour avoir l'effet spécifique de chacune des variables sur la prévision, il faudrait analyser chacun des arbres individuellement, ce qui n'est évidemment pas optimal. On aura recourt à des outils permettant de visualiser l'impact global de chacune des variables sur l'ensemble des arbres, ce qui est effectivement un peu moins précis que pour le modèle de base. Le GLM permet d'avoir un facteur associé à chacune des variables directement. Ces facteurs sont une mesure directe de l'impact des variables sur la prévision. Ainsi, on tente d'avoir une mesure semblable pour le modèle de boosting de gradient nous permettant de bien visualiser l'impact global des variables sur la prévision sans avoir à passer en revu chacun des arbres entrainés.
+Dans cette section, on interprète le modèle de base, soit le modèle linéaire généralisé, et le modèle de gradient stochastique car ce sont ceux ayant la meilleure performance sous la mesure _AUC_ de la qualité de l'ajustement. Les méthodes utilisées pour l'interprétation diffèreront entres-autres car le modèle de boosting de gradient stochastique est construit sur un nombre élevé d'arbres. Pour avoir l'effet spécifique de chacune des variables sur la prévision, il faudrait analyser chacun des arbres individuellement, ce qui n'est évidemment pas optimal. On aura recourt à des outils permettant de visualiser l'impact global de chacune des variables sur l'ensemble des arbres, ce qui est un peu moins précis que pour le modèle de base. Le GLM permet d'avoir un facteur associé à chacune des variables directement. Ces facteurs sont une mesure directe de l'impact des variables sur la prévision. Ainsi, on tente d'avoir une mesure semblable pour le modèle de boosting de gradient nous permettant de visualiser l'impact des variables sur la prévision sans avoir à passer en revu chacun des arbres entrainés.
 
 ## Modèle de base
+
+Comme mentionné précédemment, l'interprétation de ce modèle ce fera sur les valeurs que prend les coefficients, soit les valeurs des $\beta_i$ qui multiplie chacune des variables dans l'équation. Étant donné qu'on modelise la probabilité de non-renouvellement des assurés de cette compagnie d'assurance, le lien logistique a été utilisé dans l'élaboration du modèle. En isolant, on peut obtenir l'équation suivante : 
+
+$\eta = ln\left(\frac{\pi_{res}}{1 - \pi_{res}}\right) \quad \Leftrightarrow \quad \pi_{res} = \frac{e^{\eta}}{1 + e^{\eta}}$ (fn expit)
+
+L'interprétation qui en ressort est que lorsque la fonction est croissante lorsque $\eta$ augmente et décroissante lorsque que $\eta$ est décroissant. Il est à noter que $\eta$ représente la probabilité de résignation de l'assuré pour lequel on veut obtenir une prévision. Sachant que l'équation du modèle est la suivante :
+
+$\eta = \sum\limits_{j=1}^p \beta_{j} x_{j}$
+
+Un coefficient négatif indique que la probabilité de résignation de la police d'assurance diminue et inversement, lorsque le coefficient est positif, la probabilité de résignation augmente. Sachant que le modèle comprend un grand nombre de variables explicatives, un tableau résumé (voir \autoref{tbl:glm_coeff}) a été conçu et ajouté à ce rapport dans le but de synthétiser l'interprétation qu'on peut en faire. Le coefficient d'origine aura un impact négatif sur la prévision. C'est-à-dire que la prévision part avec une probabilité de résignation qui diminue. De plus, selon l'équation du modèle plus la valeur d'une variable est élevée plus l'impact sur la prévision sera marquable sur la prévision. 
+
+On interprète ensuite le tableau comme suit :
+
+- Les variables *polholder_age*, *policy_age*, *prem_last*, *prem_market* et *vehicl_age* feront baisser la probabilité de résignation. Ainsi, plus l'âge de l'assuré, l'âge du véhicule et l'âge de la police augmente et plus la probabilité de non-renouvellement diminue. De plus, plus la prime du marché augmente plus les assurés seront tenté de garder leur police d'assurance car ils n'auront pas intérêt à s'assurer ailleurs à un prix qui vient tout juste d'augmenter ;
+
+- *prem_final* : l'augmentation de la prime proposée pour le renouvellement de la police fait augmenter la probabilité de résignation, ce qui fait beaucoup de sens ;
+
+- *polholder_diffdriver* : Une police ayant un conducteur de 24 ans et plus n'aura aucun impact sur la probabilité. La probabilité de résignation sera par contre plus élevée si le conducteur est un apprenti, un partenaire ou un jeune, tandis que la probabilité sera plus faible lorsque le conducteur est un utilisateur commerciale ou un utilisateur seul ;
+
+- *Polholder_age* : Lorsque le sexe de l'assuré n'aura aucun impact sur la probabilité lorsque l'assuré est un femme tandis que lorsque l'assuré est un homme, la probabilité de résignation aura tendance à augmenter ;
+
+- *polholder_BMCevol* : La probabilité de résignation reste neutre lorsque la prime a baissée depuis le dernier renouvellement. L'impact sur la prévision sera cependant négatif lorsque la prime a augmentée ou est restée stable depuis le dernier renouvellement ;
+
+- *polholder_job* : L'emploi de l'assuré n'aura aucun impact sur la prévision si l'assuré travaille dans le domaine médical. Dans tout autre domaine, le prévision aura tendance augmenter et donc l'assuré sera plus prompt à résigner sa police d'assurance.
+
+- *vehicl_region* : Ne sachant pas le nom des régions des assurés, il est impossible de ressortir une cause possible, mais la région de l'assuré n'aurau aucun effet sur la prévision lorsqu'elle est de 1. L'effet sera négatif pour les régions 2, 5 et 7 et positif pour toutes les autres régions ;
+
+- *prem_freqperyear* : pour ce qui est de cette variables, une fréquence de paiement choisie à une fois par année n'aura aucun impact sur la probabilité de résigner. Les assurés faisant des paiements semestrielles auront une probabilité moins élevée de résigner leur police et comparativement à ceux faisant leur paiement 3 ou 4 fois par année qui auront une probabilité plus élevée.
+
 
 ```{r load_glm_base}
 glm_base <- readRDS("../src/01-glm/mod_glm_final.rds")
 ```
 
 ```{r, glm_coeff_table, results='asis'}
-coeff_names <- c("Intercept", "polholder age", "polholder BM (inchangée, hausse)", "polholder diffdriver (apprenti, partenaire, jeunes)", "polholder diffdriver (commerciale, utilisateur seul)", "polholder gender (Male)", "polholder job (normal)", "policy age", "prem final", "prem freqyear (2)", "prem freqyear (4, 12)", "prem last", "prem market", "vehicl age", "vehicl region (3, 4, 6, 8 à 14)", "vehicl region (2, 5, 7)")
+coeff_names <- c("Intercept", "polholder age", "polholder BMCevol (inchangée, hausse)", "polholder diffdriver (apprenti, partenaire, jeunes)", "polholder diffdriver (commerciale, utilisateur seul)", "polholder gender (Male)", "polholder job (normal)", "policy age", "prem final", "prem freqyear (2)", "prem freqyear (4, 12)", "prem last", "prem market", "vehicl age", "vehicl region (3, 4, 6, 8 à 14)", "vehicl region (2, 5, 7)")
 coeff_positif <- c("", "", "", "x", "", "x", "x", "", "x", "", "x", "", "", "", "x", "")
 coeff_negatif <- c("x", "x", "x", "", "x", "", "", "x", "", "x", "", "x", "x", "x", "", "x")
 niv_inclu <- c("-", "-", "baisse", "24 ans et plus", "24 ans et plus", "Female", "medical", "-", "-", "1", "1", "-", "-", "-", "1", "1")
 lasso.names0 <- data.frame(Coefficients = coeff_names, Positif = coeff_positif,
-                           Negatif = coeff_negatif, "Niveau inclu dans Intercept" = niv_inclu)
+                           Negatif = coeff_negatif, "Niveau neutre" = niv_inclu)
 Rmd_table(lasso.names0, label="tbl:glm_coeff", 
           caption="Signe des coefficients du GLM")
 ```
+
 
 ```{r, glm_valeurs_des_betas, results='asis'}
 #coefficients.glm <- summary(glm_base)$coefficients[,1][which(abs(summary(glm_base)$coefficients[,1]) > 0.15)]
@@ -732,16 +764,6 @@ Rmd_table(lasso.names0, label="tbl:glm_coeff",
 #variables <- c("Intercept", "polholder.age", "polholder.BMCevolstable", "polholder.BMCevolup", #"polholder.diffdrivercommercial", "polholder.diffdriverlearner 17", "polholder_diffdriveronly partner", #"polholder.diffdriversame", "polholder.diffdriveryoung drivers", "polholder.genderMale", "polholder_jobnormal", #"policy_age", "prem_final", "prem_freqperyear.L", "prem_freqperyear.Q", "prem_freqperyear.C", "prem_last", #"prem_market", "vehicl_age", "vehicl_regionReg2", "", "", "", "", "", "" , "", "", "", "")
 #save(coefficients, file = "../src/01-glm/tableau_coefficient.tex")
 ```
-
-Interprétation de la probabilité de résignation à partir du lien (logistique) du glm:
-
-$\eta = ln\left(\frac{\pi_{res}}{1 - \pi_{res}}\right) \quad \Leftrightarrow \quad \pi_{res} = \frac{e^{\eta}}{1 + e^{\eta}}$ (fn expit)
-
-La fonction expit est croissante lorsque $\eta$ augmente (prob augmente), décroissante lorsque que $\eta$ est décroissant.
-
-$\eta = \sum\limits_{j=1}^p \beta_{j} x_{j}$
-
-Coefficients negatif -> fait baisser la prob, Coefficients positif -> augmente la prob
 
 
 ## Boosting de gradient stochastique
@@ -756,22 +778,17 @@ load(file = "../src/07-gbm/pdp_vehicl_region.rds")
 load(file = "../src/07-gbm/pdp_policy_age.rds")
 ```
 
+*Importance des variables*
 Pour l'interprétation de ce modèle, nous utiliserons l'importance des variables, les graphiques de dépendance partielle et la statistique H de Friedman.
 
-L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles étant plus significatives dans l'élaboration du modèle. 
-
-Les graphiques de dépendance partielle ( _DPD_) sont un outil plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet plus spécifique d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on peut interprété cette partie du modèle. Cet outil est utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs. Le désavantage de cet outil est qu'il y a beaucoup de courbe surperposées. Ainsi, il est difficile de voir l'effet individuel de la prévision sur les observations. Si nécessaire on peut aussi faire les graphiques d'espérance conditionnelle pour pouvoir interpréter l'effet individuel d'une variable par prévisions et non pour les prévisions en générales. C'est en observant les graphique de dépendance partielle qu'on pourra savoir si les graphiques d'espérance conditionnelle individuelle pourrait être utile pour l'interprétation du modèle.
-
-Nous aurons également recourt à la statistique H de Friedman pour pouvoir estimer la force d'une interraction en mesurant la quantité de la variance qui provient de cet interraction dans la prévision. Ce qui nous permettera plus spécifiquement d'observer les variables qui interragissent avec les variables les plus importantes pour expliquer la prévision, soit **prim_last** et **vehicl_region**. Sachant que la profondeur maximale de l'arbre pour ce modèle est de `r gbmfit_Bern$bestTune["interaction.depth"]`, il pourrait y avoir des interraction sur jusqu'à `r gbmfit_Bern$bestTune["interaction.depth"]` variables différentes. On pourra ensuite réutiliser les DPD sur les interractions qui nous intéressent.
-
-*Importance des variables*
+L'importance des variables nous permet de comprendre l'influence des variables explicatives sur la prévision. Ainsi, on peut visualiser les variables du modèles étant plus significatives dans l'élaboration du modèle. De la (mettre les 2 REFERENCES ICI), on voit que les variables les plus significatives sur ce modèles sont *prem_index* et *vehicl_region* 
 
 \input{tbl_iml_gbm.tex}
 
 ![Graphique de l'importance des variables sur la prévision](../src/07-gbm/imp_gbm.png)
 
 *Graphiques de dépendance partielle*
-
+Les graphiques de dépendance partielle ( _DPD_) est un outil plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet plus spécifique d'une variable explicative sur la prévision, c'est à l'aide de cette outil qu'on peut interpréter cette partie du modèle. Cet outil est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle. 
 
 ```{r pdp_prem_index, results='asis', fig.height=4, fig.cap="Graphique de dépendance partielle pour la variable prem.index"}
 plot(gbm_opti_Bern, 19, gbmfit_Bern$bestTune["n.trees"], type ="response")
@@ -786,7 +803,9 @@ plot(gbm_opti_Bern, 6, gbmfit_Bern$bestTune["n.trees"], type ="response")
 ```
 
 
-*Statistique H de friedman* 
+Pour ce qui est de la statistique H de Friedman, elle  est utilisé pour pouvoir estimer la force des interractions entre une variable précisement et tous les autres variables en mesurant la quantité de la variance qui provient de cet interraction dans la prévision. On peut ainsi observer les variables qui interragissent avec les variables les plus importantes pour expliquer la prévision, soit les variables *prem_index* et *vehicl_region*. Sachant que la profondeur maximale de l'arbre pour ce modèle est de `r gbmfit_Bern$bestTune["interaction.depth"]`, il pourrait y avoir des interraction sur jusqu'à `r gbmfit_Bern$bestTune["interaction.depth"]` variables différentes. On pourra ensuite réutiliser les DPD sur les interractions qui nous intéressent.
+
+On peut voir dans les (2 FIGURES SUIVANTES : Mettre une ref) que les interractions ayant la force d'interraction la plus élevée sur la prévision sont vehicl_region:prem_index, prem_freqperyear:prem_index et prem_final:vehicl_region. En effet, on observant la force d'interraction sur les autres interractions sur les variables les plus importantes pour ce modèle, on remarque que les interractions mentionnées précédemment sont celles ayant la force la plus élevée mais aussi les seules menant à une analyse interressante sur l'impact sur la prévision par les (METTRE REFERENCE ICI DES 3 GRAPHIQUES PDP SUIVANTS) représentant les _PDP_ de ces interractions. On remarque que ..... À COMPLETÉ PAR L'ANALYSE DES 3 GRAPHIQUES SUIVANTS.
 
 ```{r int_prem_index, results='asis', fig.height=4, fig.cap="Graphique de l'importance des interractions entre la variables prem.index et les autres variables sur la prévision"}
 plot(int.prem_index)
@@ -797,9 +816,16 @@ plot(int.vehicl_region)
 ```
 
 
-Ajout des graphiques pdp nécessaire pour les interractions ayant la plus grande importance (1-2 graphiques max)
 ```{r dpd_interraction, results='asis', fig.heigth=4, fig.cap="Graphique de dépendance partielle pour l'interraction entre la variable vehicl.region et la variable prem.index"}
-#plot(gbm_opti_Bern, 18:19, gbmfit_Bern$bestTune["n.trees"], type="response")
+plot(gbm_opti_Bern, 18:19, gbmfit_Bern$bestTune["n.trees"], type="response")
+```
+
+```{r dpd_interraction2, results='asis', fig.heigth=4, fig.cap="Graphique de dépendance partielle pour l'interraction entre la variable prem.freqperyear et la variable prem.index"}
+plot(gbm_opti_Bern, c(10,19), gbmfit_Bern$bestTune["n.trees"], type="response")
+```
+
+```{r dpd_interraction3, results='asis', fig.heigth=4, fig.cap="Graphique de dépendance partielle pour l'interraction entre la variable prem.final et la variable vehicl.region"}
+plot(gbm_opti_Bern, c(9,18), gbmfit_Bern$bestTune["n.trees"], type="response")
 ```
 
 \newpage
