@@ -875,24 +875,32 @@ glm_table <- as.data.frame.matrix(table(testData$lapse, glm_pred_test_binaire))
 ```
 ### Prédiction sur les données tests
 
-Puisque nous avons choisit l'AUC comme métrique de sélection, il est difficile 
-de dire comment le modèles prédit exactement les données. C'est pourquoi la 
-autoref{tbl:conf-matrice-modele-final} montre les résultats des prédictions 
-sur les données tests en utilisant le seuil optimal qui mène au point le plus
+Puisque nous avons choisit l'AUC comme métrique de sélection, il est difficile
+de dire comment le modèles prédit exactement les données. C'est pourquoi la
+autoref{tbl:conf-matrice-modele-final} montre les résultats des prédictions sur
+les données tests en utilisant le seuil optimal qui mène au point le plus
 proche du coin haut gauche de la courbe ROC. On remarque que le modèle gbm
-prédit mieux les vrai renouvellement et moins de faux renouvellement que le 
-glm. En opposition, le glm prédit légérement mieux les vrais résignations
-et prédit moins de fausse résignation. En vu des ses tableaux de confusion,
-le modèles qui devrait être utilisé par la compagnie d'assurance pour 
-prédire les résignations serait le modèle GBM. En plus d'avoir une meilleur
-matrice de confusion, il est moins grave de prédire des fausse résignation
-puisque si la compagnie utilise ses prédictions pour optimisé leurs statégie de
-renouvellement, par exemple en augmentant les clients avec un faible
-probabilité, les clients aurais résigné de toutes façon et ses mauvaise prédiction
-n'auront aucun impact sur la rentabilité.
+prédit mieux les vrai renouvellement et moins de faux renouvellement que le
+glm. En opposition, le glm prédit légérement mieux les vrais résignations et
+prédit moins de fausse résignation. En vu des ses tableaux de confusion, le
+modèles qui devrait être utilisé par la compagnie d'assurance pour prédire les
+résignations serait le modèle GBM pour deux raisons. 
 
-\begin{table}[!hb]
-centering
+Premièrement, comme discuté
+précédament, chaque matrice de confusion offre des avantages et des désavantage,
+mais les avantages sont meilleurs pour le gbm. Par exemple, on augmente de 192
+les vrai renouvellement pour seulement augmenter de 29 les faux renouvellement.
+
+Deuxièmement, prenon le cas ou la prédiction servirait à optimisé la statégie
+de renouvellement des assurés, par exemple en augmentant plus les assurées avec
+un faible probabilité de résignation. Dans ce cas, le fait de prédire des faux
+renouvellement n'a aucun effet puisque peut importe l'augmentation, l'assuré
+aurait résigné; conséquament, ceci n'a pas d'impact sur la rentabilité.  Ainsi,
+la matrice de confusion qui maximise les vrai renouvellement au coût de prédire
+plus de faux renouvellement est le modèle gbm.
+
+\begin{table}[!ht]
+\centering
 \caption{Tableau de confusion en utilisant le seuil optimal pour les deux 
 meilleurs modèles sélectionnés.}
 \label{tbl:conf-matrice-modele-final}
@@ -918,9 +926,6 @@ Résignation    & `r gbm_table[2, 1]` & `r gbm_table[2, 2]` \\
 \end{tabular}
 \end{minipage}
 \end{table}
-
-
-
 
 \newpage
 
