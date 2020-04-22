@@ -845,7 +845,7 @@ Pour ce qui est de la statistique H de Friedman, elle  est utilisée pour pouvoi
 plot(int.prem_index)
 ```
 
-La \autoref{int} est un exemple de graphique obtenu en utilisant cette statistique. On peut ensuite utiliser les graphiques de dépendance partielle pour voir l'impact des interactions ayant la plus grande force sur la prévision. Après analyse, seule l'interaction *vehicl_region:prem_index* donne une interprétation intéressante. À partir de graphique de dépendance partielle de la \autoref{pdp}, on peut observer que certaines régions possèdent un creux où la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%.
+La \autoref{int} est un exemple de graphique obtenu en utilisant cette statistique. On peut ensuite utiliser les graphiques de dépendance partielle pour voir l'impact des interactions ayant la plus grande force sur la prévision. Après analyse, seule l'interaction *vehicl_region:prem_index* donne une interprétation intéressante. À partir du graphique de dépendance partielle de la \autoref{pdp}, on peut observer que certaines régions possèdent un creux où la probabilité de résignation est beaucoup plus faible lorsque le pourcentage d'augmentation de la prime ce situe entre 0 et 50% dont les régions 1, 2, 8, 9, 12, 13 et 14. Pour ce qui est des autres régions, la probabilité de résignation demeure assez stable et faible lorsque le pourcentage d'augmentation est supérieur à 0%.
 
 ```{r dpd_interraction, results='asis', fig.heigth=3, fig.cap="\\label{pdp}Graphique de dépendance partielle pour l'interraction entre la variable vehicl.region et la variable prem.index"}
 plot(gbm_opti_Bern, 18:19, gbmfit_Bern$bestTune["n.trees"], type="response")
@@ -877,13 +877,12 @@ glm_table <- as.data.frame.matrix(table(testData$lapse, glm_pred_test_binaire))
 ### Prédiction sur les données tests
 
 Puisque nous avons choisi l'AUC comme métrique de sélection, il est difficile
-de dire comment le modèles prédit exactement les données. C'est pourquoi la
+de dire comment le modèle prédit exactement les données. C'est pourquoi la
 \autoref{tbl:conf-matrice-modele-final} montre les résultats des prédictions sur
 les données tests en utilisant le seuil optimal qui mène au point le plus
-proche du coin haut gauche de la courbe ROC. On remarque que le modèle de boosting de gradient stochastique
-prédit mieux les vrais renouvellements et moins de faux renouvellement que le
+proche du coin en haut à gauche de la courbe _ROC_. On remarque que le modèle de boosting de gradient stochastique prédit mieux les vrais renouvellements et moins bien les faux renouvellement que le
 modèle de base. En opposition, le modèle de base prédit légèrement mieux les vraies résignations et
-prédit moins de fausse résignation. 
+prédit moins bien les fausses résignations. 
 
 \begin{table}[!ht]
 \centering
@@ -919,33 +918,22 @@ Résignation    & `r gbm_table[2, 1]` & `r gbm_table[2, 2]` \\
 
 En vue des tableaux de confusion de la section précédente, le 
 modèle qui devrait être utilisé par la compagnie d'assurance pour prédire les
-résignations serait le modèle GBM pour deux raisons. 
+résignations serait le modèle de boosting de gradient stochastique pour les raisons suivantes. En effet, comme discuté précédemment, chaque tableau de confusion à ces avantages et ces désavantages.
+Par contre, il serait préférable d'opter pour le modèle de boosting de gradient stochastique. On augmente de 192 les vrais renouvellements pour seulement augmenter de 29 les faux renouvellements, ce qui est préférable aux écarts remarqués avec le modèle de base. En prenant le cas où la prédiction servirait à optimiser la stratégie de renouvellement des assurés, soit par exemple en augmentant davantage la prime des assurés ayant une faible probabilité de résignation prédite. Le fait de prédire de faux
+renouvellement n'aurait aucun effet puisque peu importe l'augmentation de la prime, l'assuré
+n'aurait pas renouvelé sa police d'assurance, ce qui n'aurait pas d'impact réel sur la rentabilité. Ainsi, la matrice de confusion qui maximise les vrais renouvellements au coût de prédire
+plus de faux renouvellement est le modèle de boosting de gradient stochastique.
 
-Premièrement, comme discuté
-précédemment, chaque matrice de confusion offre des avantages et des désavantages,
-mais les avantages sont meilleurs pour le gbm. Par exemple, on augmente de 192
-les vrais renouvellements pour seulement augmenter de 29 les faux renouvellements.
-
-Deuxièmement, prenons le cas ou la prédiction servirait à optimiser la stratégie
-de renouvellement des assurés, par exemple en augmentant plus les assurées avec
-une faible probabilité de résignation. Dans ce cas, le fait de prédire de faux
-renouvellement n'a aucun effet puisque peu importe l'augmentation, l'assuré
-aurait résigné; conséquemment, ceci n'a pas d'impact sur la rentabilité.  Ainsi,
-la matrice de confusion qui maximise les vrais renouvellements au coût de prédire
-plus de faux renouvellement est le modèle gbm.
-
-Finalement, bien que le modèle final soit le gradient boosting, les résultats
-auraient pu être meilleurs. En effet, beaucoup de faux renouvellements sont 
+Bien que le modèle final soit le modèle de boosting de gradient stochastique, nous aurions pu espérer de meilleurs résultats. En effet, beaucoup de faux renouvellements sont 
 générés ce qui pourrait avoir des effets sur la rentabilité de la compagnie
-puisqu'elle aurait pu charger plus cher à ces assurés. Le modèle pourrait être
+puisqu'elle aurait pu charger plus cher à certains de ces assurés. Le modèle pourrait être
 amélioré est utilisant des méthodes pour contourné le problème de débalancement
 des données, par exemple en utilisant des techniques de sous et sur
 échantillonnage. Il aurait aussi été intéressant d'avoir plus d'information
-sur l'expérience des assurés autre que le système Bonus Malus. Par exemple,
-la fréquence d'accident ainsi que le coût de ses accidents aurait permis de mieux 
-déterminer pourquoi il y avait une augmentation de la prime. De plus, nous avons
+sur l'expérience des assurés, autre que le système Bonus Malus. Par exemple,
+la fréquence d'accident pour le détenteur de la police ainsi que leurs coûts respectifs auraient permis de mieux déterminer la raison d'une augmentation de la prime chargée. De plus, nous avons
 vu que la région avait un impact important. Il aurait été pertinent de savoir
-davantage ce qui caractérise ses différentes régions.
+davantage ce qui caractérise les régions habitées par les assurés pour savoir ce qui les différencie les unes des autres.
 
 \newpage
 
