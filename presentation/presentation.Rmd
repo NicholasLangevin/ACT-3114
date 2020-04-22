@@ -239,16 +239,6 @@ $$\max _{\left(\beta_{0}, \beta_{j}\right)} \mathcal{L}(\beta_{0}, \ldots, \beta
 ![](lambda_opti.jpg){width=550px}
 </center>
 
-## Modèle linéaire avec régularisation
-
-### Variables avec coeffcient nul
-
-<br/>
-<center>
-![](selection_lasso.jpg){width=600px}
-
-</center>
-
 ## Modèles k plus proches voisins
 
 <br/>
@@ -261,14 +251,7 @@ $$\max _{\left(\beta_{0}, \beta_{j}\right)} \mathcal{L}(\beta_{0}, \ldots, \beta
 
 - Prédiction de la probabilité de résignation par régression
 
-
-## Modèles k plus proches voisins
-
-### Résultats de l'optimisation
-
-<center>
-![](knn_opti.jpg){width=700px}
-</center>
+- Optimisation de l'hyperparamètre k
 
 ## Arbre de classification
 
@@ -296,16 +279,6 @@ $$
 </center>
 
 - Paramètre optimisé: taille minimale d'un noeud (nodesize)
-
-## Bagging
-
-### Résultats de l'optimisation
-
-<center>
-![](bag_opti.jpg){width=600px}
-</center>
-
-
 
 ## Forêt aléatoire 
 
@@ -347,25 +320,13 @@ $$
 
 ## Boosting de gradient stochastique
 
-### Résultats de l'optimisation
+### Illustration de l'optimisation
 
 ```{r plot_gbm_opti, fig.height=3.5}
 plot(gbmfit_Bern)
 gbmfit_Bern$bestTune[1:2]
 ```
 
-
-<<<<<<< HEAD
-# Interprétation des meilleurs modèles 
-
-## Modèle de base 
-
-- Modélisation avec lien logistique 
-
-<font size = "4.5">
-$$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
-</font>
-=======
 ## Comparaison de la performance des modèles
 
 - Échantillon test 20\%
@@ -375,7 +336,16 @@ $$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
 <center>
 <img src="comparaison_ROC.jpg" width="400" />  <img src="comparaison_AUC.jpg" width="500" height = 300 /> 
 </center>
->>>>>>> e485c38... presentation charles
+
+# Interprétation des meilleurs modèles 
+
+## Modèle de base 
+
+- Modélisation avec lien logistique 
+
+<font size = "4.5">
+$$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
+</font>
 
 - Impact des coefficients sur la prévision
 
