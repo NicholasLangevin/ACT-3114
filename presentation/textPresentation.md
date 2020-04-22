@@ -1,12 +1,34 @@
 # Introduction
-TODO:
+Les contracts d'assurance IARD sont pour la plupart d'une *durée de 1 ans*.
+Le renouvellement des polices est donc une étape répétitives pour les compagnies
+d'assurance.
+
+Comme dans le cas de la tarification, les compagnies d'assurances peuvent être
+tenté d'optimiser ce processus pour offrir un prix unique à chaque assuré 
+dependament de leurs caractéristiqueis. Cette optimisation peut permettre 
+d'augmenter la rentabilité de cette compagnie.
+
+Finalement, un autre raison pourquoi il est important de ne pas n'églifer les 
+stratégie de renouvellement est que la plupart des compagnies vont données des
+*rabais au nouveau* assuré dans le but d'augmenter leur *part de marché*. Il est 
+donc important pour ceux-ci d'*augmenter la prime efficacement* les contracts au 
+renouvellement pour premièrement ne pas perde les clients et deuxièmement 
+rentabilisé leur investissement.
+
+c'est dans cette objectif que la présentation d'aujourd'hui tente de vous 
+informer sur la modélisation de la probabilité de résignation.
 
 # Plan de la présentation 
+Dans un prémier temps, je vais vous expliquer en quoi la probabilité de 
+résignation peut être util dans une statégie de renouvellement.
+
+Ensuite, je vais vous présenté brièvement les données avec lesquels nous avons
+travailler pour notre analyse.
+
+Finalement, mes collèges vont vous parler ...
 
 # Description du problème dans un context actuariel
-Dans un context d'assurance, il est important de savoir si un assurer à 
-beaucoup de chance de renouveler sont contrat pour l'année suivant. Pourquoi?
-
+Premièrement:
 - Taux de rétention:
   Savoir combien de personnes vont renouveler permet de faire un estimation
   du taux de rétention. Le taux de rétention est important dans la compagnie 
@@ -16,7 +38,8 @@ beaucoup de chance de renouveler sont contrat pour l'année suivant. Pourquoi?
   Si le taux de rétention réelle est plus petit que celui prédit, une raison
   potentielle est que les compétiteurs offrent des meilleurs prix, ou encore
   que le service à la clientèle porte des lacunes.
-  
+
+Deuxièmement:
 - Élasticité:
   Une autre raison de calculé la probabilité de renouvellement est pour calculé
   l'élastique. Ceci représente la variation dans la probabilité de
@@ -58,20 +81,34 @@ dé balancé et ceci pourrait expliquer pourquoi.
 Ce graphique représente l'augmentation de la prime final chargée au client et
 la prime pure. 
 
-La prime pure représente l'espérance des couts. Cette prime devrait
+*La prime pure* représente l'espérance des couts. Cette prime devrait
 théoriquement être chargée au client. En pratique, la prime final peut chargée
 peut être différent pour des raison marketing ou de rentabilité. 
 
-Il est surprenant de voir que les assurés avec un bon dossier sont chargée plus
-cher en moyenne que lors prime théorique alors que les dossiers stable ou
-mauvais sont environ égaux. De plus, les polices chargées plus cher sont ceux
-qui ont résigner leur police.
+
+Les *bon dossier* sont chargée plus cher que leur prime theorique. Diminuer 
+dans le systeme bonus malus signifie que l experience est bonne depuis
+plusieurs années. donc la compagnie dinimu la prime, mes pas autant qu'elle
+devrait pour faire du profit. 
+
+Les stable et up sont similaire, mais dans le cas des resignations, le 3e
+quartile est plus élever. Cest normal, parce que les concurrant on sensiblement
+une tarrification similaire et charge plus proche des cettes prime pure.
+
 
 ## Police commercial
-TODO:
+*Age de la voiture et de l'assuré* sont des bon indicateur de resignation
+dans le cas de police commercial
+
+Les jeunes qui ont des compagnie vont plus probablement magasiner chaque années
+pour trouver le meilleurs prix.
+
+Finalement, les police commercial garde leur auto plus longtemps, mais vers 15
+ans les chance qu il change leurs voiture la prochaine années est grande.
+Et la compagnie d assurance ne semble pas avoir la part de marche des nouveaux
+vehicule
 
 ## Âge de l'assuré
-TODO:
 
 ## Région géographique
 TODO:

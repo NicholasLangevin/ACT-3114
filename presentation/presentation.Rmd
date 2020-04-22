@@ -3,6 +3,10 @@ header-includes: \usepackage{booktabs}
 title: "Modélisation de la probabilité de résignation"
 author: "Charles Comeau, Nicholas Langevin et Andréanne Larouche"
 date: "22/04/2020"
+bibliography: ../biblio.bib
+bibliographystyle: apalike
+nocite: | 
+  @CASdatasets, @glmnet.intro, @Caret, @IntroAppSupervise
 output: 
         ioslides_presentation:
             widescreen: true
@@ -53,14 +57,15 @@ print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1),
 ```
 ## Plan de la présentation
 
-- Description du problème dans un context actuariel
+- Importance de la prédiction de résignation
+  <!-- Description du problème dans un context actuariel -->
 - Exploration des données utilisées
 - Prétraitement des données et exploration non-supevisée
 - Description des modèles considérés
 - Performance et interprétation des meilleurs modèles
 - Conclusion
 
-## Description du problème dans un contexte actuariel
+## Importance de la prédiction de résignation
 - Taux de rétention:
   $$
     \text{Taux de rétention} = \frac{\text{# Renouvellement}}{\text{# Police
@@ -71,7 +76,6 @@ print.tables <- function(dat, caption="", label="", align=rep("c", ncol(dat)+1),
     \text{Élasticité} = \frac{\Delta Pr[\text{Renouvellement}]}{\Delta
     \text{Augmentation prix}}
   $$
-  
 
 ## Descriptions du jeu de données
 ```{r}
@@ -97,6 +101,7 @@ nbResign <- sum(data$lapse == levels(data$lapse)[2]) / nrow(data)
 ```{r}
 ggplot(data, aes(x=policy_age, y=prem_index, col=polholder_BMCevol)) + 
     geom_point(alpha=0.5) + 
+    facet_grid(vars(lapse)) + 
     ylab("Augmentation de la prime au renouvellement") + 
     xlab("Âge de la police") + 
     scale_y_continuous(labels = percent) + 
@@ -135,7 +140,7 @@ gg.pol_age <-
 
 grid.arrange(gg.veh_age, gg.pol_age, ncol = 2)
 ```
-
+<!--
 ## Âge de l'assuré
 
 ```{r}
@@ -146,6 +151,7 @@ ggplot(data, aes(x=lapse, y=polholder_age, col=prem_freqperyear)) +
     ylab("Âge de l'assuré") + 
     theme_bw()
 ```
+-->
 
 ## Region géographique
 
@@ -444,4 +450,4 @@ Modèle de boosting de gradient stochastique :
 
 # Conclusion
 
-## Conclusion
+## Bibliographie

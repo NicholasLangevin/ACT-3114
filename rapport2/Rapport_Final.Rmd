@@ -882,22 +882,8 @@ les données tests en utilisant le seuil optimal qui mène au point le plus
 proche du coin haut gauche de la courbe ROC. On remarque que le modèle gbm
 prédit mieux les vrai renouvellement et moins de faux renouvellement que le
 glm. En opposition, le glm prédit légérement mieux les vrais résignations et
-prédit moins de fausse résignation. En vu des ses tableaux de confusion, le
-modèles qui devrait être utilisé par la compagnie d'assurance pour prédire les
-résignations serait le modèle GBM pour deux raisons. 
+prédit moins de fausse résignation. 
 
-Premièrement, comme discuté
-précédament, chaque matrice de confusion offre des avantages et des désavantage,
-mais les avantages sont meilleurs pour le gbm. Par exemple, on augmente de 192
-les vrai renouvellement pour seulement augmenter de 29 les faux renouvellement.
-
-Deuxièmement, prenon le cas ou la prédiction servirait à optimisé la statégie
-de renouvellement des assurés, par exemple en augmentant plus les assurées avec
-un faible probabilité de résignation. Dans ce cas, le fait de prédire des faux
-renouvellement n'a aucun effet puisque peut importe l'augmentation, l'assuré
-aurait résigné; conséquament, ceci n'a pas d'impact sur la rentabilité.  Ainsi,
-la matrice de confusion qui maximise les vrai renouvellement au coût de prédire
-plus de faux renouvellement est le modèle gbm.
 
 \begin{table}[!ht]
 \centering
@@ -930,6 +916,35 @@ Résignation    & `r gbm_table[2, 1]` & `r gbm_table[2, 2]` \\
 \newpage
 
 # Conclusion
+En vu des des tableaux de confusion de la section précédante, le 
+modèles qui devrait être utilisé par la compagnie d'assurance pour prédire les
+résignations serait le modèle GBM pour deux raisons. 
+
+Premièrement, comme discuté
+précédament, chaque matrice de confusion offre des avantages et des désavantage,
+mais les avantages sont meilleurs pour le gbm. Par exemple, on augmente de 192
+les vrai renouvellement pour seulement augmenter de 29 les faux renouvellement.
+
+Deuxièmement, prenont le cas ou la prédiction servirait à optimisé la statégie
+de renouvellement des assurés, par exemple en augmentant plus les assurées avec
+un faible probabilité de résignation. Dans ce cas, le fait de prédire des faux
+renouvellement n'a aucun effet puisque peut importe l'augmentation, l'assuré
+aurait résigné; conséquament, ceci n'a pas d'impact sur la rentabilité.  Ainsi,
+la matrice de confusion qui maximise les vrai renouvellement au coût de prédire
+plus de faux renouvellement est le modèle gbm.
+
+Finalement, bien que le modèle final soit le gradient boosting, les résultats
+auraient pu être meilleurs. En effet, beaucoup de faux renouvellement sont 
+généré ce qui pourrait avoir des effets sur la rentabilité de la compagnie
+puisqu'elle aurait pu charché plus cher à ces assurés. Le modèle pourrait être
+amélioré est utilisant des méthodes pour contourné le problème de débalancement
+des données, par exemple en utilisant des techniques de sous et sur
+échantillionnage. Il aurait aussi été intéréssant d'avoir plus d'information
+sur l'expérience des assurés autre que le système Bonus Malus. Par exemple,
+la fréquence d'accident ainsi que le coût de ses accident aurait permit de mieux 
+déterminé pourquoi il y avait un augmentation de la prime. De plus, nous avons
+vu que la régions avait un impact important. Il aurait été pertinant de savoir
+davantage ce qui caractérise ses différentes régions.
 
 \newpage
 
