@@ -795,8 +795,8 @@ L'importance des variables nous permet de comprendre l'influence des variables e
 
 Ces graphiques permettent une interprétation plus spécifique. Étant donné que l'importance des variables ne nous permet pas de comprendre l'effet isolé d'une variable explicative sur la prévision, c'est à l'aide de cet outil qu'on pourra en faire l'interprétation. Il est ainsi utilisé pour mieux comprendre l'effet global d'une variable explicative sur la prévision et peut être interprété comme la moyenne des ICEs, soit l'espérance conditionnelle individuelle pour chacune des observations. 
 
-Le graphique de gauche de la \autoref{tbl:pdppartie1} nous permet de voir que pour une valeur de *prem_index* se situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage d'augmentation de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner. Il est surprenant de voir que lorsque qu'il y a une petit diminution de prime, la probabilité augmente de beaucoup. Cette effect est difficilement expliquable
-sans l'aide de d'autres variables explicatives.
+Le graphique de gauche de la \autoref{tbl:pdppartie1} nous permet de voir que pour une valeur de *prem_index* se situant entre 0 et 0.6, la probabilité de résignation est beaucoup plus faible. Ainsi, un assuré peut avoir un pourcentage d'augmentation de sa prime au renouvellement allant jusqu'à presque 50% sans qu'il y ait nécessairement un impact sur sa probabilité de résigner. C'est lorsque l'augmentation dépasse les 55% environ qu'on remarque l'impact de l'augmentation de la prime sur la probabilité de résigner. Il est surprenant de voir que lorsqu'il y a une petite diminution de prime, la probabilité augmente de beaucoup. Cet effet est difficilement explicable
+sans l'aide d'autres variables explicatives.
 
 Le graphique de droite de la \autoref{tbl:pdppartie1} nous permet, quant à elle, de voir que les régions 11 à 14 sont celles affectant le plus la probabilité de ne pas renouveler la police d'assurance. L'impact le plus marqué est observé auprès des assurés ayant comme région de résidence la région 12 et l'impact le moins marqué est observé auprès des résidents de la région 2. Étant donné que les noms des régions n'ont pas été divulgués par la compagnie d'où provient le jeu de données, il est impossible pour nous de faire un lien entre la région et l'impact que celle-ci peut avoir sur la décision de l'assuré qui y habite.
 
@@ -835,7 +835,7 @@ plot(gbm_opti_Bern, 10, gbmfit_Bern$bestTune["n.trees"], type ="response")
 \label{tbl:pdppartie2}
 \end{figure}
 
-De plus, en jetant un coup d'oeil aux autres variables ayant une importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police et de la fréquance de paiement de la prime sur la probabilité de résignation d'où l'ajout de la \autoref{tbl:pdppartie2} à ce rapport. Dans celles-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui montre une certaine forme de fidélité des clients. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable à une valeur qui s'approche grandement de la valeur nulle. Dans le cas de la variable *prem_freqperyear*, on observe que plus la fréquence de paiement est élevé, plus la probabilité de résignation diminue.
+De plus, en jetant un coup d'oeil aux autres variables ayant une importance marquée sur la prévision, il a été possible d'observer un effet important de l'âge de la police et de la fréquence de paiement de la prime sur la probabilité de résignation d'où l'ajout de la \autoref{tbl:pdppartie2} à ce rapport. Dans celles-ci, on peut observer que la probabilité de résignation diminue avec l'âge de la police, ce qui montre une certaine forme de fidélité des clients. De plus dès que la police atteint plus de 5 ans, cette probabilité reste stable à une valeur qui s'approche grandement de la valeur nulle. Dans le cas de la variable *prem_freqperyear*, on observe que plus la fréquence de paiement est élevée, plus la probabilité de résignation diminue.
 
 \newpage
 
@@ -873,17 +873,17 @@ glm_pred_test <- predict(glm_base, newdata = testData, type = "response")
 glm_pred_test_binaire <- ifelse(glm_pred_test > glm_threshold_train, "resignation", "renouvellement")
 glm_table <- as.data.frame.matrix(table(testData$lapse, glm_pred_test_binaire))
 ```
+
 ### Prédiction sur les données tests
 
-Puisque nous avons choisit l'AUC comme métrique de sélection, il est difficile
+Puisque nous avons choisi l'AUC comme métrique de sélection, il est difficile
 de dire comment le modèles prédit exactement les données. C'est pourquoi la
-autoref{tbl:conf-matrice-modele-final} montre les résultats des prédictions sur
+\autoref{tbl:conf-matrice-modele-final} montre les résultats des prédictions sur
 les données tests en utilisant le seuil optimal qui mène au point le plus
-proche du coin haut gauche de la courbe ROC. On remarque que le modèle gbm
-prédit mieux les vrai renouvellement et moins de faux renouvellement que le
-glm. En opposition, le glm prédit légérement mieux les vrais résignations et
+proche du coin haut gauche de la courbe ROC. On remarque que le modèle de boosting de gradient stochastique
+prédit mieux les vrais renouvellements et moins de faux renouvellement que le
+modèle de base. En opposition, le modèle de base prédit légèrement mieux les vraies résignations et
 prédit moins de fausse résignation. 
-
 
 \begin{table}[!ht]
 \centering
@@ -916,34 +916,35 @@ Résignation    & `r gbm_table[2, 1]` & `r gbm_table[2, 2]` \\
 \newpage
 
 # Conclusion
-En vu des des tableaux de confusion de la section précédante, le 
-modèles qui devrait être utilisé par la compagnie d'assurance pour prédire les
+
+En vue des tableaux de confusion de la section précédente, le 
+modèle qui devrait être utilisé par la compagnie d'assurance pour prédire les
 résignations serait le modèle GBM pour deux raisons. 
 
 Premièrement, comme discuté
-précédament, chaque matrice de confusion offre des avantages et des désavantage,
+précédemment, chaque matrice de confusion offre des avantages et des désavantages,
 mais les avantages sont meilleurs pour le gbm. Par exemple, on augmente de 192
-les vrai renouvellement pour seulement augmenter de 29 les faux renouvellement.
+les vrais renouvellements pour seulement augmenter de 29 les faux renouvellements.
 
-Deuxièmement, prenont le cas ou la prédiction servirait à optimisé la statégie
+Deuxièmement, prenons le cas ou la prédiction servirait à optimiser la stratégie
 de renouvellement des assurés, par exemple en augmentant plus les assurées avec
-un faible probabilité de résignation. Dans ce cas, le fait de prédire des faux
-renouvellement n'a aucun effet puisque peut importe l'augmentation, l'assuré
-aurait résigné; conséquament, ceci n'a pas d'impact sur la rentabilité.  Ainsi,
-la matrice de confusion qui maximise les vrai renouvellement au coût de prédire
+une faible probabilité de résignation. Dans ce cas, le fait de prédire de faux
+renouvellement n'a aucun effet puisque peu importe l'augmentation, l'assuré
+aurait résigné; conséquemment, ceci n'a pas d'impact sur la rentabilité.  Ainsi,
+la matrice de confusion qui maximise les vrais renouvellements au coût de prédire
 plus de faux renouvellement est le modèle gbm.
 
 Finalement, bien que le modèle final soit le gradient boosting, les résultats
-auraient pu être meilleurs. En effet, beaucoup de faux renouvellement sont 
-généré ce qui pourrait avoir des effets sur la rentabilité de la compagnie
-puisqu'elle aurait pu charché plus cher à ces assurés. Le modèle pourrait être
+auraient pu être meilleurs. En effet, beaucoup de faux renouvellements sont 
+générés ce qui pourrait avoir des effets sur la rentabilité de la compagnie
+puisqu'elle aurait pu charger plus cher à ces assurés. Le modèle pourrait être
 amélioré est utilisant des méthodes pour contourné le problème de débalancement
 des données, par exemple en utilisant des techniques de sous et sur
-échantillionnage. Il aurait aussi été intéréssant d'avoir plus d'information
+échantillonnage. Il aurait aussi été intéressant d'avoir plus d'information
 sur l'expérience des assurés autre que le système Bonus Malus. Par exemple,
-la fréquence d'accident ainsi que le coût de ses accident aurait permit de mieux 
-déterminé pourquoi il y avait un augmentation de la prime. De plus, nous avons
-vu que la régions avait un impact important. Il aurait été pertinant de savoir
+la fréquence d'accident ainsi que le coût de ses accidents aurait permis de mieux 
+déterminer pourquoi il y avait une augmentation de la prime. De plus, nous avons
+vu que la région avait un impact important. Il aurait été pertinent de savoir
 davantage ce qui caractérise ses différentes régions.
 
 \newpage
