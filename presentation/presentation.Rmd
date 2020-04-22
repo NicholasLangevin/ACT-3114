@@ -182,13 +182,7 @@ ggplot(region, aes(x=Region, y=Proportion, fill=TRUE)) +
 
 ### Traitement des valeurs manquantes
 
-<br/>
-
-- policy_caruse: 3483
-
-- vehicl_garage: 1575
-
-- polholder_diffdriver: 12
+![](donnes_na.jpg){width=550px}
 
 - Nombre d'observations touchées: `r nrow(data) - nrow(na.omit(data.init))` (`r round((nrow(data) - nrow(na.omit(data.init))) / nrow(data) *100, 2)`%)
 
@@ -217,9 +211,9 @@ $$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
 </font>
 - Estimateurs $\beta_{i}$ 
 <font size = "4">
-$$    \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}$$
+$$    \mathcal{L}(\beta_{0}, \ldots, \beta_{p}) = \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\beta_{0} + \sum_{j=1}^p \beta_{j} x_{j} ) - ln \left(1 + e^{\beta_{0} + \sum\limits_{j=1}^p \beta_{j} x_{j}} \right)\right) \right\}$$
 </font>
-- TRV 1\% pour la sélection de variable
+- TRV 99\% pour la sélection de variable
 
 
 ## Modèle linéaire avec régularisation
@@ -228,25 +222,32 @@ $$    \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\be
 
 - Modélisation de la probabilité de résignation avec régression logistique
 
+- Optimisation de l'hyperparamètre $\lambda$ avant l'estimation des coefficients
+
 - Estimateurs $\beta_{i}$ 
 
-- Optimisation de l'hyperparamètre $\lambda$ 
+<font size = "4">
+$$\max _{\left(\beta_{0}, \beta_{j}\right)} \mathcal{L}(\beta_{0}, \ldots, \beta_{p}) - \lambda \sum_{j=1}^{p}\left|\beta_{j}\right|$$
+</font>
 
 
 ## Modèle linéaire avec régularisation
 
 ### Optimisation de l'hyperparamètre $\lambda$
 
-
-![](lambda_opti.jpg){width=1000px}
+<center>
+![](lambda_opti.jpg){width=550px}
+</center>
 
 ## Modèle linéaire avec régularisation
 
-### Variables avec coeffcient nul de la régulation Lasso
+### Variables avec coeffcient nul
 
 <br/>
+<center>
+![](selection_lasso.jpg){width=600px}
 
-![](selection_lasso.jpg){width=800px}
+</center>
 
 ## Modèles k plus proches voisins
 
@@ -263,34 +264,23 @@ $$    \max\limits_{(\beta_0, \beta_j)} exp\left\{ \sum_{i=1}^n \left( y_{i} (\be
 
 ## Modèles k plus proches voisins
 
-### Optimisation de l'hyperparamètre k
+### Résultats de l'optimisation
 
+<center>
 ![](knn_opti.jpg){width=700px}
-
+</center>
 
 ## Arbre de classification
 
-<ul>
-<li> Processus de partitionnement récursif binaire
-<li> Deux fonctions de perte testée
+- Processus de partitionnement récursif binaire
+- Deux fonctions de perte testée
 $$
 \mathcal{L}_G = \sum_{k=1}^K \widehat{P}_{mk} (1 - \widehat{P}_{mk}) \qquad \mathcal{L}_D = - \sum_{k=1}^K \widehat{P}_{mk} \ln( \widehat{P}_{mk})
 $$
 <br/>
-<li> Complexité de l'arbre sera optimisée en fonction de deux paramètres
-    <ul>
-    <li> paramètre de complexité (cp)
-    <li> nombre minimal d'observations dans une feuille (minbucket) </li>
-</li>
-</ul>
-
-## Arbre de classification 
-
-### Optimisation des hyperparamètres
-
-<br/>
-
-![](arbre_opti.jpg){width=750px}
+- Complexité de l'arbre sera optimisée en fonction de deux paramètres
+    - paramètre de complexité (cp)
+    - nombre minimal d'observations dans une feuille (minbucket) 
 
 
 ## Bagging
@@ -305,64 +295,59 @@ $$
 ![](bag_nbtree.jpg){width=400px}
 </center>
 
+- Paramètre optimisé: taille minimale d'un noeud (nodesize)
+
+## Bagging
+
+### Résultats de l'optimisation
+
+<center>
+![](bag_opti.jpg){width=600px}
+</center>
+
+
 
 ## Forêt aléatoire 
 
-<ul>
-<li> Taille de l'échantillon boostrap de 50\%
 
-<li> Nombre d'arbre nécessaire
+- Taille de l'échantillon boostrap de 50\%
+
+- Nombre d'arbre nécessaire
 
 <center>
 ![](foret_nbtree.jpg){width=400px}
 </center>
 
-<li> Deux hyperparamètre à optimiser
-    <ul>
-    <li> taille minimal d'un noeud (nodesize)
-    <li> nombre de prédicteurs choisi aléatoirement (mtry) </li>
-</li>
-</ul>
-
-
-## Forêt aléatoire
-
-### Optimisation des hyperparamètres
-
-<br/>
-
-<center>
-![](foret_opti.jpg){width=350px}
-</center>
+- Deux hyperparamètre à optimiser
+    - taille minimal d'un noeud (nodesize)
+    - nombre de prédicteurs choisi aléatoirement (mtry) 
 
 
 ## Boosting de gradient stochastique
 
-<li> Amélioration à l'itération t
+- Amélioration à l'itération t
 <font size = "4">
 $$
    \sum_{i=1}^n \mathcal{L} \left\{ y_i, \widehat{f}_{t-1}(x_i) + \widehat{f}_{\text{arbre}}^t(x_i) \right\}
 $$
 </font>
-<li> Avec fonction de perte 
+- Avec fonction de perte 
 <font size = "4">
 $$
-    \mathcal{L} = \sum_{k=1}^2 \widehat{P}_{ik} \ln( \widehat{P}_{ik})
+    \mathcal{L} = - \sum_{k=1}^K \widehat{P}_{ik} \ln( \widehat{P}_{ik})
 $$
 </font>
 
-<li> Taux d'apprentissage <font size = "5"> $\lambda = 0.005$ </font>, sous-échantillonnage de 75\% 
+- Taux d'apprentissage <font size = "5"> $\lambda = 0.005$ </font>, sous-échantillonnage de 75\% 
 
-<li> Deux hyperparamètre à optimiser
-    <ul>
-    <li> nombre d'arbre (n.trees)
-    <li> profondeur maximal des arbres (d) </li>
-</li>
-</ul>
+- Deux hyperparamètre à optimiser
+    - nombre d'arbre (n.trees)
+    - profondeur maximal des arbres (d) 
+
 
 ## Boosting de gradient stochastique
 
-### Optimisation des hyperparamètres
+### Résultats de l'optimisation
 
 ```{r plot_gbm_opti, fig.height=3.5}
 plot(gbmfit_Bern)
@@ -370,6 +355,7 @@ gbmfit_Bern$bestTune[1:2]
 ```
 
 
+<<<<<<< HEAD
 # Interprétation des meilleurs modèles 
 
 ## Modèle de base 
@@ -379,6 +365,17 @@ gbmfit_Bern$bestTune[1:2]
 <font size = "4.5">
 $$\ln \frac{\pi_{res}}{1 - \pi_{res}} = \beta_0 + \sum_{i=1}^p \beta_i x_i$$
 </font>
+=======
+## Comparaison de la performance des modèles
+
+- Échantillon test 20\%
+- Comparaison avec la courbe ROC et l'AUC
+
+<br/>
+<center>
+<img src="comparaison_ROC.jpg" width="400" />  <img src="comparaison_AUC.jpg" width="500" height = 300 /> 
+</center>
+>>>>>>> e485c38... presentation charles
 
 - Impact des coefficients sur la prévision
 

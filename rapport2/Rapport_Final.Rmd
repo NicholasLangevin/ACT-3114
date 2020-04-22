@@ -257,6 +257,17 @@ Rmd_table(lasso.names0, label="tbl:lasso.variable0",
           pour la colonne \\emph{AUC}.")
 ```
 
+```{r, lasso.varShrinkede, results='asis'}
+lasso.names <- c("policy caruse", "prem last", "prem pure",
+                 "vehicl region", "vehicl region")
+lasso.level <- c("private or freelance work", "-", "-", "Region 03",
+                 "Region 08")
+auc.name <- c("x","x","x","x","x")
+lasso.names0 <- data.frame(Variable=lasso.names, Niveau=lasso.level,
+                           AUC=auc.name)
+Rmd_table(lasso.names0, label="tbl:lasso.variable0", 
+          caption="")
+```
 Pour déterminer si une prédiction est à résignation ou à
 renouvellement, il faut déterminer le seuil optimal qui maximise la sensitivité
 et la spécificité. Celui-ci a été sélectionné selon le critère suivant
@@ -285,8 +296,8 @@ ROC. Puisque les 2 modèles ont des courbes ROC similaires, le seuil optimal est
 aussi similaire. Le \autoref{tbl:lasso.confMatrix} montre les tableaux de
 confusion résultants. Dans le cas du modèle utilisant la _deviance_, la
 sensitivité est de `r spec.dev[4]` et la spécificité est de `r spec.dev[3]`.
-Dans le modèle utilisant l' _AUC_, la sensitivité est de `r spec.dev[4]` et la
-spécificité est de `r spec.dev[4]`. On remarque que l'erreur la plus fréquente
+Dans le modèle utilisant l' _AUC_, la sensitivité est de `r spec.auc[4]` et la
+spécificité est de `r spec.auc[3]`. On remarque que l'erreur la plus fréquente
 dans les deux cas est de prédire faussement résignation. Ceci pourrait causé
 des erreurs de rentabilisation au renouvellement puisque la compagnie ne
 passerait pas de grandes augmentations de prime à ces clients par **fausse**
